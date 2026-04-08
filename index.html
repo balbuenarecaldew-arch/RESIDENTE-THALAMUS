@@ -21,54 +21,12 @@ async function getFile(i){const d=await db();return new Promise((ok,bad)=>{const
 async function delFile(i){const d=await db();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).delete(i);t.oncomplete=()=>ok();t.onerror=()=>bad(t.error)})}
 async function hash(pass,salt,it=120000){const e=new TextEncoder(),k=await crypto.subtle.importKey('raw',e.encode(pass),'PBKDF2',false,['deriveBits']),b=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:e.encode(salt),iterations:it},k,256);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function rec(pass){const a=new Uint8Array(16);crypto.getRandomValues(a);const salt=Array.from(a).map(x=>x.toString(16).padStart(2,'0')).join('');return{salt,it:120000,hash:await hash(pass,salt)}}
-async function seed(){
-  // Intentar cargar de múltiples claves posibles del localStorage (compatibilidad con versiones anteriores)
-  const keys=['libro_obras_app_v4','libro_obras_data'];
-  load();
-  if(!data.users.length){
-    for(const k of keys){
-      try{const d=JSON.parse(localStorage.getItem(k));if(d&&d.users&&d.users.length){data=d;break}}catch(e){}
-    }
-  }
-  // Si aún no hay usuarios, crear admin por defecto
-  if(!data.users.length){
-    data.users=[{id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[],...(await rec('admin'))}];
-    save();
-  }
-  // Migrar usuarios con contraseña en texto plano (u.pass) a hash
-  let changed=false;
-  for(const u of data.users){
-    if(u.pass&&!u.hash){Object.assign(u,await rec(u.pass));delete u.pass;changed=true;}
-    // Si no tiene ni pass ni hash, no se puede migrar → asignar admin como contraseña temporal
-    if(!u.hash&&!u.pass){Object.assign(u,await rec('admin'));changed=true;}
-  }
-  if(changed)save();
-  renderStats();
-}
+async function seed(){load();if(!data.users.length){data.users=[{id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[],...(await rec('admin'))}];save()}for(const u of data.users){if(u.pass&&!u.hash){Object.assign(u,await rec(u.pass));delete u.pass;save()}}renderStats()}
 function show(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active')}function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');view=v}
 function setNav(m){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('on',x.dataset.main===m))}
 function ids(){return user?.rol==='admin'?data.obras.map(o=>o.id):(user?.obras||[])}function projects(q=''){let r=user?.rol==='admin'?[...data.obras]:data.obras.filter(o=>ids().includes(o.id));if(q){q=q.toLowerCase();r=r.filter(o=>(o.nombre||'').toLowerCase().includes(q)||(o.codigo||'').toLowerCase().includes(q))}return r}
 function cur(){return data.obras.find(o=>o.id===curProjectId)}function canEdit(){return user&&(user.rol==='admin'||user.rol==='residente')}function isAdmin(){return user&&user.rol==='admin'}
-async function login(){
-  const l=document.getElementById('login-user').value.trim().toLowerCase();
-  const p=document.getElementById('login-pass').value;
-  const e=document.getElementById('login-error');
-  e.style.display='none';
-  if(!l||!p){e.textContent='Ingrese usuario y contraseña.';e.style.display='block';return;}
-  const u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);
-  if(!u){e.textContent='Usuario no encontrado.';e.style.display='block';return;}
-  let ok=false;
-  // Verificar con hash criptográfico (modo seguro)
-  if(u.hash&&u.salt){try{ok=(await hash(p,u.salt,u.it||120000))===u.hash;}catch(ex){ok=false;}}
-  // Fallback: comparar en texto plano (datos de versión anterior)
-  if(!ok&&u.pass){ok=(u.pass===p);}
-  // Si el fallback funcionó, migrar a hash
-  if(ok&&u.pass&&!u.hash){Object.assign(u,await rec(p));delete u.pass;save();}
-  if(!ok){e.textContent='Usuario o contraseña incorrectos.';e.style.display='block';return;}
-  user=u;
-  document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-  show('app');openMain('home');
-}
+async function login(){const l=document.getElementById('login-user').value.trim().toLowerCase(),p=document.getElementById('login-pass').value,e=document.getElementById('login-error');e.style.display='none';const u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);if(!u||await hash(p,u.salt,u.it)!==u.hash){e.textContent='Usuario o contrasena incorrectos.';e.style.display='block';return}user=u;document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);show('app');openMain('home')}
 function logout(){user=null;curProjectId=null;stack=[];document.getElementById('login-pass').value='';show('login')}
 function openMain(v){stack=[];showView(v);setNav(v);if(v==='home')renderStats();if(v==='projects')renderProjects(document.getElementById('search').value||'');if(v==='documents')renderAllDocs();if(v==='admin')renderUsers()}
 function openSub(v){stack.push(view);showView(v)}function back(){const p=stack.pop()||'home';showView(p);if(['home','projects','documents','admin'].includes(p))setNav(p);if(p==='projects')renderProjects(document.getElementById('search').value||'')}
@@ -120,6 +78,7 @@ function fire(msg){
 }
 
 async function initFirebaseLayer(){
+  fb.ready=false;firebaseMode=false;return; // MODO LOCAL: Firebase deshabilitado
   try{
     if(!window.firebase) return;
     fb.app=firebase.initializeApp(firebaseConfig);
@@ -162,65 +121,34 @@ logout=async function(){
   return window.originalLogout();
 };
 async function localFallbackLogin(){
-  const l=document.getElementById('login-user').value.trim().toLowerCase(),p=document.getElementById('login-pass').value,e=document.getElementById('login-error');
+  const l=document.getElementById('login-user').value.trim().toLowerCase();
+  const p=document.getElementById('login-pass').value;
+  const e=document.getElementById('login-error');
   e.style.display='none';
-  if(l==='admin'&&p==='admin'){
-    let u=data.users.find(x=>(x.login||'').toLowerCase()==='admin');
-    if(!u){
-      u={id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[]};
-      data.users=[u,...data.users.filter(x=>(x.login||'').toLowerCase()!=='admin')];
-      save();
-    }
-    user=u;
-    document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-    show('app');
-    openMain('home');
-    return;
-  }
-  const u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);
-  if(!u||await hash(p,u.salt,u.it)!==u.hash){e.textContent='Usuario o contrasena incorrectos.';e.style.display='block';return}
-  user=u;document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);show('app');openMain('home');
+  if(!l||!p){e.textContent='Ingrese usuario y contraseña.';e.style.display='block';return;}
+  // Buscar usuario por login, email, o la parte antes del @ del email
+  let u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);
+  if(!u){e.textContent='Usuario no encontrado.';e.style.display='block';return;}
+  let ok=false;
+  // 1. Verificar con hash criptográfico
+  if(u.hash&&u.salt){try{ok=(await hash(p,u.salt,u.it||120000))===u.hash;}catch(ex){ok=false;}}
+  // 2. Fallback texto plano (versiones anteriores)
+  if(!ok&&u.pass){ok=(u.pass===p);}
+  // 3. Si admin/admin y no tiene credenciales válidas, aceptar siempre
+  if(!ok&&l==='admin'&&p==='admin'&&u.rol==='admin'){ok=true;}
+  // Si el fallback funcionó, migrar a hash seguro
+  if(ok&&u.pass&&!u.hash){Object.assign(u,await rec(p));delete u.pass;save();}
+  if(!ok){e.textContent='Contraseña incorrecta.';e.style.display='block';return;}
+  user=u;
+  document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
+  show('app');openMain('home');
 }
 
 async function persistRemote(collection,id,payload){ if(fb.ready) await fb.db.collection(collection).doc(id).set(payload,{merge:true}); }
 async function removeRemote(collection,id){ if(fb.ready) await fb.db.collection(collection).doc(id).delete(); }
 
 login=async function(){
-  const value=document.getElementById('login-user').value.trim().toLowerCase();
-  const pass=document.getElementById('login-pass').value;
-  fire('');
-  const knownLocalUser=data.users.find(x=>((x.login||'').toLowerCase()===value||(x.email||'').toLowerCase()===value) && x.hash && x.salt);
-  if(value==='admin' && pass==='admin'){
-    let adminUser=data.users.find(x=>(x.login||'').toLowerCase()==='admin');
-    if(!adminUser){
-      adminUser={id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[]};
-      data.users=[adminUser,...data.users.filter(x=>(x.login||'').toLowerCase()!=='admin')];
-      save();
-    }
-    user=adminUser;
-    document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-    show('app');
-    openMain('home');
-    return;
-  }
-  if(knownLocalUser){
-    return localFallbackLogin();
-  }
-  if(fb.ready && value.includes('@')){
-    try{
-      const cred=await fb.auth.signInWithEmailAndPassword(value,pass);
-      const profile=await ensureFirebaseProfile(cred.user);
-      user={id:cred.user.uid,...profile};
-      await loadRemoteData();
-      document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-      show('app');
-      openMain('home');
-      return;
-    }catch(error){
-      console.warn('Firebase login error',error);
-      fire('Firebase no pudo autenticar. Intentando modo local.');
-    }
-  }
+  // Siempre modo local (Firebase deshabilitado)
   return localFallbackLogin();
 };
 
