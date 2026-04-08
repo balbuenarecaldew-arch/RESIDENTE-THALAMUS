@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Libro de Obras</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <section id="screen-login" class="screen active">
+    <div class="login-shell">
+      <div class="login-card">
+        <div class="brand-mark">⬢</div>
+        <h1>Libro de Obras</h1>
+        <p class="subtitle">Ingreso seguro, pensado para celular y preparado para el seguimiento diario de obra.</p>
+        <div id="login-error" class="alert"></div>
+        <div class="form-grid">
+          <label class="field">
+            <span>Email o usuario</span>
+            <input id="login-user" placeholder="admin" autocomplete="username">
+          </label>
+          <label class="field">
+            <span>Contraseña</span>
+            <input id="login-pass" type="password" placeholder="admin" autocomplete="current-password">
+          </label>
+          <button id="login-btn" class="primary-btn" onclick="Auth.login()">Ingresar</button>
+        </div>
+        <div class="hint">Acceso por defecto: <strong>admin / admin</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-app" class="screen">
+    <header class="topbar">
+      <div>
+        <h2>LIBRO DE OBRAS</h2>
+        <p id="session-user">Sesión activa</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="soft-btn" onclick="App.openMain('documents')">Documentos</button>
+        <button class="soft-btn" onclick="Auth.logout()">Salir</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section id="view-home" class="view active">
+        <div class="hero-panel">
+          <span class="eyebrow">Gestión móvil</span>
+          <h3>Obras, actividades y documentos en un flujo simple</h3>
+          <p>Las obras se crean rápido, el libro diario enumera solo las actividades y los faltantes de documentos se ven de inmediato.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" onclick="App.openMain('works')">Ir a obras</button>
+            <button class="soft-btn" onclick="App.openMain('documents')">Ir a documentos</button>
+          </div>
+        </div>
+        <div id="home-stats" class="stats-grid"></div>
+        <div class="hero-grid">
+          <button class="feature-card" onclick="App.openMain('works')">
+            <strong>Libro digital</strong>
+            <span>Crea obras y entra directo al anotador.</span>
+          </button>
+          <button class="feature-card" onclick="App.openMain('documents')">
+            <strong>Documentos</strong>
+            <span>Configura requisitos y controla faltantes por obra.</span>
+          </button>
+          <button class="feature-card admin-only" onclick="App.openMain('admin')">
+            <strong>Usuarios</strong>
+            <span>Asigna residentes y teléfonos para avisos.</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="view-works" class="view">
+        <div class="section-head">
+          <div class="section-head-left">
+            <button class="back-btn" onclick="App.goBack()">←</button>
+            <div>
+              <h3>Obras</h3>
+              <p>Tarjetas de acceso directo al libro diario.</p>
+            </div>
+          </div>
+          <button id="new-work-btn" class="primary-btn" onclick="Libros.openCreateWork()">Nueva obra</button>
+        </div>
+        <input id="work-search" class="search-input" placeholder="Buscar obra" oninput="Libros.renderWorks(this.value)">
+        <div id="works-list" class="cards-list"></div>
+      </section>
+
+      <section id="view-workbook" class="view">
+        <div class="section-head">
+          <div class="section-head-left">
+            <button class="back-btn" onclick="App.goBack()">←</button>
+            <div>
+              <h3 id="workbook-work-name">Libro diario</h3>
+              <p id="workbook-work-subtitle">Anotador de actividades</p>
+            </div>
+          </div>
+          <button class="soft-btn" onclick="Libros.configureResident()">Residente</button>
+        </div>
+
+        <div class="card-panel">
+          <label class="field">
+            <span>Título de la hoja</span>
+            <input id="workbook-title" placeholder="Ej: Hoja diaria de obra">
+          </label>
+          <div class="inline-actions">
+            <button class="soft-btn" onclick="Libros.saveWorkbookTitle()">Guardar título</button>
+            <button class="whatsapp-btn" onclick="Libros.openDailyReminder()">Avisar por WhatsApp</button>
+          </div>
+          <div id="daily-warning" class="notice hidden"></div>
+        </div>
+
+        <div class="section-head compact">
+          <div>
+            <h4>Actividades del libro</h4>
+            <p>Se enumeran automáticamente.</p>
+          </div>
+          <button class="primary-btn" onclick="Libros.openActivityForm()">Nueva actividad</button>
+        </div>
+        <div id="workbook-list" class="cards-list"></div>
+      </section>
+
+      <section id="view-documents" class="view">
+        <div class="section-head">
+          <div class="section-head-left">
+            <button class="back-btn" onclick="App.goBack()">←</button>
+            <div>
+              <h3>Documentos</h3>
+              <p>Requisitos por obra y seguimiento visible.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="documents-layout">
+          <div class="card-panel admin-only">
+            <div class="section-head compact">
+              <div>
+                <h4>Configuración de documentos</h4>
+                <p>Define qué debe presentar cada obra.</p>
+              </div>
+              <button class="primary-btn" onclick="Documentos.openTemplateForm()">Nuevo requisito</button>
+            </div>
+            <div id="doc-template-list" class="cards-list compact-list"></div>
+          </div>
+
+          <div class="card-panel">
+            <div class="section-head compact">
+              <div>
+                <h4>Obras</h4>
+                <p>Toca una obra para ver faltantes y cargados.</p>
+              </div>
+            </div>
+            <div id="doc-work-list" class="cards-list compact-list"></div>
+          </div>
+
+          <div class="card-panel">
+            <div class="section-head compact">
+              <div>
+                <h4 id="doc-detail-title">Checklist documental</h4>
+                <p id="doc-detail-subtitle">Selecciona una obra</p>
+              </div>
+              <button class="whatsapp-btn" onclick="Documentos.openDocumentReminder()">Pedir por WhatsApp</button>
+            </div>
+            <div id="doc-overdue-warning" class="notice hidden"></div>
+            <div id="doc-checklist" class="cards-list compact-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-admin" class="view">
+        <div class="section-head">
+          <div class="section-head-left">
+            <button class="back-btn" onclick="App.goBack()">←</button>
+            <div>
+              <h3>Usuarios</h3>
+              <p>Administra accesos y teléfonos de residentes.</p>
+            </div>
+          </div>
+          <button class="primary-btn" onclick="App.openUserForm()">Nuevo usuario</button>
+        </div>
+        <div id="admin-warning" class="alert"></div>
+        <div id="users-list" class="cards-list"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-main="home" onclick="App.openMain('home')">Inicio</button>
+      <button class="nav-btn" data-main="works" onclick="App.openMain('works')">Obras</button>
+      <button class="nav-btn" data-main="documents" onclick="App.openMain('documents')">Docs</button>
+      <button class="nav-btn admin-only" data-main="admin" onclick="App.openMain('admin')">Admin</button>
+    </nav>
+  </section>
+
+  <script>
+    window.APP_CONFIG = {
+      API_BASE: 'https://libro-obras.TU_USUARIO.workers.dev'
+    };
+  </script>
+  <script src="./app.js"></script>
+  <script src="./auth.js"></script>
+  <script src="./libros.js"></script>
+  <script src="./documentos.js"></script>
+</body>
+</html>
