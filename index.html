@@ -129,6 +129,13 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   border:1px solid var(--line);font-size:12px;color:var(--muted);background:rgba(10,24,45,.95)}
 .sync-pill.ok{color:var(--green);border-color:rgba(73,240,184,.24);background:rgba(73,240,184,.08)}
 .sync-pill.warn{color:var(--yellow);border-color:rgba(255,207,97,.24);background:rgba(255,207,97,.08)}
+.doc-files{display:grid;gap:8px;margin-top:12px}
+.doc-file{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;
+  border:1px solid var(--line);border-radius:16px;background:rgba(8,18,34,.6)}
+.doc-file a{color:var(--cyan);text-decoration:none;font-weight:700}
+.doc-file small{display:block;color:var(--muted);font-size:12px}
+.doc-upload-note{min-height:96px}
+.mini{min-height:42px;padding:10px 14px;border-radius:14px;font-weight:700}
 
 @media(min-width:900px){
   .stats{grid-template-columns:repeat(4,1fr)}
@@ -410,6 +417,25 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 </div>
 
 <!-- MODAL: EXPORTAR -->
+<div class="modal-bg" id="modal-doc-upload">
+  <div class="modal">
+    <h3 id="md-title">Subir documentos</h3>
+    <input type="hidden" id="md-tpl-id">
+    <div class="fgrid">
+      <label class="flabel"><span>Archivos *</span><input id="md-files" type="file" multiple></label>
+      <label class="flabel"><span>Observación</span>
+        <textarea id="md-note" class="doc-upload-note" placeholder="Ej: plano aprobado por la municipalidad, versión final firmada"></textarea>
+      </label>
+      <div id="md-error" class="alert"></div>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-doc-upload')">Cancelar</button>
+      <button id="md-save-btn" class="btn" onclick="saveDocUpload()">Subir archivos</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EXPORTAR -->
 <div class="modal-bg" id="modal-export">
   <div class="modal">
     <h3>Exportar libro de obra</h3>
@@ -424,6 +450,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
 // ── STORAGE ──────────────────────────────────────────────────────────────────
 const KEY = 'lo_v5';
@@ -448,6 +475,8 @@ const Cloud = {
   syncTimer: null,
   lastJson: JSON.stringify(D),
   docRef: null,
+  app: null,
+  storage: null,
   unsubscribe: null
 };
 
@@ -560,7 +589,9 @@ async function initCloud() {
   }
   try {
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+    Cloud.app = app;
     Cloud.docRef = app.firestore().collection(CLOUD_COLLECTION).doc(CLOUD_DOCUMENT);
+    Cloud.storage = firebase.storage ? app.storage() : null;
     const snap = await Cloud.docRef.get();
     if (snap.exists && snap.data()?.payload) {
       D = normalizeData(snap.data().payload);
@@ -596,6 +627,15 @@ const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 const fmtDate = d => d ? new Date(d).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}) : '-';
 const fmtDT = d => d ? new Date(d).toLocaleString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
 const role = r => ({admin:'Administrador',residente:'Residente',viewer:'Solo lectura'})[r]||r;
+const fmtBytes = n => {
+  const v = Number(n)||0;
+  if (v < 1024) return `${v} B`;
+  if (v < 1024*1024) return `${(v/1024).toFixed(1)} KB`;
+  return `${(v/(1024*1024)).toFixed(1)} MB`;
+};
+const sanitizeFileName = name => String(name||'archivo').replace(/[^\w.\-]+/g,'_');
+const docFiles = doc => Array.isArray(doc?.files) ? doc.files : [];
+const hasUploadedFiles = doc => docFiles(doc).length > 0;
 
 // ── HASH ─────────────────────────────────────────────────────────────────────
 async function hashPass(pass, salt, it=120000) {
@@ -833,12 +873,12 @@ const App = {
 
 // ── HOME ─────────────────────────────────────────────────────────────────────
 function renderHome() {
-  const myWorks = ME.rol==='admin' ? D.obras : D.obras.filter(o=>(ME.obras||[]).includes(o.id));
-  const myIds = new Set(myWorks.map(o=>o.id));
+  const visibleWorks = myWorks();
+  const myIds = new Set(visibleWorks.map(o=>o.id));
   const acts = D.actividades.filter(a=>myIds.has(a.obraId)).length;
   const docs = D.documentos.filter(d=>myIds.has(d.obraId)).length;
   document.getElementById('home-stats').innerHTML = [
-    {v:myWorks.length,l:'Obras'},
+    {v:visibleWorks.length,l:'Obras'},
     {v:acts,l:'Actividades'},
     {v:docs,l:'Docs cargados'},
     {v:ME.rol==='admin'?D.users.length:'—',l:'Usuarios'}
@@ -847,7 +887,11 @@ function renderHome() {
 
 // ── OBRAS ────────────────────────────────────────────────────────────────────
 function myWorks() {
-  return ME.rol==='admin' ? D.obras : D.obras.filter(o=>(ME.obras||[]).includes(o.id));
+  if (!ME) return [];
+  if (ME.rol==='admin') return D.obras;
+  const assigned = Array.isArray(ME.obras) ? ME.obras.filter(Boolean) : [];
+  if (!assigned.length) return D.obras;
+  return D.obras.filter(o=>assigned.includes(o.id));
 }
 function canEdit() { return ME && ['admin','residente'].includes(ME.rol); }
 function isAdmin() { return ME && ME.rol==='admin'; }
@@ -1071,6 +1115,140 @@ function doExport() {
 }
 
 // ── DOCUMENTOS ───────────────────────────────────────────────────────────────
+function getDocRecord(workId, tplId) {
+  return D.documentos.find(d=>d.obraId===workId&&d.templateId===tplId) || null;
+}
+function hasStorageReady() {
+  return !!(Cloud.storage && window.firebase && firebase.storage);
+}
+function setDocUploadState(loading, msg='') {
+  const btn = document.getElementById('md-save-btn');
+  const err = document.getElementById('md-error');
+  if (btn) {
+    btn.disabled = loading;
+    btn.textContent = loading ? 'Subiendo...' : 'Subir archivos';
+  }
+  if (err) {
+    err.style.display = msg ? 'block' : 'none';
+    err.textContent = msg;
+  }
+}
+function openDocUploadModal(tplId) {
+  if (!CUR_DOC_WORK) { alert('Selecciona una obra primero.'); return; }
+  if (!canEdit()) { alert('Tu perfil no puede cargar documentos.'); return; }
+  if (!hasStorageReady()) { alert('Firebase Storage no está disponible todavía.'); return; }
+  const tpl = D.templates.find(x=>x.id===tplId);
+  document.getElementById('md-title').textContent = `Subir archivos${tpl ? `: ${tpl.nombre}` : ''}`;
+  document.getElementById('md-tpl-id').value = tplId;
+  document.getElementById('md-files').value = '';
+  document.getElementById('md-note').value = '';
+  setDocUploadState(false);
+  openModal('modal-doc-upload');
+}
+async function saveDocUpload() {
+  const tplId = document.getElementById('md-tpl-id').value;
+  const files = Array.from(document.getElementById('md-files').files||[]);
+  const note = document.getElementById('md-note').value.trim();
+  const tpl = D.templates.find(x=>x.id===tplId);
+  if (!CUR_DOC_WORK || !tpl) { setDocUploadState(false, 'No se encontró la obra o el requisito.'); return; }
+  if (!files.length) { setDocUploadState(false, 'Selecciona al menos un archivo.'); return; }
+  if (!hasStorageReady()) { setDocUploadState(false, 'Firebase Storage no está disponible.'); return; }
+  setDocUploadState(true);
+  try {
+    let doc = getDocRecord(CUR_DOC_WORK, tplId);
+    if (!doc) {
+      doc = {
+        id: uid(),
+        obraId: CUR_DOC_WORK,
+        templateId: tplId,
+        templateNombre: tpl.nombre,
+        estado: 'cargado',
+        detalle: '',
+        date: new Date().toISOString(),
+        creadoPor: ME.nombre,
+        files: []
+      };
+      D.documentos.push(doc);
+    } else if (!Array.isArray(doc.files)) {
+      doc.files = [];
+    }
+    const uploaded = [];
+    for (const file of files) {
+      const fileId = uid();
+      const cleanName = sanitizeFileName(file.name);
+      const path = `documentos/${CUR_DOC_WORK}/${tplId}/${fileId}_${cleanName}`;
+      const task = await Cloud.storage.ref(path).put(file, {
+        contentType: file.type || 'application/octet-stream',
+        customMetadata: {
+          obraId: CUR_DOC_WORK,
+          templateId: tplId,
+          uploadedBy: ME.id || ''
+        }
+      });
+      const url = await task.ref.getDownloadURL();
+      uploaded.push({
+        id: fileId,
+        name: file.name,
+        size: file.size || 0,
+        type: file.type || '',
+        path,
+        url,
+        note,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: ME.nombre,
+        uploadedById: ME.id
+      });
+    }
+    doc.templateNombre = tpl.nombre;
+    doc.estado = 'cargado';
+    doc.detalle = note || doc.detalle || '';
+    doc.date = new Date().toISOString();
+    doc.creadoPor = ME.nombre;
+    doc.files = [...docFiles(doc), ...uploaded];
+    await save(true);
+    closeModal('modal-doc-upload');
+    renderDocsHome();
+  } catch (e) {
+    console.error('Upload error', e);
+    setDocUploadState(false, 'No se pudo subir el archivo a Firebase Storage.');
+    return;
+  }
+  setDocUploadState(false);
+}
+async function delDocFile(docId, fileId) {
+  const doc = D.documentos.find(d=>d.id===docId);
+  const file = docFiles(doc).find(f=>f.id===fileId);
+  if (!doc || !file) return;
+  if (!confirm(`¿Eliminar el archivo "${file.name}"?`)) return;
+  try {
+    if (hasStorageReady() && file.path) await Cloud.storage.ref(file.path).delete();
+  } catch (e) {
+    console.error('Storage delete error', e);
+  }
+  doc.files = docFiles(doc).filter(f=>f.id!==fileId);
+  doc.date = new Date().toISOString();
+  if (!doc.files.length && !doc.detalle) {
+    D.documentos = D.documentos.filter(d=>d.id!==docId);
+  }
+  await save(true);
+  renderDocsHome();
+}
+async function delDocFileGroup(id) {
+  const doc = D.documentos.find(d=>d.id===id);
+  if (!doc) return;
+  if (!confirm('¿Quitar este registro documental y sus archivos?')) return;
+  for (const file of docFiles(doc)) {
+    try {
+      if (hasStorageReady() && file.path) await Cloud.storage.ref(file.path).delete();
+    } catch (e) {
+      console.error('Storage delete error', e);
+    }
+  }
+  D.documentos = D.documentos.filter(d=>d.id!==id);
+  await save(true);
+  renderDocsHome();
+}
+
 function renderDocsHome() {
   renderTplList(); renderDocWorkList();
   if (CUR_DOC_WORK) renderChecklist(CUR_DOC_WORK, true);
@@ -1101,7 +1279,7 @@ function renderTplList() {
 function renderDocWorkList() {
   const ws = myWorks();
   document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
-    const miss = D.templates.filter(t=>!D.documentos.find(d=>d.obraId===o.id&&d.templateId===t.id&&d.estado==='cargado')).length;
+    const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
     return `<article class="work-card" style="border-radius:22px">
       <div class="ctop"><span class="ccode">OBRA</span>
         <span class="pill ${miss?'warn':'ok'}">${miss?`${miss} faltantes`:'Completa'}</span>
@@ -1131,8 +1309,8 @@ function renderChecklist(workId, preserve=false) {
   document.getElementById('doc-detail-sub').textContent = `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Sin residente'}`;
 
   const overdue = D.templates.filter(t=>{
-    const ld = D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado');
-    return isOverdue(o,t,ld);
+    const ld = getDocRecord(workId, t.id);
+    return isOverdue(o, t, hasUploadedFiles(ld));
   });
   const warn = document.getElementById('doc-overdue');
   if (overdue.length) { warn.classList.remove('hidden'); warn.classList.add('danger');
@@ -1144,32 +1322,40 @@ function renderChecklist(workId, preserve=false) {
     target.innerHTML=`<article class="doc-card"><strong>No hay requisitos configurados.</strong></article>`; return;
   }
   target.innerHTML = D.templates.map(t=>{
-    const ld = D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado');
-    const od = isOverdue(o,t,ld);
-    const pillC = ld?'ok':od?'bad':'warn';
-    const pillL = ld?'Cargado':od?'Vencido':'Pendiente';
+    const ld = getDocRecord(workId, t.id);
+    const files = docFiles(ld);
+    const loaded = hasUploadedFiles(ld);
+    const legacy = !!ld && !loaded;
+    const od = isOverdue(o, t, loaded);
+    const pillC = loaded ? 'ok' : od ? 'bad' : legacy ? 'warn' : 'warn';
+    const pillL = loaded ? `${files.length} archivo${files.length===1?'':'s'}` : legacy ? 'Sin archivo' : od ? 'Vencido' : 'Pendiente';
+    const filesHtml = files.length ? `<div class="doc-files">${files.map(f=>`<div class="doc-file">
+        <div>
+          <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
+          <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}${f.note?` · ${esc(f.note)}`:''}</small>
+        </div>
+        ${canEdit()?`<button class="soft mini" onclick="delDocFile('${ld.id}','${f.id}')">Quitar</button>`:''}
+      </div>`).join('')}</div>` : '';
     return `<article class="doc-card">
       <div class="ctop"><strong>${esc(t.nombre)}</strong><span class="pill ${pillC}">${pillL}</span></div>
       <div class="meta">${esc(t.desc||'')}</div>
       <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
-      <div class="meta">${ld?`Última carga: ${fmtDT(ld.date)}`:'Aún no fue cargado'}</div>
+      <div class="meta">${loaded?`Última carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'Aún no fue cargado'}</div>
       <div class="cacts">
-        ${isAdmin()?`<button class="btn" onclick="markDocLoaded('${t.id}')">${ld?'Actualizar':'Marcar cargado'}</button>`:`<button class="soft" disabled>Solo admin</button>`}
-        ${ld&&isAdmin()?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
+        ${canEdit()?`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar más':'Subir archivo'}</button>`:`<button class="soft" disabled>Solo lectura</button>`}
+        ${ld&&canEdit()?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
       </div>
+      ${ld?.detalle?`<div class="meta">Observación: ${esc(ld.detalle)}</div>`:''}
+      ${filesHtml}
     </article>`;
   }).join('');
 }
 
 function markDocLoaded(tplId) {
-  const t = D.templates.find(x=>x.id===tplId); if(!t) return;
-  const detalle = prompt('Referencia o comentario','')||'';
-  D.documentos = D.documentos.filter(d=>!(d.obraId===CUR_DOC_WORK&&d.templateId===tplId));
-  D.documentos.push({id:uid(),obraId:CUR_DOC_WORK,templateId:tplId,
-    templateNombre:t.nombre,estado:'cargado',detalle,date:new Date().toISOString(),creadoPor:ME.nombre});
-  save(); renderDocsHome();
+  openDocUploadModal(tplId);
 }
 function delDoc(id) {
+  return delDocFileGroup(id);
   if (!confirm('¿Quitar este documento cargado?')) return;
   D.documentos = D.documentos.filter(d=>d.id!==id);
   save(); renderDocsHome();
@@ -1203,7 +1389,7 @@ function delTpl(id) {
 function waDocReminder(workId=CUR_DOC_WORK) {
   const o = D.obras.find(x=>x.id===workId);
   if (!o?.residenteTelefono) { alert('Configura el WhatsApp del residente primero.'); return; }
-  const miss = D.templates.filter(t=>!D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado'));
+  const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(workId, t.id)));
   if (!miss.length) { alert('Esta obra ya tiene todos los documentos.'); return; }
   const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, necesitamos los siguientes documentos de "${o.nombre}":\n${miss.map(t=>`- ${t.nombre}`).join('\n')}`);
   window.open(`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}`,'_blank','noopener');
@@ -1216,7 +1402,10 @@ function renderUsers() {
   if (!isAdmin()) { warn.style.display='block'; warn.textContent='Solo el administrador puede gestionar usuarios.'; target.innerHTML=''; return; }
   warn.style.display='none';
   target.innerHTML = D.users.map(u=>{
-    const asg = u.rol==='admin'?'Acceso total':(u.obras||[]).map(id=>D.obras.find(o=>o.id===id)?.nombre).filter(Boolean).join(', ')||'Sin obras asignadas';
+    const asg = u.rol==='admin' ? 'Acceso total'
+      : ((u.obras||[]).length
+        ? (u.obras||[]).map(id=>D.obras.find(o=>o.id===id)?.nombre).filter(Boolean).join(', ')
+        : 'Todas las obras');
     const pillC = {admin:'ok',residente:'warn',viewer:'bad'}[u.rol]||'bad';
     return `<article class="user-card">
       <div class="ctop">
