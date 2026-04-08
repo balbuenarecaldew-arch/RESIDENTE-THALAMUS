@@ -1,280 +1,840 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Libro de Obras</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet"><style>:root{--bg:#07111f;--panel:#0d1d35;--line:#1f3c66;--text:#ecf7ff;--muted:#9ab9d7;--c1:#4be5ff;--c2:#7890ff;--ok:#45efb3;--warn:#ffca5f;--bad:#ff6e9d}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Manrope,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(75,229,255,.18),transparent 28%),radial-gradient(circle at top right,rgba(120,144,255,.18),transparent 25%),linear-gradient(180deg,#040913,#07111f 35%,#0a1830);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer;border:0}input,select{width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);background:#091426;color:var(--text)}.screen{display:none;min-height:100vh}.screen.active{display:block}.login{min-height:100vh;display:grid;place-items:center;padding:18px}.card,.tile,.item{background:linear-gradient(180deg,rgba(13,29,53,.96),rgba(7,16,29,.98));border:1px solid var(--line);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}.card{width:min(100%,430px);padding:24px}.mark{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:28px;color:#05111d;background:linear-gradient(135deg,var(--c1),var(--c2));margin-bottom:16px}h1,h2,h3{font-family:Orbitron,sans-serif}.sub{color:var(--muted);font-size:14px;margin-top:10px}.g{display:grid;gap:12px}.m{margin-top:16px}.btn,.ghost,.nav,.back{min-height:54px;border-radius:18px;font-weight:800}.btn{background:linear-gradient(135deg,var(--c1),var(--c2));color:#04111d}.ghost,.back,.nav{background:#0a1930;color:var(--text);border:1px solid var(--line)}.top{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:rgba(5,10,20,.86);backdrop-filter:blur(16px);border-bottom:1px solid #163054}.shell{max-width:1100px;margin:auto;padding:18px 18px 100px}.hero,.panel{padding:20px}.hero{position:relative;overflow:hidden}.hero:after{content:'';position:absolute;right:-70px;bottom:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(75,229,255,.22),transparent 65%)}.ey{display:inline-block;padding:7px 10px;border-radius:999px;background:rgba(75,229,255,.08);color:var(--c1);font-size:11px;font-weight:800;text-transform:uppercase}.tt{font-size:24px;line-height:1.1;margin-top:14px}.grid{display:grid;gap:12px}.grid.s4{grid-template-columns:repeat(2,1fr)}.item{padding:16px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.code{font-family:monospace;color:var(--c1);font-size:12px}.pill{padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase}.activa{background:rgba(69,239,179,.12);color:var(--ok)}.pausada{background:rgba(255,202,95,.12);color:var(--warn)}.finalizada{background:rgba(255,110,157,.12);color:var(--bad)}.muted{color:var(--muted);font-size:13px}.small{color:var(--muted);font-size:12px}.view{display:none}.view.active{display:block}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.left{display:flex;align-items:center;gap:12px}.back{width:48px}.list{display:grid;gap:12px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;width:min(490px,calc(100vw - 20px));display:flex;gap:10px;padding:10px;border-radius:24px;background:rgba(5,10,20,.92);border:1px solid #163054}.nav{flex:1}.nav.on{background:linear-gradient(135deg,rgba(75,229,255,.16),rgba(120,144,255,.18))}.alert{display:none;margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,110,157,.12);border:1px solid rgba(255,110,157,.2);color:#ffd4e2}.empty{text-align:center;padding:24px}.hide{display:none!important}@media(min-width:760px){.grid.s4{grid-template-columns:repeat(4,1fr)}.bottom{display:none}}</style></head><body>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Libro de Obras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1d35;--line:#1f3c66;--text:#ecf7ff;--muted:#9ab9d7;
+  --c1:#4be5ff;--c2:#7890ff;--ok:#45efb3;--warn:#ffca5f;--bad:#ff6e9d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Manrope,sans-serif;color:var(--text);
+  background:
+    radial-gradient(circle at top left,rgba(75,229,255,.18),transparent 28%),
+    radial-gradient(circle at top right,rgba(120,144,255,.18),transparent 25%),
+    linear-gradient(180deg,#040913,#07111f 35%,#0a1830);
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+input,select{
+  width:100%;padding:14px;border-radius:16px;
+  border:1px solid var(--line);background:#091426;color:var(--text);
+}
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+.login{min-height:100vh;display:grid;place-items:center;padding:18px}
+.card,.tile,.item{
+  background:linear-gradient(180deg,rgba(13,29,53,.96),rgba(7,16,29,.98));
+  border:1px solid var(--line);border-radius:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.card{width:min(100%,430px);padding:24px}
+.mark{
+  width:60px;height:60px;border-radius:18px;
+  display:grid;place-items:center;font-size:28px;color:#05111d;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  margin-bottom:16px;
+}
+h1,h2,h3{font-family:Orbitron,sans-serif}
+.sub{color:var(--muted);font-size:14px;margin-top:10px}
+.g{display:grid;gap:12px}
+.m{margin-top:16px}
+.btn,.ghost,.nav,.back{min-height:54px;border-radius:18px;font-weight:800}
+.btn{background:linear-gradient(135deg,var(--c1),var(--c2));color:#04111d}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.ghost,.back,.nav{background:#0a1930;color:var(--text);border:1px solid var(--line)}
+.ghost:disabled{opacity:.5;cursor:not-allowed}
+.top{
+  position:sticky;top:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;
+  background:rgba(5,10,20,.86);backdrop-filter:blur(16px);
+  border-bottom:1px solid #163054;
+  z-index:100;
+}
+.shell{max-width:1100px;margin:auto;padding:18px 18px 100px}
+.hero,.panel{padding:20px}
+.hero{position:relative;overflow:hidden}
+.hero:after{
+  content:'';position:absolute;right:-70px;bottom:-80px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(75,229,255,.22),transparent 65%);
+}
+.ey{
+  display:inline-block;padding:7px 10px;border-radius:999px;
+  background:rgba(75,229,255,.08);color:var(--c1);
+  font-size:11px;font-weight:800;text-transform:uppercase;
+}
+.tt{font-size:24px;line-height:1.1;margin-top:14px}
+.grid{display:grid;gap:12px}
+.grid.s4{grid-template-columns:repeat(2,1fr)}
+.item{padding:16px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.code{font-family:monospace;color:var(--c1);font-size:12px}
+.pill{padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase}
+.activa{background:rgba(69,239,179,.12);color:var(--ok)}
+.pausada{background:rgba(255,202,95,.12);color:var(--warn)}
+.finalizada{background:rgba(255,110,157,.12);color:var(--bad)}
+.muted{color:var(--muted);font-size:13px}
+.small{color:var(--muted);font-size:12px}
+.view{display:none}
+.view.active{display:block}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
+.left{display:flex;align-items:center;gap:12px}
+.back{width:48px}
+.list{display:grid;gap:12px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.bottom{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:10px;
+  width:min(490px,calc(100vw - 20px));
+  display:flex;gap:10px;padding:10px;border-radius:24px;
+  background:rgba(5,10,20,.92);border:1px solid #163054;
+  z-index:99;
+}
+.nav{flex:1}
+.nav.on{background:linear-gradient(135deg,rgba(75,229,255,.16),rgba(120,144,255,.18))}
+.alert{display:none;margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,110,157,.12);border:1px solid rgba(255,110,157,.2);color:#ffd4e2}
+.alert.success{background:rgba(69,239,179,.1);border-color:rgba(69,239,179,.2);color:var(--ok)}
+.empty{text-align:center;padding:24px}
+.hide{display:none!important}
 
-<section id="screen-login" class="screen active"><div class="login"><div class="card"><div class="mark">⬡</div><h1>Libro de Obras</h1><div class="sub">Sistema local seguro para obras civiles.</div><div id="login-error" class="alert"></div><div class="g m"><div><label class="small">Usuario o email</label><input id="login-user" placeholder="admin"></div><div><label class="small">Contrasena</label><input id="login-pass" type="password" placeholder="admin"></div><button class="btn" onclick="login()">Ingresar</button></div><div class="sub m">Acceso por defecto: <b>admin / admin</b></div></div></div></section>
+/* Loading spinner */
+.spinner{
+  display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.2);
+  border-top-color:var(--c1);
+  border-radius:50%;animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-<section id="screen-app" class="screen"><header class="top"><div><h3 style="font-size:14px;letter-spacing:.08em">LIBRO DE OBRAS</h3><div id="who" class="small">Sesion activa</div></div><div style="display:flex;gap:8px"><button class="ghost" style="min-height:44px;padding:0 12px" onclick="logout()">Salir</button></div></header><div class="shell"><main>
+/* Cloud badge */
+.cloud-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:999px;
+  background:rgba(69,239,179,.08);border:1px solid rgba(69,239,179,.2);
+  color:var(--ok);font-size:11px;font-weight:800;
+  text-transform:uppercase;margin-top:8px;
+}
 
-<div id="view-home" class="view active"><div class="hero card"><div class="ey">Modo local</div><div class="tt">Registro digital de obras civiles</div><div class="sub">Administrador gestiona usuarios y documentos. Residentes registran avances. Lectores solo consultan.</div><div class="grid m"><button class="btn" onclick="openMain('projects')">Obras</button><button class="ghost" onclick="openMain('documents')">Documentos</button><button class="ghost" onclick="openMain('admin')">Usuarios</button></div></div><div class="grid s4 m" id="stats"></div></div>
+@media(min-width:760px){.grid.s4{grid-template-columns:repeat(4,1fr)}.bottom{display:none}}
+</style>
+</head>
+<body>
 
-<div id="view-projects" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 style="font-size:18px">Obras</h2><div class="small">Selecciona una obra</div></div></div><button id="add-project" class="btn" style="min-height:46px;padding:0 14px" onclick="projectForm()">Nueva</button></div><input id="search" placeholder="Buscar obra" oninput="renderProjects(this.value)"><div id="projects" class="list m"></div></div>
+<!-- ─── LOGIN ─────────────────────────────────────────────────────────────── -->
+<section id="screen-login" class="screen active">
+  <div class="login">
+    <div class="card">
+      <div class="mark">⬡</div>
+      <h1>Libro de Obras</h1>
+      <div class="sub">Sistema para obras civiles.</div>
+      <div class="cloud-badge">☁ Usuarios en la nube</div>
+      <div id="login-error" class="alert"></div>
+      <div class="g m">
+        <div>
+          <label class="small">Usuario o email</label>
+          <input id="login-user" placeholder="admin" autocomplete="username">
+        </div>
+        <div>
+          <label class="small">Contraseña</label>
+          <input id="login-pass" type="password" placeholder="admin" autocomplete="current-password">
+        </div>
+        <button id="login-btn" class="btn" onclick="login()">Ingresar</button>
+      </div>
+      <div class="sub m">Acceso por defecto: <b>admin / admin</b></div>
+    </div>
+  </div>
+</section>
 
-<div id="view-project" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 id="pname" style="font-size:18px">Obra</h2><div id="psub" class="small"></div></div></div><button id="edit-project" class="ghost" style="min-height:46px;padding:0 14px" onclick="projectForm(curProjectId)">Editar</button></div><div id="project-info" class="panel card"></div><div class="grid m"><button class="btn" onclick="openProjectView('acts')">Libro de actividades</button><button class="ghost" onclick="openProjectView('docs')">Documentos de la obra</button></div></div>
+<!-- ─── APP ───────────────────────────────────────────────────────────────── -->
+<section id="screen-app" class="screen">
+  <header class="top">
+    <div>
+      <h3 style="font-size:14px;letter-spacing:.08em">LIBRO DE OBRAS</h3>
+      <div id="who" class="small">Sesión activa</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="ghost" style="min-height:44px;padding:0 12px" onclick="logout()">Salir</button>
+    </div>
+  </header>
 
-<div id="view-acts" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 style="font-size:18px">Actividades</h2><div class="small">Registro de la obra</div></div></div><button id="add-act" class="btn" style="min-height:46px;padding:0 14px" onclick="activityForm()">Agregar</button></div><div class="row m"><select id="cat" onchange="renderActs()"><option value="">Todas</option><option>avance</option><option>incidencia</option><option>inspeccion</option><option>material</option><option>clima</option><option>otro</option></select><button class="ghost" style="min-height:50px;padding:0 14px" onclick="exportWord()">Exportar Word</button></div><div id="acts" class="list m"></div></div>
+  <div class="shell"><main>
 
-<div id="view-docs" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 style="font-size:18px">Documentos</h2><div class="small">Contrato, acta, certificados y mas</div></div></div><button id="add-doc" class="btn" style="min-height:46px;padding:0 14px" onclick="docForm()">Agregar</button></div><div id="docs" class="list"></div></div>
+    <!-- HOME -->
+    <div id="view-home" class="view active">
+      <div class="hero card">
+        <div class="ey">Modo nube</div>
+        <div class="tt">Registro digital de obras civiles</div>
+        <div class="sub">Administrador gestiona usuarios y documentos. Residentes registran avances. Lectores solo consultan.</div>
+        <div class="grid m">
+          <button class="btn" onclick="openMain('projects')">Obras</button>
+          <button class="ghost" onclick="openMain('documents')">Documentos</button>
+          <button class="ghost" onclick="openMain('admin')">Usuarios</button>
+        </div>
+      </div>
+      <div class="grid s4 m" id="stats"></div>
+    </div>
 
-<div id="view-documents" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 style="font-size:18px">Repositorio documental</h2><div class="small">Todos tus documentos</div></div></div></div><div id="alldocs" class="list"></div></div>
+    <!-- PROJECTS LIST -->
+    <div id="view-projects" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 style="font-size:18px">Obras</h2><div class="small">Selecciona una obra</div></div>
+        </div>
+        <button id="add-project" class="btn" style="min-height:46px;padding:0 14px" onclick="projectForm()">Nueva</button>
+      </div>
+      <input id="search" placeholder="Buscar obra" oninput="renderProjects(this.value)">
+      <div id="projects" class="list m"></div>
+    </div>
 
-<div id="view-admin" class="view"><div class="head"><div class="left"><button class="back" onclick="back()">←</button><div><h2 style="font-size:18px">Usuarios</h2><div class="small">Gestion de accesos</div></div></div><button id="add-user" class="btn" style="min-height:46px;padding:0 14px" onclick="userForm()">Nuevo</button></div><div id="admin-msg" class="alert"></div><div id="users" class="list"></div></div>
+    <!-- PROJECT DETAIL -->
+    <div id="view-project" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 id="pname" style="font-size:18px">Obra</h2><div id="psub" class="small"></div></div>
+        </div>
+        <button id="edit-project" class="ghost" style="min-height:46px;padding:0 14px" onclick="projectForm(curProjectId)">Editar</button>
+      </div>
+      <div id="project-info" class="panel card"></div>
+      <div class="grid m">
+        <button class="btn" onclick="openProjectView('acts')">Libro de actividades</button>
+        <button class="ghost" onclick="openProjectView('docs')">Documentos de la obra</button>
+      </div>
+    </div>
 
-</main></div><nav class="bottom"><button class="nav on" data-main="home" onclick="openMain('home')">Inicio</button><button class="nav" data-main="projects" onclick="openMain('projects')">Obras</button><button class="nav" data-main="documents" onclick="openMain('documents')">Docs</button><button class="nav" data-main="admin" onclick="openMain('admin')">Admin</button></nav></section>
+    <!-- ACTIVIDADES -->
+    <div id="view-acts" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 style="font-size:18px">Actividades</h2><div class="small">Registro de la obra</div></div>
+        </div>
+        <button id="add-act" class="btn" style="min-height:46px;padding:0 14px" onclick="activityForm()">Agregar</button>
+      </div>
+      <div class="row m">
+        <select id="cat" onchange="renderActs()">
+          <option value="">Todas</option>
+          <option>avance</option><option>incidencia</option><option>inspeccion</option>
+          <option>material</option><option>clima</option><option>otro</option>
+        </select>
+        <button class="ghost" style="min-height:50px;padding:0 14px" onclick="exportWord()">Exportar Word</button>
+      </div>
+      <div id="acts" class="list m"></div>
+    </div>
+
+    <!-- DOCS DE OBRA -->
+    <div id="view-docs" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 style="font-size:18px">Documentos</h2><div class="small">Contrato, acta, certificados y más</div></div>
+        </div>
+        <button id="add-doc" class="btn" style="min-height:46px;padding:0 14px" onclick="docForm()">Agregar</button>
+      </div>
+      <div id="docs" class="list"></div>
+    </div>
+
+    <!-- REPOSITORIO DOCS -->
+    <div id="view-documents" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 style="font-size:18px">Repositorio documental</h2><div class="small">Todos tus documentos</div></div>
+        </div>
+      </div>
+      <div id="alldocs" class="list"></div>
+    </div>
+
+    <!-- ADMIN USUARIOS -->
+    <div id="view-admin" class="view">
+      <div class="head">
+        <div class="left">
+          <button class="back" onclick="back()">←</button>
+          <div><h2 style="font-size:18px">Usuarios</h2><div class="small">Gestión de accesos</div></div>
+        </div>
+        <button id="add-user" class="btn" style="min-height:46px;padding:0 14px" onclick="userForm()">Nuevo</button>
+      </div>
+      <div id="admin-msg" class="alert"></div>
+      <div id="users" class="list"></div>
+    </div>
+
+  </main></div>
+
+  <nav class="bottom">
+    <button class="nav on"  data-main="home"      onclick="openMain('home')">Inicio</button>
+    <button class="nav"     data-main="projects"  onclick="openMain('projects')">Obras</button>
+    <button class="nav"     data-main="documents" onclick="openMain('documents')">Docs</button>
+    <button class="nav"     data-main="admin"     onclick="openMain('admin')">Admin</button>
+  </nav>
+</section>
 
 <script>
-const KEY='libro_obras_app_v4',DB='libro_docs_v1',STORE='files';
-let data={users:[],obras:[],actividades:[],documentos:[]},user=null,curProjectId=null,stack=[],view='home';
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+// Cambia esta URL por tu Worker desplegado (ej: https://libro-obras.TU_USUARIO.workers.dev)
+const API = 'https://libro-obras.TU_USUARIO.workers.dev';
 
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const role=r=>({admin:'Administrador',residente:'Residente',viewer:'Solo lectura'})[r]||r;
-const fmt=d=>d?new Date(d).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}):'-';
-const fmtd=d=>d?new Date(d).toLocaleString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'-';
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let user  = null;
+let token = localStorage.getItem('lo_token') || null;
+let curProjectId = null;
+let stack = [];
+let view  = 'home';
 
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function load(){try{const r=localStorage.getItem(KEY);if(r)data=JSON.parse(r)}catch(e){}}
+// Cache local para minimizar llamadas a la API dentro de la misma sesión
+let cache = { obras: null, actividades: null, documentos: null, users: null };
 
-// IndexedDB para archivos locales
-function dbOpen(){return new Promise((ok,bad)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})}
-async function putFile(i,f){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put({id:i,blob:f});t.oncomplete=()=>ok();t.onerror=()=>bad(t.error)})}
-async function getFile(i){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readonly').objectStore(STORE).get(i);t.onsuccess=()=>ok(t.result);t.onerror=()=>bad(t.error)})}
-async function delFile(i){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).delete(i);t.oncomplete=()=>ok();t.onerror=()=>bad(t.error)})}
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+const fmt  = d => d ? new Date(d).toLocaleDateString('es-PY', {day:'2-digit',month:'2-digit',year:'numeric'}) : '-';
+const fmtd = d => d ? new Date(d).toLocaleString('es-PY', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
+const role = r => ({admin:'Administrador',residente:'Residente',viewer:'Solo lectura'})[r] || r;
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
-// Hash seguro PBKDF2
-async function hashPass(pass,salt,it=120000){
-  const e=new TextEncoder();
-  const k=await crypto.subtle.importKey('raw',e.encode(pass),'PBKDF2',false,['deriveBits']);
-  const b=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:e.encode(salt),iterations:it},k,256);
-  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+// ─── API FETCH ────────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Error del servidor');
+  return data;
 }
-async function makeHash(pass){
-  const a=new Uint8Array(16);crypto.getRandomValues(a);
-  const salt=Array.from(a).map(x=>x.toString(16).padStart(2,'0')).join('');
-  return{salt,it:120000,hash:await hashPass(pass,salt)};
+
+const GET    = path         => api('GET',    path);
+const POST   = (path, body) => api('POST',   path, body);
+const PUT    = (path, body) => api('PUT',    path, body);
+const DELETE = path         => api('DELETE', path);
+
+// ─── LOADING STATE ────────────────────────────────────────────────────────────
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  if (loading) {
+    btn._orig = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> Cargando…';
+    btn.disabled = true;
+  } else {
+    if (btn._orig) btn.innerHTML = btn._orig;
+    btn.disabled = false;
+  }
 }
 
-async function seed(){
-  load();
-  // Intentar cargar desde otras claves de versiones anteriores
-  if(!data.users.length){
-    for(const k of['libro_obras_data','libro_obras_app_v3']){
-      try{const d=JSON.parse(localStorage.getItem(k));if(d&&d.users&&d.users.length){data=d;break}}catch(e){}
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+async function login() {
+  const l = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const eBox = document.getElementById('login-error');
+  eBox.style.display = 'none';
+  if (!l || !p) { showErr(eBox, 'Ingrese usuario y contraseña.'); return; }
+
+  setLoading('login-btn', true);
+  try {
+    const res = await POST('/api/login', { login: l, pass: p });
+    token = res.token;
+    user  = res.user;
+    localStorage.setItem('lo_token', token);
+    cache = { obras: null, actividades: null, documentos: null, users: null };
+    document.getElementById('who').textContent = user.nombre + ' · ' + role(user.rol);
+    show('app');
+    openMain('home');
+  } catch (e) {
+    showErr(eBox, e.message);
+  } finally {
+    setLoading('login-btn', false);
+  }
+}
+
+async function logout() {
+  try { await POST('/api/logout'); } catch (_) {}
+  token = null; user = null; curProjectId = null; stack = [];
+  localStorage.removeItem('lo_token');
+  cache = { obras: null, actividades: null, documentos: null, users: null };
+  document.getElementById('login-pass').value = '';
+  show('login');
+}
+
+// Auto-restore session
+async function tryRestoreSession() {
+  if (!token) return;
+  try {
+    // Use any protected endpoint to verify token
+    const obras = await GET('/api/obras');
+    // Token is valid — but we need user info too; store it alongside token
+    const saved = localStorage.getItem('lo_user');
+    if (saved) {
+      user = JSON.parse(saved);
+      document.getElementById('who').textContent = user.nombre + ' · ' + role(user.rol);
+      show('app');
+      openMain('home');
+    } else {
+      // Token exists but no user info saved — force re-login
+      localStorage.removeItem('lo_token');
+      token = null;
     }
+  } catch (_) {
+    // Token expired or invalid
+    localStorage.removeItem('lo_token');
+    token = null;
   }
-  // Crear admin por defecto si no existe
-  if(!data.users.length){
-    data.users=[{id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[],...(await makeHash('admin'))}];
-    save();
+}
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function showOk(el, msg)  { el.textContent = msg; el.className = 'alert success'; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function show(s) {
+  document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
+  document.getElementById('screen-' + s).classList.add('active');
+}
+function showView(v) {
+  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  view = v;
+}
+function setNav(m) {
+  document.querySelectorAll('.nav').forEach(x => x.classList.toggle('on', x.dataset.main === m));
+}
+
+function canEdit() { return user && (user.rol === 'admin' || user.rol === 'residente'); }
+function isAdmin() { return user && user.rol === 'admin'; }
+
+function openMain(v) {
+  stack = []; showView(v); setNav(v);
+  if (v === 'home')      renderStats();
+  if (v === 'projects')  renderProjects(document.getElementById('search').value || '');
+  if (v === 'documents') renderAllDocs();
+  if (v === 'admin')     renderUsers();
+}
+function openSub(v) { stack.push(view); showView(v); }
+function back() {
+  const p = stack.pop() || 'home';
+  showView(p);
+  if (['home','projects','documents','admin'].includes(p)) setNav(p);
+  if (p === 'projects') renderProjects(document.getElementById('search').value || '');
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+async function renderStats() {
+  const el = document.getElementById('stats');
+  el.innerHTML = `<div class='tile item'><div class='spinner'></div></div>`;
+  try {
+    const [obras, acts, docs] = await Promise.all([
+      GET('/api/obras'),
+      GET('/api/actividades'),
+      GET('/api/documentos'),
+    ]);
+    cache.obras = obras; cache.actividades = acts; cache.documentos = docs;
+    const usersCount = isAdmin() ? (await GET('/api/users')).length : '—';
+    el.innerHTML = `
+      <div class='tile item'><h3>${obras.length}</h3><div class='muted'>Obras</div></div>
+      <div class='tile item'><h3>${acts.length}</h3><div class='muted'>Actividades</div></div>
+      <div class='tile item'><h3>${docs.length}</h3><div class='muted'>Documentos</div></div>
+      <div class='tile item'><h3>${usersCount}</h3><div class='muted'>Usuarios</div></div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<div class='tile item'><div class='muted'>${e.message}</div></div>`;
   }
-  // Migrar usuarios con contraseña en texto plano
-  let changed=false;
-  for(const u of data.users){
-    if(u.pass&&!u.hash){Object.assign(u,await makeHash(u.pass));delete u.pass;changed=true;}
-    if(!u.hash&&!u.salt){Object.assign(u,await makeHash('admin'));changed=true;}
+}
+
+// ─── OBRAS ────────────────────────────────────────────────────────────────────
+async function renderProjects(q = '') {
+  document.getElementById('add-project').style.display = canEdit() ? '' : 'none';
+  const list = document.getElementById('projects');
+  list.innerHTML = `<div class='item empty'><span class='spinner'></span> Cargando…</div>`;
+  try {
+    let obras = await GET('/api/obras');
+    cache.obras = obras;
+    if (q) { const ql = q.toLowerCase(); obras = obras.filter(o => (o.nombre||'').toLowerCase().includes(ql)||(o.codigo||'').toLowerCase().includes(ql)); }
+    if (!obras.length) { list.innerHTML = `<div class='item empty'><strong>No hay obras visibles.</strong></div>`; return; }
+    const acts = cache.actividades || await GET('/api/actividades');
+    const docs = cache.documentos || await GET('/api/documentos');
+    list.innerHTML = obras.map(o => {
+      const a = acts.filter(x => x.obraId === o.id).length;
+      const d = docs.filter(x => x.obraId === o.id).length;
+      return `<div class='item'>
+        <div class='row'><span class='code'>${o.codigo||'SIN-CODIGO'}</span><span class='pill ${o.estado||'activa'}'>${o.estado||'activa'}</span></div>
+        <div style='font-size:18px;font-weight:800;margin-top:10px'>${o.nombre}</div>
+        <div class='muted' style='margin-top:8px'>${o.comitente||'Sin contratante'}</div>
+        <div class='small' style='margin-top:6px'>Inicio: ${fmt(o.inicio)} · Fin: ${fmt(o.fin)}</div>
+        <div class='small' style='margin-top:10px'>${a} actividades · ${d} documentos</div>
+        <div class='actions'>
+          <button class='ghost' onclick="openProject('${o.id}')">Entrar</button>
+          ${canEdit() ? `<button class='ghost' onclick="projectForm('${o.id}')">Editar</button>` : `<button class='ghost' onclick="openProject('${o.id}')">Ver</button>`}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = `<div class='item empty'><strong>Error: ${e.message}</strong></div>`;
   }
-  if(changed)save();
-  renderStats();
 }
 
-// Login 100% local
-async function login(){
-  const l=document.getElementById('login-user').value.trim().toLowerCase();
-  const p=document.getElementById('login-pass').value;
-  const eBox=document.getElementById('login-error');
-  eBox.style.display='none';
-  if(!l||!p){eBox.textContent='Ingrese usuario y contraseña.';eBox.style.display='block';return;}
-  // Buscar por login o email
-  const u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);
-  if(!u){eBox.textContent='Usuario no encontrado.';eBox.style.display='block';return;}
-  let ok=false;
-  // Verificar con hash criptográfico
-  if(u.hash&&u.salt){try{ok=(await hashPass(p,u.salt,u.it||120000))===u.hash;}catch(ex){ok=false;}}
-  // Fallback texto plano (datos de versión anterior)
-  if(!ok&&u.pass){ok=(u.pass===p);}
-  // Admin sin credenciales válidas: aceptar admin/admin
-  if(!ok&&(u.login==='admin'||u.email==='admin@local.app')&&p==='admin'&&u.rol==='admin'){ok=true;}
-  // Migrar a hash si entró por fallback
-  if(ok&&(!u.hash||u.pass)){Object.assign(u,await makeHash(p));delete u.pass;save();}
-  if(!ok){eBox.textContent='Contraseña incorrecta.';eBox.style.display='block';return;}
-  user=u;
-  document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-  show('app');openMain('home');
+async function openProject(id) {
+  curProjectId = id;
+  openSub('project');
+  await renderProject();
 }
 
-function logout(){user=null;curProjectId=null;stack=[];document.getElementById('login-pass').value='';show('login')}
-
-function show(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active')}
-function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');view=v}
-function setNav(m){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('on',x.dataset.main===m))}
-
-function ids(){return user?.rol==='admin'?data.obras.map(o=>o.id):(user?.obras||[])}
-function projects(q=''){let r=user?.rol==='admin'?[...data.obras]:data.obras.filter(o=>ids().includes(o.id));if(q){q=q.toLowerCase();r=r.filter(o=>(o.nombre||'').toLowerCase().includes(q)||(o.codigo||'').toLowerCase().includes(q))}return r}
-function cur(){return data.obras.find(o=>o.id===curProjectId)}
-function canEdit(){return user&&(user.rol==='admin'||user.rol==='residente')}
-function isAdmin(){return user&&user.rol==='admin'}
-
-function openMain(v){stack=[];showView(v);setNav(v);if(v==='home')renderStats();if(v==='projects')renderProjects(document.getElementById('search').value||'');if(v==='documents')renderAllDocs();if(v==='admin')renderUsers()}
-function openSub(v){stack.push(view);showView(v)}
-function back(){const p=stack.pop()||'home';showView(p);if(['home','projects','documents','admin'].includes(p))setNav(p);if(p==='projects')renderProjects(document.getElementById('search').value||'')}
-
-function renderStats(){
-  const ps=projects(),set=new Set(ps.map(x=>x.id));
-  const a=data.actividades.filter(x=>set.has(x.obraId)).length;
-  const d=data.documentos.filter(x=>set.has(x.obraId)).length;
-  document.getElementById('stats').innerHTML=`<div class='tile item'><h3>${ps.length}</h3><div class='muted'>Obras</div></div><div class='tile item'><h3>${a}</h3><div class='muted'>Actividades</div></div><div class='tile item'><h3>${d}</h3><div class='muted'>Documentos</div></div><div class='tile item'><h3>${data.users.length}</h3><div class='muted'>Usuarios</div></div>`;
+async function renderProject() {
+  const obras = cache.obras || await GET('/api/obras');
+  const o = obras.find(x => x.id === curProjectId);
+  if (!o) return;
+  document.getElementById('pname').textContent = o.nombre;
+  document.getElementById('psub').textContent  = (o.codigo||'Sin código') + ' · ' + (o.comitente||'Sin contratante');
+  document.getElementById('edit-project').style.display = canEdit() ? '' : 'none';
+  const acts = (cache.actividades || []).filter(x => x.obraId === o.id).length;
+  const docs = (cache.documentos  || []).filter(x => x.obraId === o.id).length;
+  document.getElementById('project-info').innerHTML = `
+    <div class='grid s4'>
+      <div class='item'><div class='small'>Estado</div><div class='pill ${o.estado||'activa'}' style='margin-top:8px;display:inline-flex'>${o.estado||'activa'}</div></div>
+      <div class='item'><div class='small'>Contratante</div><div class='muted' style='margin-top:8px'>${o.comitente||'-'}</div></div>
+      <div class='item'><div class='small'>Actividades</div><div class='muted' style='margin-top:8px'>${acts} registros</div></div>
+      <div class='item'><div class='small'>Documentos</div><div class='muted' style='margin-top:8px'>${docs} archivos</div></div>
+    </div>
+    ${o.desc ? `<div class='muted' style='margin-top:14px'>${o.desc}</div>` : ''}
+  `;
 }
 
-function renderProjects(q=''){
-  document.getElementById('add-project').style.display=canEdit()?'':'none';
-  const list=document.getElementById('projects'),ps=projects(q);
-  if(!ps.length){list.innerHTML=`<div class='item empty'><strong>No hay obras visibles.</strong><div class='muted'>Crea una obra o pide que te asignen una.</div></div>`;return}
-  list.innerHTML=ps.map(o=>{
-    const a=data.actividades.filter(x=>x.obraId===o.id).length,d=data.documentos.filter(x=>x.obraId===o.id).length;
-    return `<div class='item'><div class='row'><span class='code'>${o.codigo||'SIN-CODIGO'}</span><span class='pill ${o.estado||'activa'}'>${o.estado||'activa'}</span></div><div style='font-size:18px;font-weight:800;margin-top:10px'>${o.nombre}</div><div class='muted' style='margin-top:8px'>${o.comitente||'Sin contratante'}</div><div class='small' style='margin-top:6px'>Inicio: ${fmt(o.inicio)} · Fin: ${fmt(o.fin)}</div><div class='small' style='margin-top:10px'>${a} actividades · ${d} documentos</div><div class='actions'><button class='ghost' onclick="openProject('${o.id}')">Entrar</button>${canEdit()?`<button class='ghost' onclick="projectForm('${o.id}')">Editar</button>`:`<button class='ghost' onclick="openProject('${o.id}')">Ver</button>`}</div></div>`;
-  }).join('');
-}
-
-function openProject(i){curProjectId=i;openSub('project');renderProject()}
-function renderProject(){
-  const o=cur();if(!o)return;
-  document.getElementById('pname').textContent=o.nombre;
-  document.getElementById('psub').textContent=(o.codigo||'Sin codigo')+' · '+(o.comitente||'Sin contratante');
-  document.getElementById('edit-project').style.display=canEdit()?'':'none';
-  const a=data.actividades.filter(x=>x.obraId===o.id).length,d=data.documentos.filter(x=>x.obraId===o.id).length;
-  document.getElementById('project-info').innerHTML=`<div class='grid s4'><div class='item'><div class='small'>Estado</div><div class='pill ${o.estado||'activa'}' style='margin-top:8px;display:inline-flex'>${o.estado||'activa'}</div></div><div class='item'><div class='small'>Contratante</div><div class='muted' style='margin-top:8px'>${o.comitente||'-'}</div></div><div class='item'><div class='small'>Actividades</div><div class='muted' style='margin-top:8px'>${a} registros</div></div><div class='item'><div class='small'>Documentos</div><div class='muted' style='margin-top:8px'>${d} archivos</div></div></div>${o.desc?`<div class='muted' style='margin-top:14px'>${o.desc}</div>`:''}`;
-}
-
-function openProjectView(v){openSub(v==='acts'?'acts':'docs');if(v==='acts')renderActs();else renderDocs()}
-
-function renderActs(){
-  document.getElementById('add-act').style.display=canEdit()?'':'none';
-  let xs=data.actividades.filter(x=>x.obraId===curProjectId).sort((a,b)=>new Date(b.edit||b.date)-new Date(a.edit||a.date));
-  const c=document.getElementById('cat').value;if(c)xs=xs.filter(x=>x.cat===c);
-  document.getElementById('acts').innerHTML=xs.length?xs.map(a=>`<div class='item'><div class='row'><div><div style='font-weight:800'>${a.title}</div><div class='small'>${fmtd(a.edit||a.date)}</div></div><span class='pill activa' style='background:#10253f;color:var(--c1)'>${a.cat}</span></div><div class='muted' style='margin-top:12px'>${a.desc||'Sin descripcion'}</div><div class='actions'>${canEdit()?`<button class='ghost' onclick="activityForm('${a.id}')">Editar</button><button class='ghost' onclick="delAct('${a.id}')">Eliminar</button>`:`<button class='ghost' disabled>Solo lectura</button>`}</div></div>`).join(''):`<div class='item empty'><strong>No hay actividades.</strong><div class='muted'>Agrega el primer registro.</div></div>`;
-}
-
-function renderDocs(){
-  document.getElementById('add-doc').style.display=isAdmin()?'':'none';
-  const xs=data.documentos.filter(x=>x.obraId===curProjectId).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('docs').innerHTML=xs.length?xs.map(d=>docHtml(d)).join(''):`<div class='item empty'><strong>No hay documentos.</strong></div>`;
-}
-
-function renderAllDocs(){
-  const set=new Set(ids()),xs=data.documentos.filter(x=>isAdmin()||set.has(x.obraId)).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('alldocs').innerHTML=xs.length?xs.map(x=>docHtml(x,true)).join(''):`<div class='item empty'><strong>No hay documentos.</strong></div>`;
-}
-
-function docHtml(d,all=false){
-  const o=data.obras.find(x=>x.id===d.obraId);
-  return `<div class='item'><div class='row'><div><div style='font-weight:800'>${d.name}</div><div class='small'>${d.type} · ${fmtd(d.date)}</div></div><span class='pill activa' style='background:#10253f;color:var(--c1)'>${d.ext||'ARCHIVO'}</span></div><div class='muted' style='margin-top:12px'>${d.desc||'Sin descripcion'}</div>${all?`<div class='small' style='margin-top:8px'>Obra: ${o?o.nombre:'-'}</div>`:''}<div class='actions'><button class='ghost' onclick="openDoc('${d.id}')">Abrir</button>${isAdmin()?`<button class='ghost' onclick="delDoc('${d.id}')">Eliminar</button>`:''}</div></div>`;
-}
-
-function renderUsers(){
-  const box=document.getElementById('admin-msg');
-  if(!isAdmin()){box.style.display='block';box.textContent='Solo el administrador puede gestionar usuarios.';document.getElementById('add-user').style.display='none';document.getElementById('users').innerHTML='';return}
-  box.style.display='none';
-  document.getElementById('add-user').style.display='';
-  document.getElementById('users').innerHTML=data.users.map(u=>{
-    const asg=u.rol==='admin'?'Acceso total':(u.obras||[]).map(i=>data.obras.find(o=>o.id===i)?.nombre).filter(Boolean).join(', ')||'Sin obras asignadas';
-    return `<div class='item'><div class='row'><div><div style='font-weight:800'>${u.nombre}</div><div class='small'>${u.login||u.email||''}</div></div><span class='pill ${u.rol==='admin'?'activa':u.rol==='residente'?'pausada':'finalizada'}'>${role(u.rol)}</span></div><div class='muted' style='margin-top:12px'>${asg}</div><div class='actions'><button class='ghost' onclick="userForm('${u.id}')">Editar</button>${u.id!==user.id?`<button class='ghost' onclick="delUser('${u.id}')">Eliminar</button>`:`<button class='ghost' disabled>Sesion actual</button>`}</div></div>`;
-  }).join('');
-}
-
-function projectForm(i=''){
-  if(!canEdit())return;
-  const o=i?data.obras.find(x=>x.id===i):null;
-  const name=prompt('Nombre de la obra',o?.nombre||'');if(!name)return;
-  const code=prompt('Codigo o expediente',o?.codigo||'')||'';
-  const state=(prompt('Estado: activa, pausada o finalizada',o?.estado||'activa')||'activa').toLowerCase();
-  const owner=prompt('Contratante',o?.comitente||'')||'';
-  const start=prompt('Fecha inicio YYYY-MM-DD',o?.inicio||'')||'';
-  const end=prompt('Fecha fin YYYY-MM-DD',o?.fin||'')||'';
-  const desc=prompt('Descripcion',o?.desc||'')||'';
-  const payload={nombre:name,codigo:code,estado:state,inicio:start,fin:end,comitente:owner,desc};
-  if(i){Object.assign(o,payload);}
-  else{
-    const nid=uid();
-    data.obras.push({id:nid,...payload});
-    if(user.rol!=='admin'){
-      user.obras=[...new Set([...(user.obras||[]),nid])];
-      data.users.find(x=>x.id===user.id).obras=user.obras;
+async function projectForm(id = '') {
+  if (!canEdit()) return;
+  const obras = cache.obras || await GET('/api/obras');
+  const o = id ? obras.find(x => x.id === id) : null;
+  const nombre   = prompt('Nombre de la obra', o?.nombre || ''); if (!nombre) return;
+  const codigo   = prompt('Código o expediente', o?.codigo || '') || '';
+  const estado   = (prompt('Estado: activa, pausada o finalizada', o?.estado || 'activa') || 'activa').toLowerCase();
+  const comitente = prompt('Contratante', o?.comitente || '') || '';
+  const inicio   = prompt('Fecha inicio YYYY-MM-DD', o?.inicio || '') || '';
+  const fin      = prompt('Fecha fin YYYY-MM-DD', o?.fin || '') || '';
+  const desc     = prompt('Descripción', o?.desc || '') || '';
+  const payload  = { nombre, codigo, estado, inicio, fin, comitente, desc };
+  try {
+    if (id) {
+      const updated = await PUT('/api/obras/' + id, payload);
+      if (cache.obras) { const i = cache.obras.findIndex(x => x.id === id); if (i >= 0) cache.obras[i] = updated; }
+    } else {
+      const created = await POST('/api/obras', payload);
+      if (cache.obras) cache.obras.push(created);
     }
+    renderProjects(document.getElementById('search').value || '');
+    if (id && curProjectId === id) renderProject();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+// ─── ACTIVIDADES ──────────────────────────────────────────────────────────────
+async function openProjectView(v) {
+  openSub(v === 'acts' ? 'acts' : 'docs');
+  if (v === 'acts') await renderActs();
+  else await renderDocs();
+}
+
+async function renderActs() {
+  document.getElementById('add-act').style.display = canEdit() ? '' : 'none';
+  const list = document.getElementById('acts');
+  list.innerHTML = `<div class='item empty'><span class='spinner'></span> Cargando…</div>`;
+  try {
+    let acts = await GET('/api/actividades?obraId=' + curProjectId);
+    cache.actividades = (cache.actividades || []).filter(a => a.obraId !== curProjectId).concat(acts);
+    acts = acts.sort((a,b) => new Date(b.edit||b.date) - new Date(a.edit||a.date));
+    const c = document.getElementById('cat').value;
+    if (c) acts = acts.filter(x => x.cat === c);
+    list.innerHTML = acts.length ? acts.map(a => `
+      <div class='item'>
+        <div class='row'>
+          <div><div style='font-weight:800'>${a.title}</div><div class='small'>${fmtd(a.edit||a.date)}</div></div>
+          <span class='pill activa' style='background:#10253f;color:var(--c1)'>${a.cat}</span>
+        </div>
+        <div class='muted' style='margin-top:12px'>${a.desc||'Sin descripción'}</div>
+        <div class='small' style='margin-top:8px'>Por: ${a.user||'-'}</div>
+        <div class='actions'>${canEdit()
+          ? `<button class='ghost' onclick="activityForm('${a.id}')">Editar</button><button class='ghost' onclick="delAct('${a.id}')">Eliminar</button>`
+          : `<button class='ghost' disabled>Solo lectura</button>`
+        }</div>
+      </div>`).join('') : `<div class='item empty'><strong>No hay actividades.</strong></div>`;
+  } catch(e) {
+    list.innerHTML = `<div class='item empty'>Error: ${e.message}</div>`;
   }
-  save();renderStats();renderProjects(document.getElementById('search').value||'');if(curProjectId)renderProject();
 }
 
-function activityForm(i=''){
-  if(!canEdit())return;
-  const o=i?data.actividades.find(x=>x.id===i):null;
-  const title=prompt('Titulo',o?.title||'');if(!title)return;
-  const cat=(prompt('Categoria: avance, incidencia, inspeccion, material, clima u otro',o?.cat||'avance')||'avance').toLowerCase();
-  const desc=prompt('Descripcion',o?.desc||'')||'';
-  const now=new Date().toISOString();
-  if(i)Object.assign(o,{title,cat,desc,edit:now,user:user.nombre});
-  else data.actividades.push({id:uid(),obraId:curProjectId,title,cat,desc,date:now,edit:now,user:user.nombre});
-  save();renderStats();renderActs();renderProject();
+async function activityForm(id = '') {
+  if (!canEdit()) return;
+  const acts = cache.actividades || [];
+  const o = id ? acts.find(x => x.id === id) : null;
+  const title = prompt('Título', o?.title || ''); if (!title) return;
+  const cat  = (prompt('Categoría: avance, incidencia, inspeccion, material, clima u otro', o?.cat || 'avance') || 'avance').toLowerCase();
+  const desc = prompt('Descripción', o?.desc || '') || '';
+  try {
+    if (id) {
+      await PUT('/api/actividades/' + id, { title, cat, desc });
+    } else {
+      await POST('/api/actividades', { obraId: curProjectId, title, cat, desc });
+    }
+    cache.actividades = null; // invalidate
+    await renderActs();
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
-function delAct(i){if(!confirm('Eliminar actividad?'))return;data.actividades=data.actividades.filter(x=>x.id!==i);save();renderStats();renderActs();renderProject()}
+async function delAct(id) {
+  if (!confirm('¿Eliminar actividad?')) return;
+  try {
+    await DELETE('/api/actividades/' + id);
+    cache.actividades = null;
+    await renderActs();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 
-async function docForm(){
-  if(!isAdmin())return;
-  const name=prompt('Nombre del documento');if(!name)return;
-  const type=prompt('Tipo: Contrato, Acta de inicio, Certificado, Plano u Otro','Contrato')||'Otro';
-  const desc=prompt('Descripcion','')||'';
-  const input=document.createElement('input');
-  input.type='file';input.accept='.pdf,.jpg,.jpeg,.png,.doc,.docx';
-  input.onchange=async()=>{
-    const file=input.files[0];if(!file)return;
-    const i=uid();
-    await putFile(i,file);
-    data.documentos.push({id:i,obraId:curProjectId,name,type,desc,file:file.name,ext:(file.name.split('.').pop()||'archivo').toUpperCase(),date:new Date().toISOString()});
-    save();renderStats();renderDocs();renderAllDocs();renderProject();
+// ─── DOCUMENTOS ───────────────────────────────────────────────────────────────
+// Archivos se guardan en IndexedDB (local), metadata en KV (nube)
+const DB_NAME = 'libro_docs_v1', STORE = 'files';
+function dbOpen() { return new Promise((ok,bad)=>{ const r=indexedDB.open(DB_NAME,1); r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'}); r.onsuccess=()=>ok(r.result); r.onerror=()=>bad(r.error); }); }
+async function putFile(i,f){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put({id:i,blob:f});t.oncomplete=()=>ok();t.onerror=()=>bad(t.error)});}
+async function getFile(i){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readonly').objectStore(STORE).get(i);t.onsuccess=()=>ok(t.result);t.onerror=()=>bad(t.error)});}
+async function delFile(i){const d=await dbOpen();return new Promise((ok,bad)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).delete(i);t.oncomplete=()=>ok();t.onerror=()=>bad(t.error)});}
+
+async function renderDocs() {
+  document.getElementById('add-doc').style.display = isAdmin() ? '' : 'none';
+  const list = document.getElementById('docs');
+  list.innerHTML = `<div class='item empty'><span class='spinner'></span></div>`;
+  try {
+    const docs = await GET('/api/documentos?obraId=' + curProjectId);
+    list.innerHTML = docs.length ? docs.map(d => docHtml(d)).join('') : `<div class='item empty'><strong>No hay documentos.</strong></div>`;
+  } catch(e) { list.innerHTML = `<div class='item empty'>Error: ${e.message}</div>`; }
+}
+
+async function renderAllDocs() {
+  const list = document.getElementById('alldocs');
+  list.innerHTML = `<div class='item empty'><span class='spinner'></span></div>`;
+  try {
+    const docs = await GET('/api/documentos');
+    const obras = cache.obras || await GET('/api/obras');
+    list.innerHTML = docs.length ? docs.map(d => docHtml(d, true, obras)).join('') : `<div class='item empty'><strong>No hay documentos.</strong></div>`;
+  } catch(e) { list.innerHTML = `<div class='item empty'>Error: ${e.message}</div>`; }
+}
+
+function docHtml(d, all = false, obras = []) {
+  const o = obras.find(x => x.id === d.obraId);
+  return `<div class='item'>
+    <div class='row'>
+      <div><div style='font-weight:800'>${d.name}</div><div class='small'>${d.type} · ${fmtd(d.date)}</div></div>
+      <span class='pill activa' style='background:#10253f;color:var(--c1)'>${d.ext||'ARCHIVO'}</span>
+    </div>
+    <div class='muted' style='margin-top:12px'>${d.desc||'Sin descripción'}</div>
+    ${all && o ? `<div class='small' style='margin-top:8px'>Obra: ${o.nombre}</div>` : ''}
+    <div class='actions'>
+      <button class='ghost' onclick="openDoc('${d.id}')">Abrir</button>
+      ${isAdmin() ? `<button class='ghost' onclick="delDoc('${d.id}')">Eliminar</button>` : ''}
+    </div>
+  </div>`;
+}
+
+async function docForm() {
+  if (!isAdmin()) return;
+  const name = prompt('Nombre del documento'); if (!name) return;
+  const type = prompt('Tipo: Contrato, Acta de inicio, Certificado, Plano u Otro', 'Contrato') || 'Otro';
+  const desc = prompt('Descripción', '') || '';
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.pdf,.jpg,.jpeg,.png,.doc,.docx';
+  input.onchange = async () => {
+    const file = input.files[0]; if (!file) return;
+    const i = uid();
+    await putFile(i, file);
+    try {
+      await POST('/api/documentos', {
+        id: i, obraId: curProjectId, name, type, desc,
+        file: file.name, ext: (file.name.split('.').pop() || 'archivo').toUpperCase(),
+      });
+      cache.documentos = null;
+      await renderDocs();
+    } catch(e) { alert('Error al guardar: ' + e.message); }
   };
   input.click();
 }
 
-async function openDoc(i){
-  const d=await getFile(i);
-  if(!d?.blob){alert('No se encontro el archivo local.');return}
-  const url=URL.createObjectURL(d.blob);window.open(url,'_blank','noopener');setTimeout(()=>URL.revokeObjectURL(url),3000);
+async function openDoc(id) {
+  const d = await getFile(id);
+  if (!d?.blob) { alert('Archivo no disponible en este dispositivo.\n(Los archivos se almacenan localmente.)'); return; }
+  const url = URL.createObjectURL(d.blob);
+  window.open(url, '_blank', 'noopener');
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
 
-async function delDoc(i){
-  if(!isAdmin()||!confirm('Eliminar documento?'))return;
-  data.documentos=data.documentos.filter(x=>x.id!==i);
-  await delFile(i);
-  save();renderStats();renderDocs();renderAllDocs();renderProject();
+async function delDoc(id) {
+  if (!isAdmin() || !confirm('¿Eliminar documento?')) return;
+  try {
+    await DELETE('/api/documentos/' + id);
+    await delFile(id);
+    cache.documentos = null;
+    await renderDocs(); await renderAllDocs();
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
-async function userForm(i=''){
-  if(!isAdmin())return;
-  const u=i?data.users.find(x=>x.id===i):null;
-  const name=prompt('Nombre completo',u?.nombre||'');if(!name)return;
-  const login=prompt('Usuario (para ingresar)',u?.login||u?.email||'')||'';
-  const email=prompt('Email (opcional)',u?.email||'')||'';
-  const rol=(prompt('Rol: admin, residente o viewer',u?.rol||'viewer')||'viewer').toLowerCase();
-  const pass=prompt(i?'Nueva contrasena (dejar vacio para no cambiar)':'Contrasena inicial','')||'';
-  if(!i&&!pass){alert('La contrasena inicial es obligatoria.');return}
-  const works=prompt('IDs de obras separados por coma (vacio si admin o sin asignar)',(u?.obras||[]).join(','))||'';
-  const obras=rol==='admin'?[]:works.split(',').map(x=>x.trim()).filter(Boolean);
-  const extra=pass?await makeHash(pass):{};
-  if(i){Object.assign(u,{nombre:name,login,email,rol,obras,...extra});if(user.id===u.id)user=u;}
-  else data.users.push({id:uid(),nombre:name,login,email,rol,obras,...extra});
-  save();renderUsers();renderStats();
+// ─── USUARIOS ────────────────────────────────────────────────────────────────
+async function renderUsers() {
+  const box = document.getElementById('admin-msg');
+  if (!isAdmin()) {
+    box.style.display = 'block'; box.className = 'alert';
+    box.textContent = 'Solo el administrador puede gestionar usuarios.';
+    document.getElementById('add-user').style.display = 'none';
+    document.getElementById('users').innerHTML = '';
+    return;
+  }
+  box.style.display = 'none';
+  document.getElementById('add-user').style.display = '';
+  const list = document.getElementById('users');
+  list.innerHTML = `<div class='item empty'><span class='spinner'></span></div>`;
+  try {
+    const users = await GET('/api/users');
+    cache.users = users;
+    const obras = cache.obras || await GET('/api/obras');
+    list.innerHTML = users.map(u => {
+      const asg = u.rol === 'admin' ? 'Acceso total' :
+        (u.obras || []).map(id => obras.find(o => o.id === id)?.nombre).filter(Boolean).join(', ') || 'Sin obras asignadas';
+      return `<div class='item'>
+        <div class='row'>
+          <div><div style='font-weight:800'>${u.nombre}</div><div class='small'>${u.login || u.email || ''}</div></div>
+          <span class='pill ${u.rol==='admin'?'activa':u.rol==='residente'?'pausada':'finalizada'}'>${role(u.rol)}</span>
+        </div>
+        <div class='muted' style='margin-top:12px'>${asg}</div>
+        <div class='actions'>
+          <button class='ghost' onclick="userForm('${u.id}')">Editar</button>
+          ${u.id !== user.id
+            ? `<button class='ghost' onclick="delUser('${u.id}')">Eliminar</button>`
+            : `<button class='ghost' disabled>Sesión actual</button>`}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = `<div class='item empty'>Error: ${e.message}</div>`;
+  }
 }
 
-function delUser(i){if(!isAdmin()||!confirm('Eliminar usuario?'))return;data.users=data.users.filter(x=>x.id!==i);save();renderUsers();renderStats()}
-
-function exportWord(){
-  const p=cur();if(!p)return;
-  const acts=data.actividades.filter(x=>x.obraId===curProjectId).sort((a,b)=>new Date(a.edit||a.date)-new Date(b.edit||b.date));
-  const html=`<html><head><meta charset='UTF-8'><style>body{font-family:Arial;margin:2cm}h1{color:#0d4a2a}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px}th{background:#1a5a3a;color:#fff}</style></head><body><h1>Libro de Obras</h1><p><b>Obra:</b> ${p.nombre}</p><p><b>Codigo:</b> ${p.codigo||'-'}</p><p><b>Contratante:</b> ${p.comitente||'-'}</p><p><b>Inicio:</b> ${fmt(p.inicio)} &nbsp; <b>Fin estimado:</b> ${fmt(p.fin)}</p><p><b>Exportado:</b> ${fmtd(new Date().toISOString())} por ${user.nombre}</p><table><thead><tr><th>#</th><th>Fecha</th><th>Categoria</th><th>Titulo</th><th>Descripcion</th><th>Usuario</th></tr></thead><tbody>${acts.map((a,n)=>`<tr><td>${n+1}</td><td>${fmtd(a.edit||a.date)}</td><td>${a.cat}</td><td>${a.title}</td><td>${a.desc||''}</td><td>${a.user||''}</td></tr>`).join('')}</tbody></table></body></html>`;
-  const b=new Blob([html],{type:'application/msword'}),url=URL.createObjectURL(b),a=document.createElement('a');
-  a.href=url;a.download='Libro_'+(p.codigo||p.nombre).replace(/[^a-z0-9]/gi,'_')+'.doc';a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),3000);
+async function userForm(id = '') {
+  if (!isAdmin()) return;
+  const users = cache.users || await GET('/api/users');
+  const u = id ? users.find(x => x.id === id) : null;
+  const nombre = prompt('Nombre completo', u?.nombre || ''); if (!nombre) return;
+  const login  = prompt('Usuario (para ingresar)', u?.login || u?.email || '') || '';
+  const email  = prompt('Email (opcional)', u?.email || '') || '';
+  const rol    = (prompt('Rol: admin, residente o viewer', u?.rol || 'viewer') || 'viewer').toLowerCase();
+  const pw     = prompt(id ? 'Nueva contraseña (vacío para no cambiar)' : 'Contraseña inicial', '') || '';
+  if (!id && !pw) { alert('La contraseña inicial es obligatoria.'); return; }
+  const obrasInput = prompt('Códigos de obras asignadas (IDs separados por coma — vacío si admin)', (u?.obras||[]).join(',')) || '';
+  const obras = rol === 'admin' ? [] : obrasInput.split(',').map(x => x.trim()).filter(Boolean);
+  const payload = { nombre, login, email, rol, obras };
+  if (pw) payload.pass = pw;
+  try {
+    if (id) await PUT('/api/users/' + id, payload);
+    else    await POST('/api/users', payload);
+    cache.users = null;
+    await renderUsers();
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active'))login()});
-seed();
+async function delUser(id) {
+  if (!isAdmin() || !confirm('¿Eliminar usuario?')) return;
+  try {
+    await DELETE('/api/users/' + id);
+    cache.users = null;
+    await renderUsers();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+// ─── EXPORT WORD ─────────────────────────────────────────────────────────────
+async function exportWord() {
+  const obras = cache.obras || await GET('/api/obras');
+  const p = obras.find(o => o.id === curProjectId); if (!p) return;
+  const acts = (await GET('/api/actividades?obraId=' + curProjectId))
+    .sort((a,b) => new Date(a.edit||a.date) - new Date(b.edit||b.date));
+  const html = `<html><head><meta charset='UTF-8'><style>body{font-family:Arial;margin:2cm}h1{color:#0d4a2a}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px}th{background:#1a5a3a;color:#fff}</style></head><body>
+    <h1>Libro de Obras</h1>
+    <p><b>Obra:</b> ${p.nombre}</p><p><b>Código:</b> ${p.codigo||'-'}</p>
+    <p><b>Contratante:</b> ${p.comitente||'-'}</p>
+    <p><b>Inicio:</b> ${fmt(p.inicio)} &nbsp; <b>Fin estimado:</b> ${fmt(p.fin)}</p>
+    <p><b>Exportado:</b> ${fmtd(new Date().toISOString())} por ${user.nombre}</p>
+    <table><thead><tr><th>#</th><th>Fecha</th><th>Categoría</th><th>Título</th><th>Descripción</th><th>Usuario</th></tr></thead>
+    <tbody>${acts.map((a,n)=>`<tr><td>${n+1}</td><td>${fmtd(a.edit||a.date)}</td><td>${a.cat}</td><td>${a.title}</td><td>${a.desc||''}</td><td>${a.user||''}</td></tr>`).join('')}</tbody>
+    </table></body></html>`;
+  const b = new Blob([html], {type:'application/msword'});
+  const url = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'Libro_' + (p.codigo||p.nombre).replace(/[^a-z0-9]/gi,'_') + '.doc';
+  a.click(); setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+// ─── KEYBOARD ────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('screen-login').classList.contains('active')) login();
+});
+
+// Persist user info alongside token for session restore
+const _origLogin = login;
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+(async () => {
+  if (token) {
+    const saved = localStorage.getItem('lo_user');
+    if (saved) {
+      try {
+        user = JSON.parse(saved);
+        // Quick token validation
+        await GET('/api/obras');
+        document.getElementById('who').textContent = user.nombre + ' · ' + role(user.rol);
+        show('app');
+        openMain('home');
+        return;
+      } catch (_) {
+        localStorage.removeItem('lo_token');
+        localStorage.removeItem('lo_user');
+        token = null; user = null;
+      }
+    }
+  }
+})();
+
+// Patch login to save user info
+const _login = login;
+window.login = async function() {
+  const l = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const eBox = document.getElementById('login-error');
+  eBox.style.display = 'none';
+  if (!l || !p) { showErr(eBox, 'Ingrese usuario y contraseña.'); return; }
+  setLoading('login-btn', true);
+  try {
+    const res = await POST('/api/login', { login: l, pass: p });
+    token = res.token; user = res.user;
+    localStorage.setItem('lo_token', token);
+    localStorage.setItem('lo_user', JSON.stringify(user));
+    cache = { obras: null, actividades: null, documentos: null, users: null };
+    document.getElementById('who').textContent = user.nombre + ' · ' + role(user.rol);
+    show('app'); openMain('home');
+  } catch(e) {
+    showErr(eBox, e.message);
+  } finally {
+    setLoading('login-btn', false);
+  }
+};
+
+window.logout = async function() {
+  try { await POST('/api/logout'); } catch(_) {}
+  token = null; user = null; curProjectId = null; stack = [];
+  localStorage.removeItem('lo_token');
+  localStorage.removeItem('lo_user');
+  cache = { obras: null, actividades: null, documentos: null, users: null };
+  document.getElementById('login-pass').value = '';
+  show('login');
+};
 </script>
-</body></html>
+</body>
+</html>
