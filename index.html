@@ -136,6 +136,23 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .doc-file small{display:block;color:var(--muted);font-size:12px}
 .doc-upload-note{min-height:96px}
 .mini{min-height:42px;padding:10px 14px;border-radius:14px;font-weight:700}
+.hero-main{display:grid;gap:12px;margin-top:18px}
+.home-summary{display:grid;gap:12px;margin-top:18px}
+.quick-card{padding:18px}
+.quick-card strong{display:block}
+.quick-card .meta{margin-top:6px}
+.window{margin-top:14px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(6,14,27,.85)}
+.window-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;
+  border-bottom:1px solid var(--line);background:rgba(80,228,255,.06)}
+.window-head strong{font-size:13px}
+.window-head span{font-size:12px;color:var(--muted)}
+.window-body{display:grid;gap:10px;padding:12px}
+.window-empty{padding:14px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);font-size:13px}
+.inline-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.toggle-card{padding:18px}
+.toggle-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.toggle-row input{width:22px;height:22px;accent-color:var(--cyan);margin-top:2px}
+.session-note{margin-top:12px}
 
 @media(min-width:900px){
   .stats{grid-template-columns:repeat(4,1fr)}
@@ -143,6 +160,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   .list{grid-template-columns:repeat(2,1fr)}
   .docs-layout{grid-template-columns:1fr 1fr 1.2fr;align-items:start}
   .bottom-nav{display:none}
+  .hero-main{grid-template-columns:1.1fr 1.1fr .9fr}
+  .home-summary{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -174,7 +193,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   <header class="topbar">
     <div><h2>LIBRO DE OBRAS</h2><p id="sess-user">Sesión activa</p><p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p></div>
     <div class="topbar-acts">
-      <button class="soft" onclick="App.openMain('documents')">Docs</button>
+      <button class="soft" onclick="App.openMain('settings')">Configuración</button>
       <button class="soft" onclick="Auth.logout()">Salir</button>
     </div>
   </header>
@@ -184,25 +203,21 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-home" class="view active">
       <div class="panel">
         <span class="eyebrow">Gestión móvil</span>
-        <h3 style="margin-top:14px;font-size:24px">Obras, actividades y documentos</h3>
-        <p class="sub">El libro diario enumera actividades automáticamente. Los faltantes de documentos se ven de inmediato.</p>
-        <div class="hero-acts">
-          <button class="btn" onclick="App.openMain('works')">Ir a obras</button>
-          <button class="soft" onclick="App.openMain('documents')">Documentos</button>
+        <h3 style="margin-top:14px;font-size:24px">Accesos principales</h3>
+        <p class="sub">Entrá directo al libro de obra o al panel documental. Todo lo demás queda en configuración.</p>
+        <div class="hero-main">
+          <button class="btn feat-card" onclick="App.openMain('works')">
+            <strong>Libro de obra</strong><span>Obras, residente y actividades del día.</span>
+          </button>
+          <button class="soft feat-card" onclick="App.openMain('documents')">
+            <strong>Documentos</strong><span>Checklist, archivos cargados y descargas por obra.</span>
+          </button>
+          <button class="soft feat-card" onclick="App.openMain('settings')">
+            <strong>Configuración</strong><span>Usuarios, sesiones conectadas y avisos automáticos.</span>
+          </button>
         </div>
       </div>
-      <div id="home-stats" class="stats"></div>
-      <div class="feat-grid">
-        <button class="feat-card" onclick="App.openMain('works')">
-          <strong>Libro digital</strong><span>Crea obras y accede directo al anotador diario.</span>
-        </button>
-        <button class="feat-card" onclick="App.openMain('documents')">
-          <strong>Documentos</strong><span>Configura requisitos y controla faltantes por obra.</span>
-        </button>
-        <button class="feat-card admin-only" onclick="App.openMain('admin')">
-          <strong>Usuarios</strong><span>Asigna residentes y teléfonos para avisos.</span>
-        </button>
-      </div>
+      <div id="home-summary" class="home-summary"></div>
     </section>
 
     <!-- OBRAS -->
@@ -228,10 +243,9 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         <button class="soft" onclick="openResidenteModal()">Residente</button>
       </div>
       <div class="panel">
-        <label class="flabel"><span>Título de la hoja</span>
-          <input id="wb-title" placeholder="Hoja diaria de obra"></label>
+        <div id="wb-user-line" class="meta">Cargando datos de la obra…</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-          <button class="soft" onclick="saveWbTitle()">Guardar título</button>
+          <button class="soft" onclick="openActModal()">Cargar actividad</button>
           <button class="wa" onclick="waDailyReminder()">Avisar WhatsApp</button>
         </div>
         <div id="wb-warning" class="notice hidden"></div>
@@ -277,8 +291,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       </div>
     </section>
 
-    <!-- ADMIN -->
-    <section id="view-admin" class="view">
+    <!-- CONFIGURACION -->
+    <section id="view-settings" class="view">
       <div class="shead">
         <div class="shead-left">
           <button class="back" onclick="App.goBack()">←</button>
@@ -293,10 +307,9 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 
   </main>
   <nav class="bottom-nav">
-    <button class="nav active" data-main="home" onclick="App.openMain('home')">Inicio</button>
-    <button class="nav" data-main="works" onclick="App.openMain('works')">Obras</button>
-    <button class="nav" data-main="documents" onclick="App.openMain('documents')">Docs</button>
-    <button class="nav admin-only" data-main="admin" onclick="App.openMain('admin')">Admin</button>
+    <button class="nav" data-main="works" onclick="App.openMain('works')">Libro de obra</button>
+    <button class="nav" data-main="documents" onclick="App.openMain('documents')">Documentos</button>
+    <button class="nav" data-main="settings" onclick="App.openMain('settings')">Configuración</button>
   </nav>
 </section>
 
@@ -329,7 +342,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <h3 id="ma-title">Nueva actividad</h3>
     <input type="hidden" id="ma-id">
     <div class="fgrid">
-      <label class="flabel"><span>Título de la actividad *</span><input id="ma-titulo" placeholder="Ej: Colado de losa nivel 2"></label>
+      <label class="flabel"><span>Título *</span><input id="ma-titulo" placeholder="Ej: Colado de losa nivel 2"></label>
+      <label class="flabel"><span>Título de actividades</span><input id="ma-subtitulo" placeholder="Ej: Frente norte / hormigonado del día"></label>
       <label class="flabel"><span>Categoría</span>
         <select id="ma-cat">
           <option value="avance">Avance de obra</option>
@@ -422,10 +436,18 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <h3 id="md-title">Subir documentos</h3>
     <input type="hidden" id="md-tpl-id">
     <div class="fgrid">
-      <label class="flabel"><span>Archivos *</span><input id="md-files" type="file" multiple></label>
+      <label class="flabel"><span>Archivos *</span><input id="md-files" type="file" multiple onchange="renderSelectedDocFiles()"></label>
       <label class="flabel"><span>Observación</span>
         <textarea id="md-note" class="doc-upload-note" placeholder="Ej: plano aprobado por la municipalidad, versión final firmada"></textarea>
       </label>
+      <div class="window">
+        <div class="window-head"><strong>Archivos ya cargados</strong><span id="md-current-count">0 archivos</span></div>
+        <div id="md-current-files" class="window-body"></div>
+      </div>
+      <div class="window">
+        <div class="window-head"><strong>Archivos listos para subir</strong><span id="md-picked-count">0 seleccionados</span></div>
+        <div id="md-picked-files" class="window-body"></div>
+      </div>
       <div id="md-error" class="alert"></div>
     </div>
     <div class="modal-acts">
@@ -468,6 +490,11 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
 const ADMIN_EMAIL = 'sewyllconstrucciones@gmail.com';
 const CLOUD_COLLECTION = 'libro_obras';
 const CLOUD_DOCUMENT = 'shared';
+const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const SESSION_TTL_MS = 120000;
+const PRESENCE_HEARTBEAT_MS = 30000;
+const PREFS_KEY = 'lo_v5_prefs';
+const REMINDER_LOG_KEY = 'lo_v5_reminders';
 const Cloud = {
   enabled: false,
   ready: false,
@@ -479,6 +506,18 @@ const Cloud = {
   storage: null,
   unsubscribe: null
 };
+const Presence = {
+  query: null,
+  selfRef: null,
+  unsubscribe: null,
+  heartbeat: null,
+  sessions: []
+};
+const defaultPrefs = () => ({
+  autoDailyWhatsApp: false,
+  autoDocWhatsApp: false
+});
+let Prefs = defaultPrefs();
 
 function normalizeData(raw) {
   if (!raw || typeof raw !== 'object') return emptyData();
@@ -572,7 +611,7 @@ function rerenderCurrentView() {
   if (App.curView==='home') renderHome();
   if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
   if (App.curView==='documents') renderDocsHome();
-  if (App.curView==='admin') renderUsers();
+  if (App.curView==='settings') renderSettings();
   if (App.curView==='workbook') {
     if (D.obras.find(x=>x.id===CUR_WORK)) renderWorkbook();
     else App.openMain('works');
@@ -614,6 +653,7 @@ async function initCloud() {
     });
     Cloud.ready = true;
     Cloud.enabled = true;
+    if (ME) startPresence();
     setSyncStatus('Sincronizado con Firebase.', 'ok');
   } catch (e) {
     console.error('Firebase init error', e);
@@ -636,6 +676,41 @@ const fmtBytes = n => {
 const sanitizeFileName = name => String(name||'archivo').replace(/[^\w.\-]+/g,'_');
 const docFiles = doc => Array.isArray(doc?.files) ? doc.files : [];
 const hasUploadedFiles = doc => docFiles(doc).length > 0;
+const tsMillis = v => {
+  if (!v) return 0;
+  if (typeof v.toMillis === 'function') return v.toMillis();
+  const ms = new Date(v).getTime();
+  return Number.isFinite(ms) ? ms : 0;
+};
+function loadPrefs() {
+  try {
+    Prefs = Object.assign(defaultPrefs(), JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'));
+  } catch (e) {
+    Prefs = defaultPrefs();
+  }
+}
+function savePrefs() {
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify(Prefs)); } catch (e) {}
+}
+function reminderLog() {
+  try { return JSON.parse(localStorage.getItem(REMINDER_LOG_KEY) || '{}'); } catch (e) { return {}; }
+}
+function reminderKey(kind, workId) {
+  return `${kind}:${workId}:${new Date().toISOString().slice(0,10)}`;
+}
+function reminderTriggered(kind, workId) {
+  return !!reminderLog()[reminderKey(kind, workId)];
+}
+function markReminderTriggered(kind, workId) {
+  const log = reminderLog();
+  log[reminderKey(kind, workId)] = new Date().toISOString();
+  try { localStorage.setItem(REMINDER_LOG_KEY, JSON.stringify(log)); } catch (e) {}
+}
+function activeSessions() {
+  const cutoff = Date.now() - SESSION_TTL_MS;
+  return Presence.sessions.filter(s => tsMillis(s.lastSeen) >= cutoff)
+    .sort((a,b) => tsMillis(b.lastSeen) - tsMillis(a.lastSeen));
+}
 
 // ── HASH ─────────────────────────────────────────────────────────────────────
 async function hashPass(pass, salt, it=120000) {
@@ -653,6 +728,7 @@ async function makeHash(pass) {
 // ── SEED ─────────────────────────────────────────────────────────────────────
 async function seed() {
   load();
+  loadPrefs();
   await initCloud();
   let changed = false;
   const adminEmail = ADMIN_EMAIL.toLowerCase();
@@ -688,6 +764,90 @@ function updateAdminUI() {
     el.classList.toggle('hidden', !(ME && ME.rol==='admin'));
   });
 }
+function ensureSettingsView() {
+  const view = document.getElementById('view-settings');
+  if (!view || view.dataset.ready==='1') return;
+  view.dataset.ready = '1';
+  view.innerHTML = `
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">&larr;</button>
+          <div><h3>Configuración</h3><p class="sub" style="margin:0">Sesiones activas, usuarios y avisos</p></div>
+        </div>
+        <button class="btn admin-only" onclick="openUserModal()">Nuevo usuario</button>
+      </div>
+      <div class="docs-layout">
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>Usuario conectado</h4><p class="sub" style="margin:0;font-size:12px">Quién está usando esta sesión</p></div>
+          </div>
+          <div id="settings-current-user" class="list" style="margin-top:14px"></div>
+        </div>
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>Conectados ahora</h4><p class="sub" style="margin:0;font-size:12px">Pueden trabajar varias personas al mismo tiempo</p></div>
+          </div>
+          <div id="settings-presence" class="list" style="margin-top:14px"></div>
+        </div>
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y apertura automática</p></div>
+          </div>
+          <div id="settings-wa" class="list" style="margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="panel admin-only" style="margin-top:14px">
+        <div class="shead mt" style="margin-top:0">
+          <div><h4>Usuarios</h4><p class="sub" style="margin:0;font-size:12px">Accesos, roles y obras asignadas</p></div>
+          <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
+        </div>
+        <div class="notice">El acceso real se crea en Firebase Authentication. Aquí solo defines correo, rol, teléfono y obras.</div>
+        <div id="admin-warn" class="alert"></div>
+        <div id="users-list" class="list" style="margin-top:14px"></div>
+      </div>`;
+}
+async function pingPresence() {
+  if (!Cloud.app || !ME) return;
+  try {
+    Presence.selfRef = Cloud.app.firestore().collection(CLOUD_COLLECTION).doc(`session_${SESSION_ID}`);
+    await Presence.selfRef.set({
+      kind: 'session',
+      sessionId: SESSION_ID,
+      userId: ME.id || '',
+      nombre: ME.nombre || 'Usuario',
+      email: (ME.email || ME.login || ''),
+      rol: ME.rol || 'viewer',
+      lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge:true });
+  } catch (e) {
+    console.error('Presence ping error', e);
+  }
+}
+function startPresence() {
+  if (!Cloud.app || !ME) return;
+  const fs = Cloud.app.firestore();
+  Presence.query = fs.collection(CLOUD_COLLECTION).where('kind','==','session');
+  if (Presence.unsubscribe) Presence.unsubscribe();
+  Presence.unsubscribe = Presence.query.onSnapshot(snap => {
+    Presence.sessions = snap.docs.map(doc => ({ id:doc.id, ...doc.data() }));
+    renderSettings();
+    if (App.curView==='home') renderHome();
+  }, e => console.error('Presence snapshot error', e));
+  if (Presence.heartbeat) clearInterval(Presence.heartbeat);
+  pingPresence();
+  Presence.heartbeat = setInterval(pingPresence, PRESENCE_HEARTBEAT_MS);
+}
+async function stopPresence(removeRemote=false) {
+  if (Presence.heartbeat) clearInterval(Presence.heartbeat);
+  Presence.heartbeat = null;
+  if (Presence.unsubscribe) Presence.unsubscribe();
+  Presence.unsubscribe = null;
+  if (removeRemote && Presence.selfRef) {
+    try { await Presence.selfRef.delete(); } catch (e) { console.error('Presence delete error', e); }
+  }
+  Presence.selfRef = null;
+  Presence.sessions = [];
+}
 
 // ── AUTH ─────────────────────────────────────────────────────────────────────
 const Auth = {
@@ -714,6 +874,7 @@ const Auth = {
     }
     firebase.auth().onAuthStateChanged(async fbUser => {
       if (!fbUser) {
+        stopPresence(false);
         ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
         document.getElementById('li-pass').value = '';
         this.setErr('');
@@ -761,10 +922,12 @@ const Auth = {
     document.getElementById('sess-user').textContent = u.nombre + ' · ' + role(u.rol);
     this.setErr('');
     updateAdminUI();
+    ensureSettingsView();
+    startPresence();
     showScreen('app');
     if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
     else if (App.curView==='documents') renderDocsHome();
-    else if (App.curView==='admin') renderUsers();
+    else if (App.curView==='settings') renderSettings();
     else if (App.curView==='workbook' && CUR_WORK) renderWorkbook();
     else App.openMain('home');
   },
@@ -794,12 +957,14 @@ const Auth = {
   async logoutFirebaseOverride() {
     try {
       if (window.firebase && firebase.auth && firebase.auth().currentUser) {
+        await stopPresence(true);
         await firebase.auth().signOut();
         return;
       }
     } catch (e) {
       console.error('Firebase logout error', e);
     }
+    stopPresence(false);
     ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
@@ -859,30 +1024,94 @@ const App = {
     if (n==='home') renderHome();
     if (n==='works') renderWorks();
     if (n==='documents') renderDocsHome();
-    if (n==='admin') renderUsers();
+    if (n==='settings') renderSettings();
   },
   openSub(n) { VIEW_STACK.push(this.curView); this.curView=n; showView(n); },
   goBack() {
     const p = VIEW_STACK.pop()||'home'; this.curView=p; showView(p);
-    if (['home','works','documents','admin'].includes(p)) setNav(p);
+    if (['home','works','documents','settings'].includes(p)) setNav(p);
     if (p==='works') renderWorks();
     if (p==='documents') renderDocsHome();
-    if (p==='admin') renderUsers();
+    if (p==='settings') renderSettings();
+    if (p==='home') renderHome();
   }
 };
 
 // ── HOME ─────────────────────────────────────────────────────────────────────
 function renderHome() {
-  const visibleWorks = myWorks();
-  const myIds = new Set(visibleWorks.map(o=>o.id));
-  const acts = D.actividades.filter(a=>myIds.has(a.obraId)).length;
-  const docs = D.documentos.filter(d=>myIds.has(d.obraId)).length;
-  document.getElementById('home-stats').innerHTML = [
-    {v:visibleWorks.length,l:'Obras'},
-    {v:acts,l:'Actividades'},
-    {v:docs,l:'Docs cargados'},
-    {v:ME.rol==='admin'?D.users.length:'—',l:'Usuarios'}
-  ].map(c=>`<article class="stat-card"><strong>${c.v}</strong><span>${c.l}</span></article>`).join('');
+  const home = document.getElementById('home-summary');
+  if (!home || !ME) return;
+  const connected = activeSessions();
+  home.innerHTML = `
+    <article class="panel quick-card">
+      <strong>${esc(ME.nombre)}</strong>
+      <div class="meta">${esc(ME.email||ME.login||'Sin correo')} · ${role(ME.rol)}</div>
+      <div class="meta">Esta es la sesión conectada actualmente.</div>
+    </article>
+    <article class="panel quick-card">
+      <strong>${Cloud.enabled ? 'Sincronización activa' : 'Modo local'}</strong>
+      <div class="meta">${Cloud.enabled ? 'Los cambios se comparten por Firebase.' : 'La app sigue funcionando, pero sin sincronización en tiempo real.'}</div>
+      <div class="meta">${connected.length ? `${connected.length} persona${connected.length===1?'':'s'} conectada${connected.length===1?'':'s'} ahora.` : 'No hay otras sesiones activas por ahora.'}</div>
+    </article>`;
+}
+function setWhatsAppPref(key, checked) {
+  Prefs[key] = !!checked;
+  savePrefs();
+  renderSettings();
+}
+function renderSettings() {
+  ensureSettingsView();
+  if (!ME) return;
+  const current = document.getElementById('settings-current-user');
+  if (current) {
+    current.innerHTML = `<article class="user-card">
+      <div class="ctop">
+        <div><strong>${esc(ME.nombre)}</strong><div class="meta" style="margin:0">${esc(ME.email||ME.login||'Sin correo')}</div></div>
+        <span class="pill ok">${role(ME.rol)}</span>
+      </div>
+      <div class="meta">Sesión: ${esc(SESSION_ID)}</div>
+      <div class="meta">${Cloud.enabled ? 'Sincronización en tiempo real activa.' : 'Sincronización en tiempo real no disponible.'}</div>
+    </article>`;
+  }
+  const presence = document.getElementById('settings-presence');
+  if (presence) {
+    const sessions = activeSessions();
+    presence.innerHTML = sessions.length ? sessions.map(s => {
+      const isMe = s.sessionId===SESSION_ID;
+      return `<article class="user-card">
+        <div class="ctop">
+          <div><strong>${esc(s.nombre||'Usuario')}</strong><div class="meta" style="margin:0">${esc(s.email||'Sin correo')}</div></div>
+          <span class="pill ${isMe?'ok':'warn'}">${isMe?'Esta sesión':role(s.rol)}</span>
+        </div>
+        <div class="meta">Última actividad: ${fmtDT(tsMillis(s.lastSeen)||new Date().toISOString())}</div>
+      </article>`;
+    }).join('') : `<article class="user-card"><strong>Solo esta sesión está activa.</strong><div class="meta">Cuando otra persona entre a la app, aparecerá aquí.</div></article>`;
+  }
+  const wa = document.getElementById('settings-wa');
+  if (wa) {
+    wa.innerHTML = `
+      <article class="toggle-card">
+        <div class="toggle-row">
+          <div>
+            <strong>Avisos automáticos del libro</strong>
+            <div class="meta">Abre WhatsApp automáticamente cuando una obra seleccionada no tenga actividad cargada hoy.</div>
+          </div>
+          <input type="checkbox" ${Prefs.autoDailyWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDailyWhatsApp', this.checked)">
+        </div>
+      </article>
+      <article class="toggle-card">
+        <div class="toggle-row">
+          <div>
+            <strong>Avisos automáticos de documentos</strong>
+            <div class="meta">Abre WhatsApp automáticamente cuando falten documentos en la obra seleccionada.</div>
+          </div>
+          <input type="checkbox" ${Prefs.autoDocWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDocWhatsApp', this.checked)">
+        </div>
+      </article>
+      <article class="notice session-note">WhatsApp no permite envío silencioso desde esta página. La automatización deja el mensaje listo y abre la conversación cuando el navegador lo permite.</article>`;
+  }
+  renderUsers();
+  updateAdminUI();
 }
 
 // ── OBRAS ────────────────────────────────────────────────────────────────────
@@ -893,7 +1122,14 @@ function myWorks() {
   if (!assigned.length) return D.obras;
   return D.obras.filter(o=>assigned.includes(o.id));
 }
+function hasWorkAccess(workId) {
+  return myWorks().some(o=>o.id===workId);
+}
 function canEdit() { return ME && ['admin','residente'].includes(ME.rol); }
+function canUploadDocuments(workId=CUR_DOC_WORK) {
+  if (!(ME && ['admin','residente'].includes(ME.rol))) return false;
+  return !workId || hasWorkAccess(workId);
+}
 function isAdmin() { return ME && ME.rol==='admin'; }
 
 function renderWorks(q='') {
@@ -979,7 +1215,8 @@ function renderWorkbook() {
   document.getElementById('wb-name').textContent = o.nombre;
   document.getElementById('wb-sub').textContent =
     `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Residente no configurado'}`;
-  document.getElementById('wb-title').value = o.notebookTitle||`Hoja diaria de ${o.nombre}`;
+  document.getElementById('wb-user-line').textContent =
+    `Usuario conectado: ${ME?.nombre||'-'} · ${role(ME?.rol||'viewer')}`;
   document.getElementById('add-act-btn').classList.toggle('hidden', !canEdit());
 
   const hoy = acts.some(a=>new Date(a.edit||a.date).toDateString()===new Date().toDateString());
@@ -990,6 +1227,7 @@ function renderWorkbook() {
       ? 'Hoy aún no se cargaron actividades. Puedes avisar al residente por WhatsApp.'
       : 'Hoy aún no se cargaron actividades. Configura el teléfono del residente para enviar aviso.';
   } else warn.classList.add('hidden');
+  if (!hoy && Prefs.autoDailyWhatsApp) maybeOpenWhatsApp('daily', CUR_WORK);
 
   const target = document.getElementById('wb-list');
   if (!acts.length) {
@@ -1004,6 +1242,7 @@ function renderWorkbook() {
       <span class="pill ok" style="font-size:10px">${fmtDT(a.edit||a.date)}</span>
     </div>
     <strong>${esc(a.title)}</strong>
+    ${a.subtitle?`<div class="meta">${esc(a.subtitle)}</div>`:''}
     <ol class="ol">${(a.items||[]).map(it=>`<li>${esc(it)}</li>`).join('')}</ol>
     <div class="meta">Registrado por ${esc(a.user||'-')}</div>
     ${canEdit()?`<div class="cacts">
@@ -1011,12 +1250,6 @@ function renderWorkbook() {
       <button class="soft" onclick="delAct('${a.id}')">Eliminar</button>
     </div>`:''}
   </article>`).join('');
-}
-
-function saveWbTitle() {
-  const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
-  o.notebookTitle = document.getElementById('wb-title').value.trim()||o.notebookTitle;
-  save(); renderWorkbook(); renderWorks();
 }
 
 function openResidenteModal() {
@@ -1037,6 +1270,7 @@ function openActModal(id='') {
   document.getElementById('ma-title').textContent = a ? 'Editar actividad' : 'Nueva actividad';
   document.getElementById('ma-id').value = id;
   document.getElementById('ma-titulo').value = a?.title||'';
+  document.getElementById('ma-subtitulo').value = a?.subtitle||'';
   document.getElementById('ma-cat').value = a?.cat||'avance';
   document.getElementById('ma-items').value = (a?.items||[]).join('\n');
   openModal('modal-act');
@@ -1044,6 +1278,7 @@ function openActModal(id='') {
 function saveAct() {
   const id = document.getElementById('ma-id').value;
   const title = document.getElementById('ma-titulo').value.trim();
+  const subtitle = document.getElementById('ma-subtitulo').value.trim();
   if (!title) { alert('El título es obligatorio.'); return; }
   const items = document.getElementById('ma-items').value
     .split('\n').map(s=>s.trim()).filter(Boolean);
@@ -1051,10 +1286,10 @@ function saveAct() {
   const now = new Date().toISOString();
   if (id) {
     const a = D.actividades.find(x=>x.id===id);
-    if (a) Object.assign(a, {title,cat,items,edit:now,user:ME.nombre});
+    if (a) Object.assign(a, {title,subtitle,cat,items,edit:now,user:ME.nombre});
   } else {
     const num = D.actividades.filter(a=>a.obraId===CUR_WORK).length+1;
-    D.actividades.push({id:uid(),obraId:CUR_WORK,title,cat,items,numero:num,
+    D.actividades.push({id:uid(),obraId:CUR_WORK,title,subtitle,cat,items,numero:num,
       date:now,edit:now,user:ME.nombre,userId:ME.id});
   }
   save(); closeModal('modal-act'); renderWorkbook(); renderWorks();
@@ -1066,12 +1301,40 @@ function delAct(id) {
   let num=0; D.actividades.forEach(a=>{if(a.obraId===CUR_WORK)a.numero=++num;});
   save(); renderWorkbook(); renderWorks();
 }
-
-function waDailyReminder() {
-  const o = D.obras.find(x=>x.id===CUR_WORK);
-  if (!o?.residenteTelefono) { alert('Configura el WhatsApp del residente primero.'); return; }
+function buildDailyWhatsApp(workId=CUR_WORK) {
+  const o = D.obras.find(x=>x.id===workId);
+  if (!o?.residenteTelefono) return { error:'Configura el WhatsApp del residente primero.' };
   const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, hoy aún no se cargaron actividades en la obra "${o.nombre}". Por favor registra el libro diario del día.`);
-  window.open(`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}`,'_blank','noopener');
+  return { url:`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}` };
+}
+function buildDocWhatsApp(workId=CUR_DOC_WORK) {
+  const o = D.obras.find(x=>x.id===workId);
+  if (!o?.residenteTelefono) return { error:'Configura el WhatsApp del residente primero.' };
+  const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(workId, t.id)));
+  if (!miss.length) return { error:'Esta obra ya tiene todos los documentos.' };
+  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, necesitamos los siguientes documentos de "${o.nombre}":\n${miss.map(t=>`- ${t.nombre}`).join('\n')}`);
+  return { url:`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}` };
+}
+function openWhatsAppReminder(kind, workId, opts={}) {
+  const data = kind==='daily' ? buildDailyWhatsApp(workId) : buildDocWhatsApp(workId);
+  if (data.error) {
+    if (!opts.silent) alert(data.error);
+    return false;
+  }
+  const opened = window.open(data.url,'_blank','noopener');
+  if (!opened) {
+    if (!opts.silent) alert('El navegador bloqueó la apertura automática de WhatsApp.');
+    return false;
+  }
+  if (opts.automatic) markReminderTriggered(kind, workId);
+  return true;
+}
+function maybeOpenWhatsApp(kind, workId) {
+  if (!workId || reminderTriggered(kind, workId)) return false;
+  return openWhatsAppReminder(kind, workId, { automatic:true, silent:true });
+}
+function waDailyReminder() {
+  openWhatsAppReminder('daily', CUR_WORK);
 }
 
 // ── EXPORTAR WORD ─────────────────────────────────────────────────────────────
@@ -1084,6 +1347,7 @@ function doExport() {
     <td style="padding:8px;border:1px solid #ccc">${fmtDT(a.edit||a.date)}</td>
     <td style="padding:8px;border:1px solid #ccc">${a.cat||'avance'}</td>
     <td style="padding:8px;border:1px solid #ccc"><strong>${esc(a.title)}</strong><br>
+      ${a.subtitle?`<em>${esc(a.subtitle)}</em><br>`:''}
       ${(a.items||[]).map((it,j)=>`${j+1}. ${esc(it)}`).join('<br>')}</td>
     <td style="padding:8px;border:1px solid #ccc">${esc(a.user||'')}</td>
   </tr>`).join('');
@@ -1118,6 +1382,90 @@ function doExport() {
 function getDocRecord(workId, tplId) {
   return D.documentos.find(d=>d.obraId===workId&&d.templateId===tplId) || null;
 }
+async function downloadStoredFile(url, name='archivo') {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = name || 'archivo';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
+  } catch (e) {
+    console.error('Download error', e);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name || 'archivo';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.click();
+  }
+}
+function renderSelectedDocFiles() {
+  const target = document.getElementById('md-picked-files');
+  const count = document.getElementById('md-picked-count');
+  if (!target || !count) return;
+  const files = Array.from(document.getElementById('md-files')?.files || []);
+  count.textContent = `${files.length} seleccionado${files.length===1?'':'s'}`;
+  target.innerHTML = files.length ? files.map(f=>`<div class="doc-file">
+      <div>
+        <strong>${esc(f.name)}</strong>
+        <small>${fmtBytes(f.size||0)}${f.type?` · ${esc(f.type)}`:''}</small>
+      </div>
+    </div>`).join('')
+    : `<div class="window-empty">Todavía no seleccionaste archivos para subir.</div>`;
+}
+function renderCurrentDocFiles(tplId) {
+  const target = document.getElementById('md-current-files');
+  const count = document.getElementById('md-current-count');
+  if (!target || !count) return;
+  const doc = getDocRecord(CUR_DOC_WORK, tplId);
+  const files = docFiles(doc);
+  count.textContent = `${files.length} archivo${files.length===1?'':'s'}`;
+  target.innerHTML = files.length ? files.map(f=>`<div class="doc-file">
+      <div>
+        <strong>${esc(f.name)}</strong>
+        <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}</small>
+      </div>
+      <div class="inline-actions">
+        <button class="soft mini" onclick='downloadStoredFile(${JSON.stringify(f.url)}, ${JSON.stringify(f.name)})'>Descargar</button>
+      </div>
+    </div>`).join('')
+    : `<div class="window-empty">Todavía no hay archivos cargados para este documento.</div>`;
+}
+function decorateDocFileWindows(target) {
+  if (!target) return;
+  target.querySelectorAll('.doc-files').forEach(group => {
+    group.classList.add('window');
+    const count = group.querySelectorAll('.doc-file').length;
+    const head = document.createElement('div');
+    head.className = 'window-head';
+    head.innerHTML = `<strong>Archivos cargados</strong><span>${count} archivo${count===1?'':'s'}</span>`;
+    const body = document.createElement('div');
+    body.className = 'window-body';
+    Array.from(group.children).forEach(child => body.appendChild(child));
+    group.innerHTML = '';
+    group.appendChild(head);
+    group.appendChild(body);
+    body.querySelectorAll('.doc-file').forEach(row => {
+      const link = row.querySelector('a[href]');
+      if (!link || row.querySelector('.download-btn')) return;
+      link.removeAttribute('target');
+      const actions = document.createElement('div');
+      actions.className = 'inline-actions';
+      const btn = document.createElement('button');
+      btn.className = 'soft mini download-btn';
+      btn.textContent = 'Descargar';
+      btn.onclick = () => downloadStoredFile(link.href, link.textContent.trim());
+      actions.appendChild(btn);
+      const existingBtn = row.querySelector('button');
+      if (existingBtn) actions.appendChild(existingBtn);
+      row.appendChild(actions);
+    });
+  });
+}
 function hasStorageReady() {
   return !!(Cloud.storage && window.firebase && firebase.storage);
 }
@@ -1135,13 +1483,15 @@ function setDocUploadState(loading, msg='') {
 }
 function openDocUploadModal(tplId) {
   if (!CUR_DOC_WORK) { alert('Selecciona una obra primero.'); return; }
-  if (!canEdit()) { alert('Tu perfil no puede cargar documentos.'); return; }
+  if (!canUploadDocuments(CUR_DOC_WORK)) { alert('Tu perfil no puede cargar documentos en esta obra.'); return; }
   if (!hasStorageReady()) { alert('Firebase Storage no está disponible todavía.'); return; }
   const tpl = D.templates.find(x=>x.id===tplId);
   document.getElementById('md-title').textContent = `Subir archivos${tpl ? `: ${tpl.nombre}` : ''}`;
   document.getElementById('md-tpl-id').value = tplId;
   document.getElementById('md-files').value = '';
   document.getElementById('md-note').value = '';
+  renderCurrentDocFiles(tplId);
+  renderSelectedDocFiles();
   setDocUploadState(false);
   openModal('modal-doc-upload');
 }
@@ -1210,7 +1560,7 @@ async function saveDocUpload() {
     renderDocsHome();
   } catch (e) {
     console.error('Upload error', e);
-    setDocUploadState(false, 'No se pudo subir el archivo a Firebase Storage.');
+    setDocUploadState(false, `No se pudo subir el archivo a Firebase Storage.${e?.message ? ` Detalle: ${e.message}` : ''}`);
     return;
   }
   setDocUploadState(false);
@@ -1316,6 +1666,7 @@ function renderChecklist(workId, preserve=false) {
   if (overdue.length) { warn.classList.remove('hidden'); warn.classList.add('danger');
     warn.textContent=`Faltan ${overdue.length} documentos vencidos o reclamables.`; }
   else { warn.classList.add('hidden'); warn.classList.remove('danger'); }
+  if (overdue.length && Prefs.autoDocWhatsApp) maybeOpenWhatsApp('documents', workId);
 
   const target = document.getElementById('doc-checklist');
   if (!D.templates.length) {
@@ -1342,13 +1693,14 @@ function renderChecklist(workId, preserve=false) {
       <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
       <div class="meta">${loaded?`Última carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'Aún no fue cargado'}</div>
       <div class="cacts">
-        ${canEdit()?`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar más':'Subir archivo'}</button>`:`<button class="soft" disabled>Solo lectura</button>`}
-        ${ld&&canEdit()?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
+        ${canUploadDocuments(workId)?`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar más':'Subir archivo'}</button>`:`<button class="soft" disabled>Solo lectura</button>`}
+        ${ld&&canUploadDocuments(workId)?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
       </div>
       ${ld?.detalle?`<div class="meta">Observación: ${esc(ld.detalle)}</div>`:''}
       ${filesHtml}
     </article>`;
   }).join('');
+  decorateDocFileWindows(target);
 }
 
 function markDocLoaded(tplId) {
@@ -1387,12 +1739,7 @@ function delTpl(id) {
 }
 
 function waDocReminder(workId=CUR_DOC_WORK) {
-  const o = D.obras.find(x=>x.id===workId);
-  if (!o?.residenteTelefono) { alert('Configura el WhatsApp del residente primero.'); return; }
-  const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(workId, t.id)));
-  if (!miss.length) { alert('Esta obra ya tiene todos los documentos.'); return; }
-  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, necesitamos los siguientes documentos de "${o.nombre}":\n${miss.map(t=>`- ${t.nombre}`).join('\n')}`);
-  window.open(`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}`,'_blank','noopener');
+  openWhatsAppReminder('documents', workId);
 }
 
 // ── USUARIOS ─────────────────────────────────────────────────────────────────
@@ -1469,6 +1816,12 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-bg').forEach(bg=>{
   bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open'); });
+});
+window.addEventListener('beforeunload', () => {
+  if (Presence.heartbeat) clearInterval(Presence.heartbeat);
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && ME) pingPresence();
 });
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
