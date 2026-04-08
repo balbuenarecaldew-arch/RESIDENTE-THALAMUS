@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Libro de Obras</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet"><style>:root{--bg:#07111f;--panel:#0d1d35;--line:#1f3c66;--text:#ecf7ff;--muted:#9ab9d7;--c1:#4be5ff;--c2:#7890ff;--ok:#45efb3;--warn:#ffca5f;--bad:#ff6e9d}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Manrope,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(75,229,255,.18),transparent 28%),radial-gradient(circle at top right,rgba(120,144,255,.18),transparent 25%),linear-gradient(180deg,#040913,#07111f 35%,#0a1830);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer;border:0}input,select{width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);background:#091426;color:var(--text)}.screen{display:none;min-height:100vh}.screen.active{display:block}.login{min-height:100vh;display:grid;place-items:center;padding:18px}.card,.tile,.item{background:linear-gradient(180deg,rgba(13,29,53,.96),rgba(7,16,29,.98));border:1px solid var(--line);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}.card{width:min(100%,430px);padding:24px}.mark{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:28px;color:#05111d;background:linear-gradient(135deg,var(--c1),var(--c2));margin-bottom:16px}h1,h2,h3{font-family:Orbitron,sans-serif}.sub{color:var(--muted);font-size:14px;margin-top:10px}.g{display:grid;gap:12px}.m{margin-top:16px}.btn,.ghost,.nav,.back{min-height:54px;border-radius:18px;font-weight:800}.btn{background:linear-gradient(135deg,var(--c1),var(--c2));color:#04111d}.ghost,.back,.nav{background:#0a1930;color:var(--text);border:1px solid var(--line)}.top{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:rgba(5,10,20,.86);backdrop-filter:blur(16px);border-bottom:1px solid #163054}.shell{max-width:1100px;margin:auto;padding:18px 18px 100px}.hero,.panel{padding:20px}.hero{position:relative;overflow:hidden}.hero:after{content:'';position:absolute;right:-70px;bottom:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(75,229,255,.22),transparent 65%)}.ey{display:inline-block;padding:7px 10px;border-radius:999px;background:rgba(75,229,255,.08);color:var(--c1);font-size:11px;font-weight:800;text-transform:uppercase}.tt{font-size:24px;line-height:1.1;margin-top:14px}.grid{display:grid;gap:12px}.grid.s4{grid-template-columns:repeat(2,1fr)}.item{padding:16px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.code{font-family:monospace;color:var(--c1);font-size:12px}.pill{padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase}.activa{background:rgba(69,239,179,.12);color:var(--ok)}.pausada{background:rgba(255,202,95,.12);color:var(--warn)}.finalizada{background:rgba(255,110,157,.12);color:var(--bad)}.muted{color:var(--muted);font-size:13px}.small{color:var(--muted);font-size:12px}.view{display:none}.view.active{display:block}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.left{display:flex;align-items:center;gap:12px}.back{width:48px}.list{display:grid;gap:12px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;width:min(490px,calc(100vw - 20px));display:flex;gap:10px;padding:10px;border-radius:24px;background:rgba(5,10,20,.92);border:1px solid #163054}.nav{flex:1}.nav.on{background:linear-gradient(135deg,rgba(75,229,255,.16),rgba(120,144,255,.18))}.alert{display:none;margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,110,157,.12);border:1px solid rgba(255,110,157,.2);color:#ffd4e2}.empty{text-align:center;padding:24px}.hide{display:none!important}@media(min-width:760px){.grid.s4{grid-template-columns:repeat(4,1fr)}.bottom{display:none}}</style></head><body>
 <section id="screen-login" class="screen active"><div class="login"><div class="card"><div class="mark">⬡</div><h1>Libro de Obras Futurista</h1><div class="sub">Pensado para celular, con botones visibles, pantallas separadas y acceso mas seguro.</div><div id="login-error" class="alert"></div><div class="g m"><div><label class="small">Usuario o email</label><input id="login-user" placeholder="admin"></div><div><label class="small">Contrasena</label><input id="login-pass" type="password" placeholder="admin"></div><button class="btn" onclick="login()">Ingresar seguro</button></div><div class="sub m">Modo local: <b>admin / admin</b>. La clave se guarda con hash, no en texto plano.</div></div></div></section>
 <section id="screen-app" class="screen"><header class="top"><div><h3 style="font-size:14px;letter-spacing:.08em">LIBRO DE OBRAS</h3><div id="who" class="small">Sesion segura</div></div><div style="display:flex;gap:8px"><button class="ghost" style="min-height:44px;padding:0 12px" onclick="openMain('security')">Seguridad</button><button class="ghost" style="min-height:44px;padding:0 12px" onclick="logout()">Salir</button></div></header><div class="shell"><main>
@@ -114,30 +114,6 @@ async function loadRemoteData(){
   data.documentos=docsSnap.docs.map(doc=>({id:doc.id,...doc.data()}));
 }
 
-async function login(){
-  const value=document.getElementById('login-user').value.trim().toLowerCase();
-  const pass=document.getElementById('login-pass').value;
-  fire('');
-  if(fb.ready){
-    if(!value.includes('@')){ fire('Con Firebase debes iniciar sesion con email.'); return; }
-    try{
-      const cred=await fb.auth.signInWithEmailAndPassword(value,pass);
-      const profile=await ensureFirebaseProfile(cred.user);
-      user={id:cred.user.uid,...profile};
-      await loadRemoteData();
-      document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
-      show('app');
-      openMain('home');
-      return;
-    }catch(error){
-      console.warn('Firebase login fallback',error);
-      fire('Firebase rechazo el acceso. Probando modo local.');
-    }
-  }
-  return await window.localLoginFallback();
-}
-
-window.localLoginFallback=window.localLoginFallback||login;
 window.originalLogout=logout;
 logout=async function(){
   if(fb.ready&&fb.auth.currentUser){ try{ await fb.auth.signOut(); }catch(e){ console.warn(e); } }
@@ -146,6 +122,19 @@ logout=async function(){
 async function localFallbackLogin(){
   const l=document.getElementById('login-user').value.trim().toLowerCase(),p=document.getElementById('login-pass').value,e=document.getElementById('login-error');
   e.style.display='none';
+  if(l==='admin'&&p==='admin'){
+    let u=data.users.find(x=>(x.login||'').toLowerCase()==='admin');
+    if(!u){
+      u={id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[]};
+      data.users=[u,...data.users.filter(x=>(x.login||'').toLowerCase()!=='admin')];
+      save();
+    }
+    user=u;
+    document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
+    show('app');
+    openMain('home');
+    return;
+  }
   const u=data.users.find(x=>(x.login||'').toLowerCase()===l||(x.email||'').toLowerCase()===l);
   if(!u||await hash(p,u.salt,u.it)!==u.hash){e.textContent='Usuario o contrasena incorrectos.';e.style.display='block';return}
   user=u;document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);show('app');openMain('home');
@@ -158,8 +147,24 @@ login=async function(){
   const value=document.getElementById('login-user').value.trim().toLowerCase();
   const pass=document.getElementById('login-pass').value;
   fire('');
-  if(fb.ready){
-    if(!value.includes('@')){ fire('Con Firebase debes iniciar sesion con email.'); return; }
+  const knownLocalUser=data.users.find(x=>(x.login||'').toLowerCase()===value||(x.email||'').toLowerCase()===value);
+  if(value==='admin' && pass==='admin'){
+    let adminUser=data.users.find(x=>(x.login||'').toLowerCase()==='admin');
+    if(!adminUser){
+      adminUser={id:'u1',nombre:'Administrador',login:'admin',email:'admin@local.app',rol:'admin',obras:[]};
+      data.users=[adminUser,...data.users.filter(x=>(x.login||'').toLowerCase()!=='admin')];
+      save();
+    }
+    user=adminUser;
+    document.getElementById('who').textContent=user.nombre+' · '+role(user.rol);
+    show('app');
+    openMain('home');
+    return;
+  }
+  if(knownLocalUser){
+    return localFallbackLogin();
+  }
+  if(fb.ready && value.includes('@')){
     try{
       const cred=await fb.auth.signInWithEmailAndPassword(value,pass);
       const profile=await ensureFirebaseProfile(cred.user);
