@@ -1,20 +1,9 @@
-/**
- * LIBRO DE OBRAS — Cloudflare Worker API
- * KV Namespace binding: LIBRO_OBRAS
- *
- * wrangler.toml:
- *   [[kv_namespaces]]
- *   binding = "LIBRO_OBRAS"
- *   id = "TU_KV_NAMESPACE_ID"
- */
-
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type,Authorization',
 };
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 function json(data, status = 200) {
@@ -24,75 +13,86 @@ function json(data, status = 200) {
   });
 }
 
-function err(msg, status = 400) {
-  return json({ error: msg }, status);
+function err(message, status = 400) {
+  return json({ error: message }, status);
 }
 
 function genToken() {
-  const a = new Uint8Array(32);
-  crypto.getRandomValues(a);
-  return Array.from(a).map(x => x.toString(16).padStart(2, '0')).join('');
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map((item) => item.toString(16).padStart(2, '0')).join('');
 }
 
-// ─── CRYPTO ───────────────────────────────────────────────────────────────────
-async function hashPass(pass, salt, it = 120000) {
+async function hashPass(pass, salt, iterations = 120000) {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits']);
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode(salt), iterations: it },
-    key, 256
+    { name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode(salt), iterations },
+    key,
+    256
   );
-  return Array.from(new Uint8Array(bits)).map(x => x.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(bits)).map((item) => item.toString(16).padStart(2, '0')).join('');
 }
 
 async function makeHash(pass) {
-  const a = new Uint8Array(16);
-  crypto.getRandomValues(a);
-  const salt = Array.from(a).map(x => x.toString(16).padStart(2, '0')).join('');
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const salt = Array.from(bytes).map((item) => item.toString(16).padStart(2, '0')).join('');
   return { salt, it: 120000, hash: await hashPass(pass, salt) };
 }
 
-// ─── KV HELPERS ───────────────────────────────────────────────────────────────
 const kv = {
   async get(env, key) {
     const raw = await env.LIBRO_OBRAS.get(key);
     return raw ? JSON.parse(raw) : null;
   },
-  async set(env, key, val) {
-    await env.LIBRO_OBRAS.put(key, JSON.stringify(val));
+  async set(env, key, value) {
+    await env.LIBRO_OBRAS.put(key, JSON.stringify(value));
   },
   async del(env, key) {
     await env.LIBRO_OBRAS.delete(key);
   },
-  async session(env, key, userId) {
-    // 24h session
-    await env.LIBRO_OBRAS.put('session:' + key, userId, { expirationTtl: 86400 });
+  async setSession(env, token, userId) {
+    await env.LIBRO_OBRAS.put(`session:${token}`, userId, { expirationTtl: 86400 });
   },
-  async getSession(env, key) {
-    return env.LIBRO_OBRAS.get('session:' + key);
+  async getSession(env, token) {
+    return env.LIBRO_OBRAS.get(`session:${token}`);
   },
 };
 
-// ─── SEED DEFAULT ADMIN ───────────────────────────────────────────────────────
 async function ensureAdmin(env) {
-  let users = await kv.get(env, 'users') || [];
+  const users = await kv.get(env, 'users') || [];
   if (!users.length) {
     const hashed = await makeHash('admin');
-    users = [{
+    const admin = {
       id: 'u1',
       nombre: 'Administrador',
       login: 'admin',
       email: 'admin@local.app',
+      telefono: '',
       rol: 'admin',
       obras: [],
       ...hashed,
-    }];
-    await kv.set(env, 'users', users);
+    };
+    await kv.set(env, 'users', [admin]);
+    return [admin];
   }
   return users;
 }
 
-// ─── AUTH MIDDLEWARE ──────────────────────────────────────────────────────────
+function safeUser(user) {
+  const { hash, salt, it, pass, ...safe } = user;
+  return safe;
+}
+
+function canEdit(user) {
+  return user && ['admin', 'residente'].includes(user.rol);
+}
+
+function isAdmin(user) {
+  return user?.rol === 'admin';
+}
+
 async function getSessionUser(env, req) {
   const auth = req.headers.get('Authorization') || '';
   const token = auth.replace('Bearer ', '').trim();
@@ -100,257 +100,313 @@ async function getSessionUser(env, req) {
   const userId = await kv.getSession(env, token);
   if (!userId) return null;
   const users = await kv.get(env, 'users') || [];
-  return users.find(u => u.id === userId) || null;
+  return users.find((user) => user.id === userId) || null;
 }
 
-function canEdit(u) { return u && (u.rol === 'admin' || u.rol === 'residente'); }
-function isAdmin(u) { return u && u.rol === 'admin'; }
-
-function safeUser(u) {
-  const { hash, salt, it, pass, ...safe } = u;
-  return safe;
-}
-
-// ─── MAIN HANDLER ─────────────────────────────────────────────────────────────
 export default {
   async fetch(req, env) {
-    const url  = new URL(req.url);
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: CORS });
+    }
+
+    await ensureAdmin(env);
+    const url = new URL(req.url);
     const path = url.pathname;
     const method = req.method;
 
-    if (method === 'OPTIONS') return new Response(null, { headers: CORS });
-
-    await ensureAdmin(env);
-
-    // ── LOGIN ────────────────────────────────────────────────────────────────
     if (path === '/api/login' && method === 'POST') {
-      const { login: l, pass: p } = await req.json().catch(() => ({}));
-      if (!l || !p) return err('Ingrese usuario y contraseña.');
-
-      const ll = l.toLowerCase().trim();
+      const { login, pass } = await req.json().catch(() => ({}));
+      if (!login || !pass) return err('Ingresa usuario y contraseña.');
       const users = await kv.get(env, 'users') || [];
-      const u = users.find(x =>
-        (x.login || '').toLowerCase() === ll ||
-        (x.email  || '').toLowerCase() === ll
-      );
-      if (!u) return err('Usuario no encontrado.', 401);
-
-      let ok = false;
-      if (u.hash && u.salt) {
-        try { ok = (await hashPass(p, u.salt, u.it || 120000)) === u.hash; } catch (_) {}
-      }
-      if (!ok && u.pass) ok = u.pass === p;
-
-      if (!ok) return err('Contraseña incorrecta.', 401);
-
-      // Migrate plaintext → hash if needed
-      if (ok && (!u.hash || u.pass)) {
-        const idx = users.findIndex(x => x.id === u.id);
-        Object.assign(users[idx], await makeHash(p));
-        delete users[idx].pass;
+      const lookup = login.toLowerCase().trim();
+      const user = users.find((item) => (item.login || '').toLowerCase() === lookup || (item.email || '').toLowerCase() === lookup);
+      if (!user) return err('Usuario no encontrado.', 401);
+      const valid = user.hash
+        ? (await hashPass(pass, user.salt, user.it || 120000)) === user.hash
+        : user.pass === pass;
+      if (!valid) return err('Contraseña incorrecta.', 401);
+      if (!user.hash) {
+        Object.assign(user, await makeHash(pass));
+        delete user.pass;
         await kv.set(env, 'users', users);
       }
-
       const token = genToken();
-      await kv.session(env, token, u.id);
-      return json({ token, user: safeUser(u) });
+      await kv.setSession(env, token, user.id);
+      return json({ token, user: safeUser(user) });
     }
 
-    // ── LOGOUT ───────────────────────────────────────────────────────────────
     if (path === '/api/logout' && method === 'POST') {
       const auth = req.headers.get('Authorization') || '';
       const token = auth.replace('Bearer ', '').trim();
-      if (token) await kv.del(env, 'session:' + token);
+      if (token) await kv.del(env, `session:${token}`);
       return json({ ok: true });
     }
 
-    // All routes below require a valid session
     const me = await getSessionUser(env, req);
     if (!me) return err('No autorizado.', 401);
 
-    // ── USERS ────────────────────────────────────────────────────────────────
     if (path === '/api/users') {
       if (!isAdmin(me)) return err('Sin permiso.', 403);
+      const users = await kv.get(env, 'users') || [];
 
       if (method === 'GET') {
-        const users = await kv.get(env, 'users') || [];
         return json(users.map(safeUser));
       }
 
       if (method === 'POST') {
-        const { nombre, login, email, rol, pass: pw, obras } = await req.json().catch(() => ({}));
+        const { nombre, login, email, telefono, rol, pass, obras } = await req.json().catch(() => ({}));
         if (!nombre || !login) return err('Nombre y usuario son obligatorios.');
-        const users = await kv.get(env, 'users') || [];
-        const dup = users.find(u =>
-          (u.login || '').toLowerCase() === login.toLowerCase() ||
-          (email && (u.email || '').toLowerCase() === email.toLowerCase())
+        if (!pass) return err('La contraseña inicial es obligatoria.');
+        const duplicate = users.find((item) =>
+          (item.login || '').toLowerCase() === login.toLowerCase() ||
+          (email && (item.email || '').toLowerCase() === email.toLowerCase())
         );
-        if (dup) return err('Ese usuario o email ya existe.');
-        if (!pw) return err('Contraseña obligatoria.');
-        const hashed = await makeHash(pw);
-        const nu = {
-          id: uid(), nombre, login,
+        if (duplicate) return err('Ese usuario o email ya existe.');
+        const created = {
+          id: uid(),
+          nombre,
+          login,
           email: email || '',
+          telefono: telefono || '',
           rol: rol || 'viewer',
-          obras: (rol === 'admin') ? [] : (obras || []),
-          ...hashed,
+          obras: rol === 'admin' ? [] : (obras || []),
+          ...(await makeHash(pass)),
         };
-        users.push(nu);
+        users.push(created);
         await kv.set(env, 'users', users);
-        return json(safeUser(nu), 201);
+        return json(safeUser(created), 201);
       }
     }
 
     if (path.match(/^\/api\/users\/[^/]+$/)) {
       if (!isAdmin(me)) return err('Sin permiso.', 403);
-      const id = path.split('/')[3];
       const users = await kv.get(env, 'users') || [];
-      const idx = users.findIndex(u => u.id === id);
-      if (idx < 0) return err('Usuario no encontrado.', 404);
+      const id = path.split('/')[3];
+      const index = users.findIndex((item) => item.id === id);
+      if (index < 0) return err('Usuario no encontrado.', 404);
 
       if (method === 'PUT') {
-        const { nombre, login, email, rol, pass: pw, obras } = await req.json().catch(() => ({}));
-        const dup = users.find(u => u.id !== id && (u.login || '').toLowerCase() === (login || '').toLowerCase());
-        if (dup) return err('Ese usuario ya existe.');
-        Object.assign(users[idx], {
-          nombre, login,
+        const { nombre, login, email, telefono, rol, pass, obras } = await req.json().catch(() => ({}));
+        Object.assign(users[index], {
+          nombre,
+          login,
           email: email || '',
+          telefono: telefono || '',
           rol,
-          obras: (rol === 'admin') ? [] : (obras || []),
+          obras: rol === 'admin' ? [] : (obras || []),
         });
-        if (pw) Object.assign(users[idx], await makeHash(pw));
+        if (pass) Object.assign(users[index], await makeHash(pass));
         await kv.set(env, 'users', users);
-        return json(safeUser(users[idx]));
+        return json(safeUser(users[index]));
       }
 
       if (method === 'DELETE') {
-        if (users[idx].id === me.id) return err('No puedes eliminar tu propia cuenta.');
-        users.splice(idx, 1);
+        if (users[index].id === me.id) return err('No puedes eliminar tu propia cuenta.');
+        users.splice(index, 1);
         await kv.set(env, 'users', users);
         return json({ ok: true });
       }
     }
 
-    // ── OBRAS ────────────────────────────────────────────────────────────────
     if (path === '/api/obras') {
+      let works = await kv.get(env, 'obras') || [];
+
       if (method === 'GET') {
-        let obras = await kv.get(env, 'obras') || [];
-        if (!isAdmin(me)) obras = obras.filter(o => (me.obras || []).includes(o.id));
-        return json(obras);
+        if (!isAdmin(me)) works = works.filter((work) => (me.obras || []).includes(work.id));
+        return json(works);
       }
 
       if (method === 'POST') {
         if (!canEdit(me)) return err('Sin permiso.', 403);
         const body = await req.json().catch(() => ({}));
-        const id = uid();
-        const obra = { id, ...body, creadoPor: me.id, creadoEn: new Date().toISOString() };
-        const obras = await kv.get(env, 'obras') || [];
-        obras.push(obra);
-        await kv.set(env, 'obras', obras);
-        // Auto-assign to residente
+        if (!body.nombre || !body.inicio) return err('Nombre e inicio son obligatorios.');
+        const work = {
+          id: uid(),
+          nombre: body.nombre,
+          inicio: body.inicio,
+          notebookTitle: body.notebookTitle || `Hoja diaria de ${body.nombre}`,
+          residenteNombre: body.residenteNombre || '',
+          residenteTelefono: body.residenteTelefono || '',
+          creadoPor: me.id,
+          creadoEn: new Date().toISOString(),
+        };
+        works.push(work);
+        await kv.set(env, 'obras', works);
         if (me.rol === 'residente') {
           const users = await kv.get(env, 'users') || [];
-          const ui = users.findIndex(u => u.id === me.id);
-          if (ui >= 0) {
-            users[ui].obras = [...new Set([...(users[ui].obras || []), id])];
+          const userIndex = users.findIndex((item) => item.id === me.id);
+          if (userIndex >= 0) {
+            users[userIndex].obras = [...new Set([...(users[userIndex].obras || []), work.id])];
             await kv.set(env, 'users', users);
           }
         }
-        return json(obra, 201);
+        return json(work, 201);
       }
     }
 
     if (path.match(/^\/api\/obras\/[^/]+$/)) {
+      const works = await kv.get(env, 'obras') || [];
       const id = path.split('/')[3];
-      const obras = await kv.get(env, 'obras') || [];
-      const idx = obras.findIndex(o => o.id === id);
-      if (idx < 0) return err('Obra no encontrada.', 404);
+      const index = works.findIndex((item) => item.id === id);
+      if (index < 0) return err('Obra no encontrada.', 404);
 
       if (method === 'PUT') {
         if (!canEdit(me)) return err('Sin permiso.', 403);
-        const body = await req.json().catch(() => ({}));
-        Object.assign(obras[idx], body);
-        await kv.set(env, 'obras', obras);
-        return json(obras[idx]);
+        Object.assign(works[index], await req.json().catch(() => ({})));
+        await kv.set(env, 'obras', works);
+        return json(works[index]);
       }
 
       if (method === 'DELETE') {
         if (!isAdmin(me)) return err('Sin permiso.', 403);
-        obras.splice(idx, 1);
-        await kv.set(env, 'obras', obras);
+        works.splice(index, 1);
+        await kv.set(env, 'obras', works);
         return json({ ok: true });
       }
     }
 
-    // ── ACTIVIDADES ──────────────────────────────────────────────────────────
     if (path === '/api/actividades') {
+      const activities = await kv.get(env, 'actividades') || [];
+
       if (method === 'GET') {
-        const obraId = url.searchParams.get('obraId');
-        let acts = await kv.get(env, 'actividades') || [];
-        if (obraId) acts = acts.filter(a => a.obraId === obraId);
-        return json(acts);
+        const workId = url.searchParams.get('obraId');
+        return json(workId ? activities.filter((item) => item.obraId === workId) : activities);
       }
 
       if (method === 'POST') {
         if (!canEdit(me)) return err('Sin permiso.', 403);
         const body = await req.json().catch(() => ({}));
-        const now = new Date().toISOString();
-        const act = { id: uid(), ...body, date: now, edit: now, user: me.nombre, userId: me.id };
-        const acts = await kv.get(env, 'actividades') || [];
-        acts.push(act);
-        await kv.set(env, 'actividades', acts);
-        return json(act, 201);
+        if (!body.obraId || !body.title) return err('Obra y título son obligatorios.');
+        const numero = activities.filter((item) => item.obraId === body.obraId).length + 1;
+        const activity = {
+          id: uid(),
+          obraId: body.obraId,
+          title: body.title,
+          items: Array.isArray(body.items) ? body.items : [],
+          numero,
+          date: new Date().toISOString(),
+          edit: new Date().toISOString(),
+          user: me.nombre,
+          userId: me.id,
+        };
+        activities.push(activity);
+        await kv.set(env, 'actividades', activities);
+        return json(activity, 201);
       }
     }
 
     if (path.match(/^\/api\/actividades\/[^/]+$/)) {
+      const activities = await kv.get(env, 'actividades') || [];
       const id = path.split('/')[3];
-      const acts = await kv.get(env, 'actividades') || [];
-      const idx = acts.findIndex(a => a.id === id);
-      if (idx < 0) return err('Actividad no encontrada.', 404);
+      const index = activities.findIndex((item) => item.id === id);
+      if (index < 0) return err('Actividad no encontrada.', 404);
 
       if (method === 'PUT') {
         if (!canEdit(me)) return err('Sin permiso.', 403);
         const body = await req.json().catch(() => ({}));
-        Object.assign(acts[idx], body, { edit: new Date().toISOString(), editUser: me.nombre });
-        await kv.set(env, 'actividades', acts);
-        return json(acts[idx]);
+        Object.assign(activities[index], body, { edit: new Date().toISOString(), editUser: me.nombre });
+        await kv.set(env, 'actividades', activities);
+        return json(activities[index]);
       }
 
       if (method === 'DELETE') {
         if (!canEdit(me)) return err('Sin permiso.', 403);
-        acts.splice(idx, 1);
-        await kv.set(env, 'actividades', acts);
+        const removed = activities[index];
+        const remaining = activities.filter((item) => item.id !== id).map((item) => item.obraId === removed.obraId ? item : item);
+        const reordered = [];
+        const perWork = {};
+        for (const item of remaining) {
+          perWork[item.obraId] = (perWork[item.obraId] || 0) + 1;
+          reordered.push({ ...item, numero: perWork[item.obraId] });
+        }
+        await kv.set(env, 'actividades', reordered);
         return json({ ok: true });
       }
     }
 
-    // ── DOCUMENTOS ───────────────────────────────────────────────────────────
+    if (path === '/api/doc-templates') {
+      let templates = await kv.get(env, 'doc_templates') || [];
+
+      if (method === 'GET') return json(templates);
+
+      if (method === 'POST') {
+        if (!isAdmin(me)) return err('Sin permiso.', 403);
+        const body = await req.json().catch(() => ({}));
+        if (!body.nombre) return err('Nombre obligatorio.');
+        const template = {
+          id: uid(),
+          nombre: body.nombre,
+          descripcion: body.descripcion || '',
+          diasDesdeInicio: Number(body.diasDesdeInicio || 15),
+        };
+        templates.push(template);
+        await kv.set(env, 'doc_templates', templates);
+        return json(template, 201);
+      }
+    }
+
+    if (path.match(/^\/api\/doc-templates\/[^/]+$/)) {
+      const templates = await kv.get(env, 'doc_templates') || [];
+      const id = path.split('/')[3];
+      const index = templates.findIndex((item) => item.id === id);
+      if (index < 0) return err('Plantilla no encontrada.', 404);
+
+      if (method === 'PUT') {
+        if (!isAdmin(me)) return err('Sin permiso.', 403);
+        const body = await req.json().catch(() => ({}));
+        Object.assign(templates[index], {
+          nombre: body.nombre || templates[index].nombre,
+          descripcion: body.descripcion ?? templates[index].descripcion,
+          diasDesdeInicio: Number(body.diasDesdeInicio || templates[index].diasDesdeInicio || 15),
+        });
+        await kv.set(env, 'doc_templates', templates);
+        return json(templates[index]);
+      }
+
+      if (method === 'DELETE') {
+        if (!isAdmin(me)) return err('Sin permiso.', 403);
+        templates.splice(index, 1);
+        await kv.set(env, 'doc_templates', templates);
+        return json({ ok: true });
+      }
+    }
+
     if (path === '/api/documentos') {
+      let documents = await kv.get(env, 'documentos') || [];
+
       if (method === 'GET') {
-        const obraId = url.searchParams.get('obraId');
-        let docs = await kv.get(env, 'documentos') || [];
-        if (obraId) docs = docs.filter(d => d.obraId === obraId);
-        if (!isAdmin(me)) docs = docs.filter(d => (me.obras || []).includes(d.obraId));
-        return json(docs);
+        const workId = url.searchParams.get('obraId');
+        if (workId) documents = documents.filter((item) => item.obraId === workId);
+        if (!isAdmin(me)) documents = documents.filter((item) => (me.obras || []).includes(item.obraId));
+        return json(documents);
       }
 
       if (method === 'POST') {
         if (!isAdmin(me)) return err('Sin permiso.', 403);
         const body = await req.json().catch(() => ({}));
-        const doc = { id: uid(), ...body, date: new Date().toISOString(), creadoPor: me.nombre };
-        const docs = await kv.get(env, 'documentos') || [];
-        docs.push(doc);
-        await kv.set(env, 'documentos', docs);
-        return json(doc, 201);
+        if (!body.obraId || !body.templateId) return err('Obra y plantilla obligatorias.');
+        documents = documents.filter((item) => !(item.obraId === body.obraId && item.templateId === body.templateId));
+        const document = {
+          id: uid(),
+          obraId: body.obraId,
+          templateId: body.templateId,
+          templateNombre: body.templateNombre || '',
+          estado: body.estado || 'cargado',
+          detalle: body.detalle || '',
+          date: new Date().toISOString(),
+          creadoPor: me.nombre,
+        };
+        documents.push(document);
+        await kv.set(env, 'documentos', documents);
+        return json(document, 201);
       }
     }
 
     if (path.match(/^\/api\/documentos\/[^/]+$/) && method === 'DELETE') {
       if (!isAdmin(me)) return err('Sin permiso.', 403);
       const id = path.split('/')[3];
-      const docs = await kv.get(env, 'documentos') || [];
-      await kv.set(env, 'documentos', docs.filter(d => d.id !== id));
+      const documents = await kv.get(env, 'documentos') || [];
+      await kv.set(env, 'documentos', documents.filter((item) => item.id !== id));
       return json({ ok: true });
     }
 
