@@ -139,6 +139,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .hero-main{display:grid;gap:12px;margin-top:18px}
 .home-summary{display:grid;gap:12px;margin-top:18px}
 .quick-card{padding:18px}
+.clickable{cursor:pointer}
 .quick-card strong{display:block}
 .quick-card .meta{margin-top:6px}
 .window{margin-top:14px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(6,14,27,.85)}
@@ -193,7 +194,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   <header class="topbar">
     <div><h2>LIBRO DE OBRAS</h2><p id="sess-user">Sesión activa</p><p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p></div>
     <div class="topbar-acts">
-      <button class="soft" onclick="App.openMain('settings')">Configuración</button>
+      <button class="soft admin-only" onclick="App.openMain('settings')">Configuración</button>
       <button class="soft" onclick="Auth.logout()">Salir</button>
     </div>
   </header>
@@ -212,7 +213,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
           <button class="soft feat-card" onclick="App.openMain('documents')">
             <strong>Documentos</strong><span>Checklist, archivos cargados y descargas por obra.</span>
           </button>
-          <button class="soft feat-card" onclick="App.openMain('settings')">
+          <button class="soft feat-card admin-only" onclick="App.openMain('settings')">
             <strong>Configuración</strong><span>Usuarios, sesiones conectadas y avisos automáticos.</span>
           </button>
         </div>
@@ -224,7 +225,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-works" class="view">
       <div class="shead">
         <div class="shead-left">
-          <button class="back" onclick="App.goBack()">←</button>
+          <button class="back" onclick="App.goBack()">&larr;</button>
           <div><h3>Obras</h3><p class="sub" style="margin:0">Acceso directo al libro diario</p></div>
         </div>
         <button id="new-work-btn" class="btn" onclick="openWorkModal()">Nueva obra</button>
@@ -266,20 +267,20 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </div>
       </div>
       <div class="docs-layout">
-        <div class="panel admin-only">
+        <div id="doc-templates-panel" class="panel admin-only">
           <div class="shead mt" style="margin-top:0">
             <div><h4>Requisitos configurados</h4><p class="sub" style="margin:0;font-size:12px">Lista maestra por obra</p></div>
             <button class="btn" onclick="openTplModal()">Nuevo</button>
           </div>
           <div id="tpl-list" class="list" style="margin-top:14px"></div>
         </div>
-        <div class="panel">
+        <div id="doc-works-panel" class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>Obras</h4><p class="sub" style="margin:0;font-size:12px">Selecciona para ver checklist</p></div>
+            <div><h4>Obras</h4><p id="doc-works-sub" class="sub" style="margin:0;font-size:12px">Selecciona para ver checklist</p></div>
           </div>
           <div id="doc-work-list" class="list" style="margin-top:14px"></div>
         </div>
-        <div class="panel">
+        <div id="doc-detail-panel" class="panel">
           <div class="shead mt" style="margin-top:0">
             <div><h4 id="doc-detail-title">Checklist documental</h4>
               <p id="doc-detail-sub" class="sub" style="margin:0;font-size:12px">Selecciona una obra</p></div>
@@ -291,8 +292,19 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       </div>
     </section>
 
+    <section id="view-doc-work" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">â†</button>
+          <div><h3 id="doc-work-title">Documentos de la obra</h3><p id="doc-work-sub" class="sub" style="margin:0">Selecciona una obra</p></div>
+        </div>
+      </div>
+      <div id="doc-work-overdue" class="notice hidden"></div>
+      <div id="doc-work-checklist" class="list" style="margin-top:14px"></div>
+    </section>
+
     <!-- CONFIGURACION -->
-    <section id="view-settings" class="view">
+    <section id="view-settings" class="view admin-only">
       <div class="shead">
         <div class="shead-left">
           <button class="back" onclick="App.goBack()">←</button>
@@ -309,7 +321,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   <nav class="bottom-nav">
     <button class="nav" data-main="works" onclick="App.openMain('works')">Libro de obra</button>
     <button class="nav" data-main="documents" onclick="App.openMain('documents')">Documentos</button>
-    <button class="nav" data-main="settings" onclick="App.openMain('settings')">Configuración</button>
+    <button class="nav admin-only" data-main="settings" onclick="App.openMain('settings')">Configuración</button>
   </nav>
 </section>
 
@@ -611,7 +623,14 @@ function rerenderCurrentView() {
   if (App.curView==='home') renderHome();
   if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
   if (App.curView==='documents') renderDocsHome();
-  if (App.curView==='settings') renderSettings();
+  if (App.curView==='doc-work') {
+    if (D.obras.find(x=>x.id===CUR_DOC_WORK)) renderResidentDocWork(CUR_DOC_WORK);
+    else App.openMain('documents');
+  }
+  if (App.curView==='settings') {
+    if (!isAdmin()) App.openMain('home');
+    else renderSettings();
+  }
   if (App.curView==='workbook') {
     if (D.obras.find(x=>x.id===CUR_WORK)) renderWorkbook();
     else App.openMain('works');
@@ -927,7 +946,10 @@ const Auth = {
     showScreen('app');
     if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
     else if (App.curView==='documents') renderDocsHome();
-    else if (App.curView==='settings') renderSettings();
+    else if (App.curView==='settings') {
+      if (!isAdmin()) App.openMain('home');
+      else renderSettings();
+    }
     else if (App.curView==='workbook' && CUR_WORK) renderWorkbook();
     else App.openMain('home');
   },
@@ -1019,6 +1041,7 @@ function setNav(n) {
 const App = {
   curView: 'home',
   openMain(n) {
+    if (n==='settings' && !isAdmin()) n = 'home';
     VIEW_STACK = []; this.curView = n;
     showView(n); setNav(n);
     if (n==='home') renderHome();
@@ -1032,6 +1055,7 @@ const App = {
     if (['home','works','documents','settings'].includes(p)) setNav(p);
     if (p==='works') renderWorks();
     if (p==='documents') renderDocsHome();
+    if (p==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
     if (p==='settings') renderSettings();
     if (p==='home') renderHome();
   }
@@ -1061,7 +1085,7 @@ function setWhatsAppPref(key, checked) {
 }
 function renderSettings() {
   ensureSettingsView();
-  if (!ME) return;
+  if (!ME || !isAdmin()) return;
   const current = document.getElementById('settings-current-user');
   if (current) {
     current.innerHTML = `<article class="user-card">
@@ -1495,6 +1519,23 @@ function openDocUploadModal(tplId) {
   setDocUploadState(false);
   openModal('modal-doc-upload');
 }
+async function uploadWithTimeout(path, file, metadata, timeoutMs=120000) {
+  const task = Cloud.storage.ref(path).put(file, metadata);
+  let timer = null;
+  try {
+    return await Promise.race([
+      task,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => {
+          try { if (typeof task.cancel === 'function') task.cancel(); } catch (e) {}
+          reject(new Error(`La carga de "${file.name}" tardó demasiado. Revisa tu conexión o las reglas de Firebase Storage.`));
+        }, timeoutMs);
+      })
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 async function saveDocUpload() {
   const tplId = document.getElementById('md-tpl-id').value;
   const files = Array.from(document.getElementById('md-files').files||[]);
@@ -1527,7 +1568,7 @@ async function saveDocUpload() {
       const fileId = uid();
       const cleanName = sanitizeFileName(file.name);
       const path = `documentos/${CUR_DOC_WORK}/${tplId}/${fileId}_${cleanName}`;
-      const task = await Cloud.storage.ref(path).put(file, {
+      const task = await uploadWithTimeout(path, file, {
         contentType: file.type || 'application/octet-stream',
         customMetadata: {
           obraId: CUR_DOC_WORK,
@@ -1555,9 +1596,10 @@ async function saveDocUpload() {
     doc.date = new Date().toISOString();
     doc.creadoPor = ME.nombre;
     doc.files = [...docFiles(doc), ...uploaded];
-    await save(true);
+    save();
     closeModal('modal-doc-upload');
-    renderDocsHome();
+    if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+    else renderDocsHome();
   } catch (e) {
     console.error('Upload error', e);
     setDocUploadState(false, `No se pudo subir el archivo a Firebase Storage.${e?.message ? ` Detalle: ${e.message}` : ''}`);
@@ -1580,8 +1622,9 @@ async function delDocFile(docId, fileId) {
   if (!doc.files.length && !doc.detalle) {
     D.documentos = D.documentos.filter(d=>d.id!==docId);
   }
-  await save(true);
-  renderDocsHome();
+  save();
+  if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+  else renderDocsHome();
 }
 async function delDocFileGroup(id) {
   const doc = D.documentos.find(d=>d.id===id);
@@ -1595,12 +1638,20 @@ async function delDocFileGroup(id) {
     }
   }
   D.documentos = D.documentos.filter(d=>d.id!==id);
-  await save(true);
-  renderDocsHome();
+  save();
+  if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+  else renderDocsHome();
 }
 
 function renderDocsHome() {
+  const tplPanel = document.getElementById('doc-templates-panel');
+  const detailPanel = document.getElementById('doc-detail-panel');
+  const worksSub = document.getElementById('doc-works-sub');
+  if (tplPanel) tplPanel.classList.toggle('hidden', !isAdmin());
+  if (detailPanel) detailPanel.classList.toggle('hidden', !isAdmin());
+  if (worksSub) worksSub.textContent = isAdmin() ? 'Selecciona para ver checklist' : 'Toca una obra para ver y cargar documentos';
   renderTplList(); renderDocWorkList();
+  if (!isAdmin()) return;
   if (CUR_DOC_WORK) renderChecklist(CUR_DOC_WORK, true);
   else {
     document.getElementById('doc-detail-title').textContent = 'Checklist documental';
@@ -1630,6 +1681,16 @@ function renderDocWorkList() {
   const ws = myWorks();
   document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
     const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
+    if (!isAdmin()) {
+      return `<article class="work-card clickable" style="border-radius:22px" onclick="openResidentDocWork('${o.id}')">
+        <div class="ctop"><span class="ccode">OBRA</span>
+          <span class="pill ${miss?'warn':'ok'}">${miss?`${miss} faltantes`:'Completa'}</span>
+        </div>
+        <strong>${esc(o.nombre)}</strong>
+        <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
+        <div class="meta">Toca la obra para ver y cargar documentos.</div>
+      </article>`;
+    }
     return `<article class="work-card" style="border-radius:22px">
       <div class="ctop"><span class="ccode">OBRA</span>
         <span class="pill ${miss?'warn':'ok'}">${miss?`${miss} faltantes`:'Completa'}</span>
@@ -1649,6 +1710,76 @@ function isOverdue(o, t, loaded) {
   const start = new Date(o.inicio); if (isNaN(start)) return false;
   const dl = new Date(start); dl.setDate(dl.getDate()+(t.dias||15));
   return new Date() > dl;
+}
+
+function checklistMarkup(workId, opts={}) {
+  const o = D.obras.find(x=>x.id===workId); if(!o) return null;
+  const overdue = D.templates.filter(t=>{
+    const ld = getDocRecord(workId, t.id);
+    return isOverdue(o, t, hasUploadedFiles(ld));
+  });
+  const html = !D.templates.length
+    ? `<article class="doc-card"><strong>No hay requisitos configurados.</strong></article>`
+    : D.templates.map(t=>{
+      const ld = getDocRecord(workId, t.id);
+      const files = docFiles(ld);
+      const loaded = hasUploadedFiles(ld);
+      const legacy = !!ld && !loaded;
+      const od = isOverdue(o, t, loaded);
+      const pillC = loaded ? 'ok' : od ? 'bad' : 'warn';
+      const pillL = loaded ? `${files.length} archivo${files.length===1?'':'s'}` : legacy ? 'Sin archivo' : od ? 'Vencido' : 'Pendiente';
+      const filesHtml = files.length ? `<div class="doc-files">${files.map(f=>`<div class="doc-file">
+          <div>
+            <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
+            <small>${fmtBytes(f.size)} Â· ${fmtDT(f.uploadedAt)} Â· ${esc(f.uploadedBy||'-')}${f.note?` Â· ${esc(f.note)}`:''}</small>
+          </div>
+          ${opts.allowDeleteFiles?`<button class="soft mini" onclick="delDocFile('${ld.id}','${f.id}')">Quitar</button>`:''}
+        </div>`).join('')}</div>` : '';
+      const actions = [];
+      if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar mÃ¡s':'Subir archivo'}</button>`);
+      if (opts.allowDeleteGroup && ld) actions.push(`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`);
+      if (opts.showReminder) actions.push(`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`);
+      return `<article class="doc-card">
+        <div class="ctop"><strong>${esc(t.nombre)}</strong><span class="pill ${pillC}">${pillL}</span></div>
+        <div class="meta">${esc(t.desc||'')}</div>
+        <div class="meta">Reclamar a los ${t.dias||15} dÃ­as del inicio</div>
+        <div class="meta">${loaded?`Ãšltima carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'AÃºn no fue cargado'}</div>
+        ${actions.length?`<div class="cacts">${actions.join('')}</div>`:''}
+        ${ld?.detalle?`<div class="meta">ObservaciÃ³n: ${esc(ld.detalle)}</div>`:''}
+        ${filesHtml}
+      </article>`;
+    }).join('');
+  return { obra:o, overdue, html };
+}
+
+function openResidentDocWork(workId) {
+  CUR_DOC_WORK = workId;
+  App.openSub('doc-work');
+  renderResidentDocWork(workId);
+}
+
+function renderResidentDocWork(workId=CUR_DOC_WORK) {
+  const data = checklistMarkup(workId, {
+    allowUpload: canUploadDocuments(workId),
+    allowDeleteGroup: false,
+    allowDeleteFiles: false,
+    showReminder: false
+  });
+  if (!data) { App.openMain('documents'); return; }
+  document.getElementById('doc-work-title').textContent = data.obra.nombre;
+  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} Â· ${data.obra.residenteNombre||'Sin residente'}`;
+  const warn = document.getElementById('doc-work-overdue');
+  if (data.overdue.length) {
+    warn.classList.remove('hidden');
+    warn.classList.add('danger');
+    warn.textContent=`Faltan ${data.overdue.length} documentos vencidos o reclamables.`;
+  } else {
+    warn.classList.add('hidden');
+    warn.classList.remove('danger');
+  }
+  const target = document.getElementById('doc-work-checklist');
+  target.innerHTML = data.html;
+  decorateDocFileWindows(target);
 }
 
 function renderChecklist(workId, preserve=false) {
