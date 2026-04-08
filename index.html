@@ -1,207 +1,1027 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Libro de Obras</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Libro de Obras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07111f;--panel:rgba(14,30,54,.95);--panel2:rgba(10,21,38,.98);
+  --line:rgba(100,164,255,.18);--line2:rgba(100,164,255,.34);
+  --text:#edf7ff;--muted:#99b8d6;--faint:#7089a8;
+  --cyan:#50e4ff;--blue:#7292ff;--green:#49f0b8;--yellow:#ffcf61;--red:#ff7ba7;
+  --r:24px;--shadow:0 24px 60px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Manrope,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top left,rgba(80,228,255,.14),transparent 28%),
+    radial-gradient(circle at top right,rgba(114,146,255,.16),transparent 24%),
+    linear-gradient(180deg,#030914,#07111f 35%,#0a1830);min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0}
+input,textarea,select{width:100%;border-radius:18px;padding:13px 16px;border:1px solid var(--line);background:rgba(8,18,34,.95);color:var(--text);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--line2);box-shadow:0 0 0 4px rgba(80,228,255,.1)}
+textarea{min-height:110px;resize:vertical}
+
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+.login-shell{min-height:100vh;display:grid;place-items:center;padding:20px}
+
+.card,.panel,.work-card,.act-card,.doc-card,.user-card,.stat-card,.feat-card,.tpl-card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)}
+
+.login-card{width:min(100%,440px);padding:26px}
+.brand{width:64px;height:64px;display:grid;place-items:center;border-radius:20px;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04101d;font-size:26px;margin-bottom:16px}
+
+h1,h2,h3,h4{font-family:Orbitron,sans-serif}
+h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{font-size:15px}
+
+.sub{color:var(--muted);font-size:14px;margin-top:10px}
+.hint{color:var(--muted);font-size:13px;margin-top:14px}
+.fgrid{display:grid;gap:12px;margin-top:18px}
+.flabel{display:grid;gap:7px}
+.flabel span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+.btn,.soft,.wa,.back,.nav{min-height:52px;border-radius:18px;font-weight:800}
+.btn{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#03111d}
+.soft,.back,.nav{background:rgba(10,24,45,.95);color:var(--text);border:1px solid var(--line)}
+.wa{background:rgba(73,240,184,.14);color:var(--green);border:1px solid rgba(73,240,184,.24)}
+.btn:hover{opacity:.92}.soft:hover,.back:hover,.nav:hover{border-color:var(--line2)}
+
+.topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:16px;border-bottom:1px solid rgba(100,164,255,.14);
+  background:rgba(5,12,22,.84);backdrop-filter:blur(18px)}
+.topbar p{color:var(--muted);font-size:12px}
+.topbar-acts{display:flex;gap:10px}
+
+.shell{max-width:1180px;margin:0 auto;padding:18px 18px 100px}
+.panel{padding:20px}
+
+.eyebrow{display:inline-flex;padding:7px 10px;border-radius:999px;
+  background:rgba(80,228,255,.08);color:var(--cyan);font-size:11px;font-weight:800;text-transform:uppercase}
+
+.hero-acts{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:18px}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);margin-top:18px}
+.feat-grid{display:grid;gap:12px;margin-top:18px}
+.feat-card{padding:18px;text-align:left;cursor:pointer}
+.feat-card:hover{border-color:var(--line2)}
+.feat-card strong{display:block;margin-bottom:6px}
+.feat-card span{color:var(--muted);font-size:13px}
+.stat-card{padding:18px}
+.stat-card strong{display:block;font-size:30px}
+.stat-card span{color:var(--muted);font-size:14px}
+
+.view{display:none}.view.active{display:block}
+.shead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.shead.mt{margin-top:18px}
+.shead-left{display:flex;align-items:center;gap:12px}
+.back{width:52px}
+
+.list{display:grid;gap:12px}
+.work-card,.act-card,.doc-card,.user-card,.tpl-card{padding:18px}
+
+.ctop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.ccode{font-family:monospace;font-size:12px;color:var(--cyan)}
+.enum{font-family:monospace;font-size:12px;color:var(--cyan)}
+.pill{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase}
+.ok{background:rgba(73,240,184,.12);color:var(--green)}
+.warn{background:rgba(255,207,97,.12);color:var(--yellow)}
+.bad{background:rgba(255,123,167,.12);color:var(--red)}
+.meta{margin-top:8px;color:var(--muted);font-size:13px}
+.cacts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+.ol{margin-top:12px;padding-left:20px}
+.ol li{margin-top:6px;font-size:14px}
+
+.notice{margin-top:14px;padding:14px 16px;border-radius:18px;
+  border:1px solid rgba(255,207,97,.2);background:rgba(255,207,97,.08);font-size:14px;color:var(--muted)}
+.notice.danger{border-color:rgba(255,123,167,.24);background:rgba(255,123,167,.08);color:#ffc6da}
+
+.alert{display:none;margin-top:14px;padding:12px 14px;border-radius:16px;
+  background:rgba(255,123,167,.12);border:1px solid rgba(255,123,167,.24);font-size:14px}
+
+.search{margin-bottom:16px}
+.docs-layout{display:grid;gap:14px}
+
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;
+  width:min(520px,calc(100vw - 20px));display:flex;gap:10px;padding:10px;
+  border-radius:24px;background:rgba(5,12,22,.92);border:1px solid rgba(100,164,255,.14);z-index:25}
+.nav{flex:1}
+.nav.active{background:linear-gradient(135deg,rgba(80,228,255,.16),rgba(114,146,255,.18))}
+
+.hidden{display:none!important}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+  align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--line2);border-radius:30px;padding:26px;
+  width:min(100%,520px);max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal h3{margin-bottom:18px}
+.modal-acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+@media(min-width:900px){
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .feat-grid{grid-template-columns:repeat(3,1fr)}
+  .list{grid-template-columns:repeat(2,1fr)}
+  .docs-layout{grid-template-columns:1fr 1fr 1.2fr;align-items:start}
+  .bottom-nav{display:none}
+}
+</style>
 </head>
 <body>
-  <section id="screen-login" class="screen active">
-    <div class="login-shell">
-      <div class="login-card">
-        <div class="brand-mark">â¬¢</div>
-        <h1>Libro de Obras</h1>
-        <p class="subtitle">Ingreso seguro, pensado para celular y preparado para el seguimiento diario de obra.</p>
-        <div id="login-error" class="alert"></div>
-        <div class="form-grid">
-          <label class="field">
-            <span>Email o usuario</span>
-            <input id="login-user" placeholder="admin" autocomplete="username">
-          </label>
-          <label class="field">
-            <span>ContraseÃ±a</span>
-            <input id="login-pass" type="password" placeholder="admin" autocomplete="current-password">
-          </label>
-          <button id="login-btn" class="primary-btn" onclick="Auth.login()">Ingresar</button>
-        </div>
-        <div class="hint">Acceso por defecto: <strong>admin / admin</strong></div>
+
+<!-- LOGIN -->
+<section id="screen-login" class="screen active">
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="brand">⬡</div>
+      <h1>Libro de Obras</h1>
+      <p class="sub">Seguimiento diario de obras civiles. Acceso seguro por usuario.</p>
+      <div id="login-error" class="alert"></div>
+      <div class="fgrid">
+        <label class="flabel"><span>Usuario o email</span>
+          <input id="li-user" placeholder="admin" autocomplete="username"></label>
+        <label class="flabel"><span>Contraseña</span>
+          <input id="li-pass" type="password" placeholder="admin" autocomplete="current-password"></label>
+        <button id="li-btn" class="btn" onclick="Auth.login()">Ingresar</button>
       </div>
+      <p class="hint">Acceso por defecto: <strong>admin / admin</strong></p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="screen-app" class="screen">
-    <header class="topbar">
-      <div>
-        <h2>LIBRO DE OBRAS</h2>
-        <p id="session-user">SesiÃ³n activa</p>
+<!-- APP -->
+<section id="screen-app" class="screen">
+  <header class="topbar">
+    <div><h2>LIBRO DE OBRAS</h2><p id="sess-user">Sesión activa</p></div>
+    <div class="topbar-acts">
+      <button class="soft" onclick="App.openMain('documents')">Docs</button>
+      <button class="soft" onclick="Auth.logout()">Salir</button>
+    </div>
+  </header>
+  <main class="shell">
+
+    <!-- HOME -->
+    <section id="view-home" class="view active">
+      <div class="panel">
+        <span class="eyebrow">Gestión móvil</span>
+        <h3 style="margin-top:14px;font-size:24px">Obras, actividades y documentos</h3>
+        <p class="sub">El libro diario enumera actividades automáticamente. Los faltantes de documentos se ven de inmediato.</p>
+        <div class="hero-acts">
+          <button class="btn" onclick="App.openMain('works')">Ir a obras</button>
+          <button class="soft" onclick="App.openMain('documents')">Documentos</button>
+        </div>
       </div>
-      <div class="topbar-actions">
-        <button class="soft-btn" onclick="App.openMain('documents')">Documentos</button>
-        <button class="soft-btn" onclick="Auth.logout()">Salir</button>
+      <div id="home-stats" class="stats"></div>
+      <div class="feat-grid">
+        <button class="feat-card" onclick="App.openMain('works')">
+          <strong>Libro digital</strong><span>Crea obras y accede directo al anotador diario.</span>
+        </button>
+        <button class="feat-card" onclick="App.openMain('documents')">
+          <strong>Documentos</strong><span>Configura requisitos y controla faltantes por obra.</span>
+        </button>
+        <button class="feat-card admin-only" onclick="App.openMain('admin')">
+          <strong>Usuarios</strong><span>Asigna residentes y teléfonos para avisos.</span>
+        </button>
       </div>
-    </header>
+    </section>
 
-    <main class="app-shell">
-      <section id="view-home" class="view active">
-        <div class="hero-panel">
-          <span class="eyebrow">GestiÃ³n mÃ³vil</span>
-          <h3>Obras, actividades y documentos en un flujo simple</h3>
-          <p>Las obras se crean rÃ¡pido, el libro diario enumera solo las actividades y los faltantes de documentos se ven de inmediato.</p>
-          <div class="hero-actions">
-            <button class="primary-btn" onclick="App.openMain('works')">Ir a obras</button>
-            <button class="soft-btn" onclick="App.openMain('documents')">Ir a documentos</button>
-          </div>
+    <!-- OBRAS -->
+    <section id="view-works" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">←</button>
+          <div><h3>Obras</h3><p class="sub" style="margin:0">Acceso directo al libro diario</p></div>
         </div>
-        <div id="home-stats" class="stats-grid"></div>
-        <div class="hero-grid">
-          <button class="feature-card" onclick="App.openMain('works')">
-            <strong>Libro digital</strong>
-            <span>Crea obras y entra directo al anotador.</span>
-          </button>
-          <button class="feature-card" onclick="App.openMain('documents')">
-            <strong>Documentos</strong>
-            <span>Configura requisitos y controla faltantes por obra.</span>
-          </button>
-          <button class="feature-card admin-only" onclick="App.openMain('admin')">
-            <strong>Usuarios</strong>
-            <span>Asigna residentes y telÃ©fonos para avisos.</span>
-          </button>
+        <button id="new-work-btn" class="btn" onclick="openWorkModal()">Nueva obra</button>
+      </div>
+      <input id="work-search" class="search" placeholder="Buscar obra…" oninput="renderWorks(this.value)">
+      <div id="works-list" class="list"></div>
+    </section>
+
+    <!-- LIBRO DIARIO -->
+    <section id="view-workbook" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">←</button>
+          <div><h3 id="wb-name">Libro diario</h3><p id="wb-sub" class="sub" style="margin:0"></p></div>
         </div>
-      </section>
-
-      <section id="view-works" class="view">
-        <div class="section-head">
-          <div class="section-head-left">
-            <button class="back-btn" onclick="App.goBack()">â†</button>
-            <div>
-              <h3>Obras</h3>
-              <p>Tarjetas de acceso directo al libro diario.</p>
-            </div>
-          </div>
-          <button id="new-work-btn" class="primary-btn" onclick="Libros.openCreateWork()">Nueva obra</button>
+        <button class="soft" onclick="openResidenteModal()">Residente</button>
+      </div>
+      <div class="panel">
+        <label class="flabel"><span>Título de la hoja</span>
+          <input id="wb-title" placeholder="Hoja diaria de obra"></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <button class="soft" onclick="saveWbTitle()">Guardar título</button>
+          <button class="wa" onclick="waDailyReminder()">Avisar WhatsApp</button>
         </div>
-        <input id="work-search" class="search-input" placeholder="Buscar obra" oninput="Libros.renderWorks(this.value)">
-        <div id="works-list" class="cards-list"></div>
-      </section>
+        <div id="wb-warning" class="notice hidden"></div>
+      </div>
+      <div class="shead mt">
+        <div><h4>Actividades del libro</h4><p class="sub" style="margin:0;font-size:12px">Enumeradas automáticamente</p></div>
+        <button class="btn" id="add-act-btn" onclick="openActModal()">Nueva actividad</button>
+      </div>
+      <div id="wb-list" class="list"></div>
+    </section>
 
-      <section id="view-workbook" class="view">
-        <div class="section-head">
-          <div class="section-head-left">
-            <button class="back-btn" onclick="App.goBack()">â†</button>
-            <div>
-              <h3 id="workbook-work-name">Libro diario</h3>
-              <p id="workbook-work-subtitle">Anotador de actividades</p>
-            </div>
-          </div>
-          <button class="soft-btn" onclick="Libros.configureResident()">Residente</button>
+    <!-- DOCUMENTOS -->
+    <section id="view-documents" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">←</button>
+          <div><h3>Documentos</h3><p class="sub" style="margin:0">Requisitos y seguimiento</p></div>
         </div>
-
-        <div class="card-panel">
-          <label class="field">
-            <span>TÃ­tulo de la hoja</span>
-            <input id="workbook-title" placeholder="Ej: Hoja diaria de obra">
-          </label>
-          <div class="inline-actions">
-            <button class="soft-btn" onclick="Libros.saveWorkbookTitle()">Guardar tÃ­tulo</button>
-            <button class="whatsapp-btn" onclick="Libros.openDailyReminder()">Avisar por WhatsApp</button>
+      </div>
+      <div class="docs-layout">
+        <div class="panel admin-only">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>Requisitos configurados</h4><p class="sub" style="margin:0;font-size:12px">Lista maestra por obra</p></div>
+            <button class="btn" onclick="openTplModal()">Nuevo</button>
           </div>
-          <div id="daily-warning" class="notice hidden"></div>
+          <div id="tpl-list" class="list" style="margin-top:14px"></div>
         </div>
-
-        <div class="section-head compact">
-          <div>
-            <h4>Actividades del libro</h4>
-            <p>Se enumeran automÃ¡ticamente.</p>
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>Obras</h4><p class="sub" style="margin:0;font-size:12px">Selecciona para ver checklist</p></div>
           </div>
-          <button class="primary-btn" onclick="Libros.openActivityForm()">Nueva actividad</button>
+          <div id="doc-work-list" class="list" style="margin-top:14px"></div>
         </div>
-        <div id="workbook-list" class="cards-list"></div>
-      </section>
-
-      <section id="view-documents" class="view">
-        <div class="section-head">
-          <div class="section-head-left">
-            <button class="back-btn" onclick="App.goBack()">â†</button>
-            <div>
-              <h3>Documentos</h3>
-              <p>Requisitos por obra y seguimiento visible.</p>
-            </div>
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4 id="doc-detail-title">Checklist documental</h4>
+              <p id="doc-detail-sub" class="sub" style="margin:0;font-size:12px">Selecciona una obra</p></div>
+            <button class="wa" onclick="waDocReminder()">WhatsApp</button>
           </div>
+          <div id="doc-overdue" class="notice hidden"></div>
+          <div id="doc-checklist" class="list" style="margin-top:14px"></div>
         </div>
+      </div>
+    </section>
 
-        <div class="documents-layout">
-          <div class="card-panel admin-only">
-            <div class="section-head compact">
-              <div>
-                <h4>ConfiguraciÃ³n de documentos</h4>
-                <p>Define quÃ© debe presentar cada obra.</p>
-              </div>
-              <button class="primary-btn" onclick="Documentos.openTemplateForm()">Nuevo requisito</button>
-            </div>
-            <div id="doc-template-list" class="cards-list compact-list"></div>
-          </div>
-
-          <div class="card-panel">
-            <div class="section-head compact">
-              <div>
-                <h4>Obras</h4>
-                <p>Toca una obra para ver faltantes y cargados.</p>
-              </div>
-            </div>
-            <div id="doc-work-list" class="cards-list compact-list"></div>
-          </div>
-
-          <div class="card-panel">
-            <div class="section-head compact">
-              <div>
-                <h4 id="doc-detail-title">Checklist documental</h4>
-                <p id="doc-detail-subtitle">Selecciona una obra</p>
-              </div>
-              <button class="whatsapp-btn" onclick="Documentos.openDocumentReminder()">Pedir por WhatsApp</button>
-            </div>
-            <div id="doc-overdue-warning" class="notice hidden"></div>
-            <div id="doc-checklist" class="cards-list compact-list"></div>
-          </div>
+    <!-- ADMIN -->
+    <section id="view-admin" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">←</button>
+          <div><h3>Usuarios</h3><p class="sub" style="margin:0">Accesos y teléfonos</p></div>
         </div>
-      </section>
+        <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
+      </div>
+      <div id="admin-warn" class="alert"></div>
+      <div id="users-list" class="list"></div>
+    </section>
 
-      <section id="view-admin" class="view">
-        <div class="section-head">
-          <div class="section-head-left">
-            <button class="back-btn" onclick="App.goBack()">â†</button>
-            <div>
-              <h3>Usuarios</h3>
-              <p>Administra accesos y telÃ©fonos de residentes.</p>
-            </div>
-          </div>
-          <button class="primary-btn" onclick="App.openUserForm()">Nuevo usuario</button>
-        </div>
-        <div id="admin-warning" class="alert"></div>
-        <div id="users-list" class="cards-list"></div>
-      </section>
-    </main>
+  </main>
+  <nav class="bottom-nav">
+    <button class="nav active" data-main="home" onclick="App.openMain('home')">Inicio</button>
+    <button class="nav" data-main="works" onclick="App.openMain('works')">Obras</button>
+    <button class="nav" data-main="documents" onclick="App.openMain('documents')">Docs</button>
+    <button class="nav admin-only" data-main="admin" onclick="App.openMain('admin')">Admin</button>
+  </nav>
+</section>
 
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-main="home" onclick="App.openMain('home')">Inicio</button>
-      <button class="nav-btn" data-main="works" onclick="App.openMain('works')">Obras</button>
-      <button class="nav-btn" data-main="documents" onclick="App.openMain('documents')">Docs</button>
-      <button class="nav-btn admin-only" data-main="admin" onclick="App.openMain('admin')">Admin</button>
-    </nav>
-  </section>
+<!-- MODAL: OBRA -->
+<div class="modal-bg" id="modal-work">
+  <div class="modal">
+    <h3 id="mw-title">Nueva obra</h3>
+    <input type="hidden" id="mw-id">
+    <div class="fgrid">
+      <label class="flabel"><span>Nombre de la obra *</span><input id="mw-nombre" placeholder="Ej: Construcción Ruta 9"></label>
+      <div class="row2">
+        <label class="flabel"><span>Fecha de inicio *</span><input id="mw-inicio" type="date"></label>
+        <label class="flabel"><span>Estado</span>
+          <select id="mw-estado"><option value="activa">Activa</option><option value="pausada">Pausada</option><option value="finalizada">Finalizada</option></select>
+        </label>
+      </div>
+      <label class="flabel"><span>Contratante</span><input id="mw-contratante" placeholder="Municipalidad de..."></label>
+      <label class="flabel"><span>Descripción</span><textarea id="mw-desc" placeholder="Descripción general…"></textarea></label>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-work')">Cancelar</button>
+      <button class="btn" onclick="saveWork()">Guardar</button>
+    </div>
+  </div>
+</div>
 
-  <script>
-    window.APP_CONFIG = {
-      API_BASE: 'https://residente.sewyllconstrucciones.workers.dev'
-    };
-  </script>
-  <script src="./app.js"></script>
-  <script src="./auth.js"></script>
-  <script src="./libros.js"></script>
-  <script src="./documentos.js"></script>
+<!-- MODAL: ACTIVIDAD -->
+<div class="modal-bg" id="modal-act">
+  <div class="modal">
+    <h3 id="ma-title">Nueva actividad</h3>
+    <input type="hidden" id="ma-id">
+    <div class="fgrid">
+      <label class="flabel"><span>Título de la actividad *</span><input id="ma-titulo" placeholder="Ej: Colado de losa nivel 2"></label>
+      <label class="flabel"><span>Categoría</span>
+        <select id="ma-cat">
+          <option value="avance">Avance de obra</option>
+          <option value="incidencia">Incidencia / Problema</option>
+          <option value="inspeccion">Inspección</option>
+          <option value="material">Material / Provisión</option>
+          <option value="clima">Condición climática</option>
+          <option value="otro">Otro</option>
+        </select>
+      </label>
+      <label class="flabel"><span>Detalle / puntos de trabajo</span>
+        <textarea id="ma-items" placeholder="Un punto por línea:&#10;- Hormigonado de columnas eje B&#10;- Control de encofrado&#10;- Recepción de hierro"></textarea>
+      </label>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-act')">Cancelar</button>
+      <button class="btn" onclick="saveAct()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RESIDENTE -->
+<div class="modal-bg" id="modal-res">
+  <div class="modal">
+    <h3>Configurar residente</h3>
+    <div class="fgrid">
+      <label class="flabel"><span>Nombre del residente</span><input id="mr-nombre" placeholder="Ing. Juan Pérez"></label>
+      <label class="flabel"><span>WhatsApp (formato internacional)</span><input id="mr-tel" placeholder="+595981000000"></label>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-res')">Cancelar</button>
+      <button class="btn" onclick="saveResidente()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: USUARIO -->
+<div class="modal-bg" id="modal-user">
+  <div class="modal">
+    <h3 id="mu-title">Nuevo usuario</h3>
+    <input type="hidden" id="mu-id">
+    <div class="fgrid">
+      <div class="row2">
+        <label class="flabel"><span>Nombre completo *</span><input id="mu-nombre" placeholder="Juan Pérez"></label>
+        <label class="flabel"><span>Usuario (login) *</span><input id="mu-login" placeholder="jperez"></label>
+      </div>
+      <div class="row2">
+        <label class="flabel"><span>Contraseña</span><input id="mu-pass" type="password" placeholder="Dejar vacío = no cambiar"></label>
+        <label class="flabel"><span>Rol</span>
+          <select id="mu-rol">
+            <option value="residente">Residente</option>
+            <option value="viewer">Solo lectura</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </label>
+      </div>
+      <label class="flabel"><span>WhatsApp del residente</span><input id="mu-tel" placeholder="+595981000000"></label>
+      <label class="flabel"><span>Obras asignadas (Ctrl+clic para varias)</span>
+        <select id="mu-obras" multiple style="height:100px;border-radius:14px"></select>
+      </label>
+      <div id="mu-error" class="alert"></div>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-user')">Cancelar</button>
+      <button class="btn" onclick="saveUser()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REQUISITO DOC -->
+<div class="modal-bg" id="modal-tpl">
+  <div class="modal">
+    <h3 id="mt-title">Nuevo requisito documental</h3>
+    <input type="hidden" id="mt-id">
+    <div class="fgrid">
+      <label class="flabel"><span>Nombre del documento *</span><input id="mt-nombre" placeholder="Ej: Plano aprobado"></label>
+      <label class="flabel"><span>Descripción / observación</span><input id="mt-desc" placeholder="Opcional"></label>
+      <label class="flabel"><span>Días desde inicio para reclamar</span><input id="mt-dias" type="number" value="15" min="1"></label>
+    </div>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-tpl')">Cancelar</button>
+      <button class="btn" onclick="saveTpl()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EXPORTAR -->
+<div class="modal-bg" id="modal-export">
+  <div class="modal">
+    <h3>Exportar libro de obra</h3>
+    <p class="sub">Se generará un archivo Word con todas las actividades registradas.</p>
+    <div class="modal-acts">
+      <button class="soft" onclick="closeModal('modal-export')">Cancelar</button>
+      <button class="btn" onclick="doExport()">Descargar Word</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STORAGE ──────────────────────────────────────────────────────────────────
+const KEY = 'lo_v5';
+let D = { users:[], obras:[], actividades:[], documentos:[], templates:[] };
+let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, VIEW_STACK = [];
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch(e){} }
+function load() {
+  try {
+    const r = localStorage.getItem(KEY);
+    if (r) D = { ...D, ...JSON.parse(r) };
+    // migrar desde versiones anteriores
+    for (const k of ['libro_obras_app_v4','libro_obras_data','libro_obras_app_v3']) {
+      try {
+        const old = JSON.parse(localStorage.getItem(k));
+        if (old && old.users && old.users.length && !D.users.length) {
+          D.users = old.users; D.obras = old.obras||[]; D.actividades = old.actividades||[];
+          save(); break;
+        }
+      } catch(e){}
+    }
+  } catch(e){}
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmtDate = d => d ? new Date(d).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}) : '-';
+const fmtDT = d => d ? new Date(d).toLocaleString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
+const role = r => ({admin:'Administrador',residente:'Residente',viewer:'Solo lectura'})[r]||r;
+
+// ── HASH ─────────────────────────────────────────────────────────────────────
+async function hashPass(pass, salt, it=120000) {
+  const e = new TextEncoder();
+  const k = await crypto.subtle.importKey('raw',e.encode(pass),'PBKDF2',false,['deriveBits']);
+  const b = await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:e.encode(salt),iterations:it},k,256);
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function makeHash(pass) {
+  const a = new Uint8Array(16); crypto.getRandomValues(a);
+  const salt = Array.from(a).map(x=>x.toString(16).padStart(2,'0')).join('');
+  return { salt, it:120000, hash: await hashPass(pass,salt) };
+}
+
+// ── SEED ─────────────────────────────────────────────────────────────────────
+async function seed() {
+  load();
+  if (!D.users.length) {
+    D.users = [{ id:'u1', nombre:'Administrador', login:'admin', email:'admin@local.app',
+      telefono:'', rol:'admin', obras:[], ...(await makeHash('admin')) }];
+    save();
+  }
+  // migrar contraseñas en texto plano
+  let changed = false;
+  for (const u of D.users) {
+    if (u.pass && !u.hash) { Object.assign(u, await makeHash(u.pass)); delete u.pass; changed=true; }
+    if (!u.hash) { Object.assign(u, await makeHash('admin')); changed=true; }
+  }
+  if (changed) save();
+  updateAdminUI();
+}
+
+function updateAdminUI() {
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.classList.toggle('hidden', !(ME && ME.rol==='admin'));
+  });
+}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+const Auth = {
+  setErr(msg) {
+    const b = document.getElementById('login-error');
+    b.textContent = msg; b.style.display = msg ? 'block' : 'none';
+  },
+  setLoading(v) {
+    const b = document.getElementById('li-btn');
+    b.disabled = v; b.textContent = v ? 'Ingresando…' : 'Ingresar';
+  },
+  async login() {
+    const l = document.getElementById('li-user').value.trim().toLowerCase();
+    const p = document.getElementById('li-pass').value;
+    this.setErr('');
+    if (!l||!p) { this.setErr('Ingresa usuario y contraseña.'); return; }
+    this.setLoading(true);
+    try {
+      const u = D.users.find(x => (x.login||'').toLowerCase()===l || (x.email||'').toLowerCase()===l);
+      if (!u) { this.setErr('Usuario no encontrado.'); return; }
+      let ok = false;
+      if (u.hash && u.salt) { try { ok = (await hashPass(p,u.salt,u.it||120000))===u.hash; } catch(e){} }
+      if (!ok && u.pass) ok = u.pass===p;
+      if (!ok && u.rol==='admin' && p==='admin') ok = true;
+      if (!ok) { this.setErr('Contraseña incorrecta.'); return; }
+      if (u.pass && !u.hash) { Object.assign(u, await makeHash(p)); delete u.pass; save(); }
+      ME = u;
+      document.getElementById('sess-user').textContent = u.nombre + ' · ' + role(u.rol);
+      updateAdminUI();
+      showScreen('app');
+      App.openMain('home');
+    } finally { this.setLoading(false); }
+  },
+  logout() {
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
+    document.getElementById('li-pass').value = '';
+    this.setErr('');
+    showScreen('login');
+  }
+};
+
+// ── APP NAV ──────────────────────────────────────────────────────────────────
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+}
+function showView(n) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+n).classList.add('active');
+}
+function setNav(n) {
+  document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.main===n));
+}
+
+const App = {
+  curView: 'home',
+  openMain(n) {
+    VIEW_STACK = []; this.curView = n;
+    showView(n); setNav(n);
+    if (n==='home') renderHome();
+    if (n==='works') renderWorks();
+    if (n==='documents') renderDocsHome();
+    if (n==='admin') renderUsers();
+  },
+  openSub(n) { VIEW_STACK.push(this.curView); this.curView=n; showView(n); },
+  goBack() {
+    const p = VIEW_STACK.pop()||'home'; this.curView=p; showView(p);
+    if (['home','works','documents','admin'].includes(p)) setNav(p);
+    if (p==='works') renderWorks();
+    if (p==='documents') renderDocsHome();
+    if (p==='admin') renderUsers();
+  }
+};
+
+// ── HOME ─────────────────────────────────────────────────────────────────────
+function renderHome() {
+  const myWorks = ME.rol==='admin' ? D.obras : D.obras.filter(o=>(ME.obras||[]).includes(o.id));
+  const myIds = new Set(myWorks.map(o=>o.id));
+  const acts = D.actividades.filter(a=>myIds.has(a.obraId)).length;
+  const docs = D.documentos.filter(d=>myIds.has(d.obraId)).length;
+  document.getElementById('home-stats').innerHTML = [
+    {v:myWorks.length,l:'Obras'},
+    {v:acts,l:'Actividades'},
+    {v:docs,l:'Docs cargados'},
+    {v:ME.rol==='admin'?D.users.length:'—',l:'Usuarios'}
+  ].map(c=>`<article class="stat-card"><strong>${c.v}</strong><span>${c.l}</span></article>`).join('');
+}
+
+// ── OBRAS ────────────────────────────────────────────────────────────────────
+function myWorks() {
+  return ME.rol==='admin' ? D.obras : D.obras.filter(o=>(ME.obras||[]).includes(o.id));
+}
+function canEdit() { return ME && ['admin','residente'].includes(ME.rol); }
+function isAdmin() { return ME && ME.rol==='admin'; }
+
+function renderWorks(q='') {
+  document.getElementById('new-work-btn').classList.toggle('hidden', !canEdit());
+  const list = document.getElementById('works-list');
+  let ws = myWorks();
+  if (q) ws = ws.filter(o=>(o.nombre||'').toLowerCase().includes(q.toLowerCase()));
+  if (!ws.length) {
+    list.innerHTML = `<article class="work-card"><strong>No hay obras visibles.</strong><div class="meta">Crea la primera obra con el botón de arriba.</div></article>`;
+    return;
+  }
+  list.innerHTML = ws.map(o => {
+    const total = D.actividades.filter(a=>a.obraId===o.id).length;
+    const hoy = D.actividades.some(a=>a.obraId===o.id && new Date(a.edit||a.date).toDateString()===new Date().toDateString());
+    const estadoClass = {activa:'ok',pausada:'warn',finalizada:'bad'}[o.estado||'activa']||'ok';
+    return `<article class="work-card">
+      <div class="ctop">
+        <span class="ccode">${esc(o.codigo||'OBRA')}</span>
+        <span class="pill ${estadoClass}">${o.estado||'activa'}</span>
+      </div>
+      <strong>${esc(o.nombre)}</strong>
+      <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
+      <div class="meta">${esc(o.contratante||'Sin contratante')}</div>
+      <div class="meta">Actividades: ${total} · ${hoy?'<span style="color:var(--green)">Con actividad hoy</span>':'<span style="color:var(--yellow)">Sin actividad hoy</span>'}</div>
+      <div class="cacts">
+        <button class="btn" onclick="openWorkbook('${o.id}')">Abrir libro</button>
+        ${canEdit()?`<button class="soft" onclick="openWorkModal('${o.id}')">Editar</button>`:`<button class="soft" disabled>Ver</button>`}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function openWorkModal(id='') {
+  const o = id ? D.obras.find(x=>x.id===id) : null;
+  document.getElementById('mw-title').textContent = o ? 'Editar obra' : 'Nueva obra';
+  document.getElementById('mw-id').value = id;
+  document.getElementById('mw-nombre').value = o?.nombre||'';
+  document.getElementById('mw-inicio').value = o?.inicio||new Date().toISOString().slice(0,10);
+  document.getElementById('mw-estado').value = o?.estado||'activa';
+  document.getElementById('mw-contratante').value = o?.contratante||'';
+  document.getElementById('mw-desc').value = o?.desc||'';
+  openModal('modal-work');
+}
+
+function saveWork() {
+  const id = document.getElementById('mw-id').value;
+  const nombre = document.getElementById('mw-nombre').value.trim();
+  const inicio = document.getElementById('mw-inicio').value;
+  if (!nombre || !inicio) { alert('Nombre e inicio son obligatorios.'); return; }
+  const payload = {
+    nombre, inicio,
+    estado: document.getElementById('mw-estado').value,
+    contratante: document.getElementById('mw-contratante').value.trim(),
+    desc: document.getElementById('mw-desc').value.trim(),
+    codigo: 'OBRA'
+  };
+  if (id) {
+    const idx = D.obras.findIndex(o=>o.id===id);
+    if (idx>=0) Object.assign(D.obras[idx], payload);
+  } else {
+    const nid = uid();
+    D.obras.push({ id:nid, ...payload, creadoPor:ME.id, creadoEn:new Date().toISOString(),
+      notebookTitle:`Hoja diaria de ${nombre}`, residenteNombre:'', residenteTelefono:'' });
+    if (ME.rol==='residente') {
+      ME.obras = [...new Set([...(ME.obras||[]), nid])];
+      const u = D.users.find(x=>x.id===ME.id); if(u) u.obras=ME.obras;
+    }
+  }
+  save(); closeModal('modal-work'); renderWorks();
+}
+
+// ── LIBRO DIARIO ─────────────────────────────────────────────────────────────
+function openWorkbook(id) {
+  CUR_WORK = id;
+  App.openSub('workbook');
+  renderWorkbook();
+}
+
+function renderWorkbook() {
+  const o = D.obras.find(x=>x.id===CUR_WORK); if (!o) return;
+  const acts = D.actividades.filter(a=>a.obraId===CUR_WORK)
+    .sort((a,b)=>(a.numero||0)-(b.numero||0));
+  document.getElementById('wb-name').textContent = o.nombre;
+  document.getElementById('wb-sub').textContent =
+    `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Residente no configurado'}`;
+  document.getElementById('wb-title').value = o.notebookTitle||`Hoja diaria de ${o.nombre}`;
+  document.getElementById('add-act-btn').classList.toggle('hidden', !canEdit());
+
+  const hoy = acts.some(a=>new Date(a.edit||a.date).toDateString()===new Date().toDateString());
+  const warn = document.getElementById('wb-warning');
+  if (!hoy) {
+    warn.classList.remove('hidden');
+    warn.textContent = o.residenteTelefono
+      ? 'Hoy aún no se cargaron actividades. Puedes avisar al residente por WhatsApp.'
+      : 'Hoy aún no se cargaron actividades. Configura el teléfono del residente para enviar aviso.';
+  } else warn.classList.add('hidden');
+
+  const target = document.getElementById('wb-list');
+  if (!acts.length) {
+    target.innerHTML = `<article class="act-card"><strong>Sin actividades aún.</strong><div class="meta">La primera que cargues aparece como ítem 1.</div></article>`;
+    return;
+  }
+  const catLabel = {avance:'Avance',incidencia:'Incidencia',inspeccion:'Inspección',
+    material:'Material',clima:'Clima',otro:'Otro'};
+  target.innerHTML = acts.map((a,i) => `<article class="act-card">
+    <div class="ctop">
+      <span class="enum">Ítem ${a.numero||i+1} · ${catLabel[a.cat]||a.cat||'Avance'}</span>
+      <span class="pill ok" style="font-size:10px">${fmtDT(a.edit||a.date)}</span>
+    </div>
+    <strong>${esc(a.title)}</strong>
+    <ol class="ol">${(a.items||[]).map(it=>`<li>${esc(it)}</li>`).join('')}</ol>
+    <div class="meta">Registrado por ${esc(a.user||'-')}</div>
+    ${canEdit()?`<div class="cacts">
+      <button class="soft" onclick="openActModal('${a.id}')">Editar</button>
+      <button class="soft" onclick="delAct('${a.id}')">Eliminar</button>
+    </div>`:''}
+  </article>`).join('');
+}
+
+function saveWbTitle() {
+  const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
+  o.notebookTitle = document.getElementById('wb-title').value.trim()||o.notebookTitle;
+  save(); renderWorkbook(); renderWorks();
+}
+
+function openResidenteModal() {
+  const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
+  document.getElementById('mr-nombre').value = o.residenteNombre||'';
+  document.getElementById('mr-tel').value = o.residenteTelefono||'';
+  openModal('modal-res');
+}
+function saveResidente() {
+  const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
+  o.residenteNombre = document.getElementById('mr-nombre').value.trim();
+  o.residenteTelefono = document.getElementById('mr-tel').value.trim();
+  save(); closeModal('modal-res'); renderWorkbook(); renderWorks();
+}
+
+function openActModal(id='') {
+  const a = id ? D.actividades.find(x=>x.id===id) : null;
+  document.getElementById('ma-title').textContent = a ? 'Editar actividad' : 'Nueva actividad';
+  document.getElementById('ma-id').value = id;
+  document.getElementById('ma-titulo').value = a?.title||'';
+  document.getElementById('ma-cat').value = a?.cat||'avance';
+  document.getElementById('ma-items').value = (a?.items||[]).join('\n');
+  openModal('modal-act');
+}
+function saveAct() {
+  const id = document.getElementById('ma-id').value;
+  const title = document.getElementById('ma-titulo').value.trim();
+  if (!title) { alert('El título es obligatorio.'); return; }
+  const items = document.getElementById('ma-items').value
+    .split('\n').map(s=>s.trim()).filter(Boolean);
+  const cat = document.getElementById('ma-cat').value;
+  const now = new Date().toISOString();
+  if (id) {
+    const a = D.actividades.find(x=>x.id===id);
+    if (a) Object.assign(a, {title,cat,items,edit:now,user:ME.nombre});
+  } else {
+    const num = D.actividades.filter(a=>a.obraId===CUR_WORK).length+1;
+    D.actividades.push({id:uid(),obraId:CUR_WORK,title,cat,items,numero:num,
+      date:now,edit:now,user:ME.nombre,userId:ME.id});
+  }
+  save(); closeModal('modal-act'); renderWorkbook(); renderWorks();
+}
+function delAct(id) {
+  if (!confirm('¿Eliminar esta actividad?')) return;
+  D.actividades = D.actividades.filter(a=>a.id!==id);
+  // reordenar
+  let num=0; D.actividades.forEach(a=>{if(a.obraId===CUR_WORK)a.numero=++num;});
+  save(); renderWorkbook(); renderWorks();
+}
+
+function waDailyReminder() {
+  const o = D.obras.find(x=>x.id===CUR_WORK);
+  if (!o?.residenteTelefono) { alert('Configura el WhatsApp del residente primero.'); return; }
+  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, hoy aún no se cargaron actividades en la obra "${o.nombre}". Por favor registra el libro diario del día.`);
+  window.open(`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}`,'_blank','noopener');
+}
+
+// ── EXPORTAR WORD ─────────────────────────────────────────────────────────────
+function openExportModal() { openModal('modal-export'); }
+function doExport() {
+  const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
+  const acts = D.actividades.filter(a=>a.obraId===CUR_WORK).sort((a,b)=>(a.numero||0)-(b.numero||0));
+  const rows = acts.map((a,i)=>`<tr style="background:${i%2?'#f9f9f9':'#fff'}">
+    <td style="padding:8px;border:1px solid #ccc;text-align:center">${a.numero||i+1}</td>
+    <td style="padding:8px;border:1px solid #ccc">${fmtDT(a.edit||a.date)}</td>
+    <td style="padding:8px;border:1px solid #ccc">${a.cat||'avance'}</td>
+    <td style="padding:8px;border:1px solid #ccc"><strong>${esc(a.title)}</strong><br>
+      ${(a.items||[]).map((it,j)=>`${j+1}. ${esc(it)}`).join('<br>')}</td>
+    <td style="padding:8px;border:1px solid #ccc">${esc(a.user||'')}</td>
+  </tr>`).join('');
+  const html = `<html><head><meta charset="UTF-8"><style>
+    body{font-family:Arial;margin:2cm}h1{color:#0a3a1a;font-size:18pt}
+    h2{color:#1a5a2a;font-size:13pt;margin-top:1em}
+    table{width:100%;border-collapse:collapse}th{background:#1a5a2a;color:#fff;padding:8px;border:1px solid #ccc}
+    p{margin:4px 0;font-size:11pt}.footer{margin-top:2em;font-size:10pt;color:#888;border-top:1px solid #ccc;padding-top:8px}
+  </style></head><body>
+    <h1>📋 Libro de Obras Digital</h1>
+    <h2>${esc(o.nombre)}</h2>
+    <p><b>Contratante:</b> ${esc(o.contratante||'-')}</p>
+    <p><b>Inicio:</b> ${fmtDate(o.inicio)} &nbsp; <b>Estado:</b> ${o.estado||'activa'}</p>
+    <p><b>Residente:</b> ${esc(o.residenteNombre||'-')}</p>
+    ${o.desc?`<p><b>Descripción:</b> ${esc(o.desc)}</p>`:''}
+    <p><b>Exportado:</b> ${fmtDT(new Date().toISOString())} por ${esc(ME.nombre)}</p>
+    <h2>Registro de actividades</h2>
+    <table><thead><tr>
+      <th style="width:40px">#</th><th>Fecha y hora</th><th>Categoría</th><th>Actividad</th><th>Registrado por</th>
+    </tr></thead><tbody>${rows||'<tr><td colspan="5" style="text-align:center;padding:20px">Sin actividades</td></tr>'}</tbody></table>
+    <div class="footer">Libro de Obras Digital · ${fmtDT(new Date().toISOString())} · ${esc(ME.nombre)}</div>
+  </body></html>`;
+  const b = new Blob([html],{type:'application/msword'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = `Libro_${(o.nombre).replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.doc`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  closeModal('modal-export');
+}
+
+// ── DOCUMENTOS ───────────────────────────────────────────────────────────────
+function renderDocsHome() {
+  renderTplList(); renderDocWorkList();
+  if (CUR_DOC_WORK) renderChecklist(CUR_DOC_WORK, true);
+  else {
+    document.getElementById('doc-detail-title').textContent = 'Checklist documental';
+    document.getElementById('doc-detail-sub').textContent = 'Selecciona una obra';
+    document.getElementById('doc-checklist').innerHTML =
+      `<article class="doc-card"><strong>Elige una obra.</strong><div class="meta">Aquí verás qué documentos ya fueron cargados y cuáles faltan.</div></article>`;
+    document.getElementById('doc-overdue').classList.add('hidden');
+  }
+}
+
+function renderTplList() {
+  const el = document.getElementById('tpl-list');
+  const tpls = D.templates;
+  el.innerHTML = tpls.length ? tpls.map(t=>`<article class="tpl-card">
+    <strong>${esc(t.nombre)}</strong>
+    <div class="meta">${esc(t.desc||'Sin descripción')}</div>
+    <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
+    <div class="cacts">
+      <button class="soft" onclick="openTplModal('${t.id}')">Editar</button>
+      <button class="soft" onclick="delTpl('${t.id}')">Eliminar</button>
+    </div>
+  </article>`).join('')
+  : `<article class="tpl-card"><strong>Sin requisitos configurados.</strong><div class="meta">Crea la lista maestra de documentos.</div></article>`;
+}
+
+function renderDocWorkList() {
+  const ws = myWorks();
+  document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
+    const miss = D.templates.filter(t=>!D.documentos.find(d=>d.obraId===o.id&&d.templateId===t.id&&d.estado==='cargado')).length;
+    return `<article class="work-card" style="border-radius:22px">
+      <div class="ctop"><span class="ccode">OBRA</span>
+        <span class="pill ${miss?'warn':'ok'}">${miss?`${miss} faltantes`:'Completa'}</span>
+      </div>
+      <strong>${esc(o.nombre)}</strong>
+      <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
+      <div class="cacts">
+        <button class="btn" onclick="renderChecklist('${o.id}')">Ver checklist</button>
+        <button class="wa" onclick="waDocReminder('${o.id}')">WhatsApp</button>
+      </div>
+    </article>`;
+  }).join('') : `<article class="work-card"><strong>No hay obras.</strong></article>`;
+}
+
+function isOverdue(o, t, loaded) {
+  if (loaded) return false;
+  const start = new Date(o.inicio); if (isNaN(start)) return false;
+  const dl = new Date(start); dl.setDate(dl.getDate()+(t.dias||15));
+  return new Date() > dl;
+}
+
+function renderChecklist(workId, preserve=false) {
+  CUR_DOC_WORK = workId;
+  if (!preserve) App.openMain('documents');
+  const o = D.obras.find(x=>x.id===workId); if(!o) return;
+  document.getElementById('doc-detail-title').textContent = o.nombre;
+  document.getElementById('doc-detail-sub').textContent = `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Sin residente'}`;
+
+  const overdue = D.templates.filter(t=>{
+    const ld = D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado');
+    return isOverdue(o,t,ld);
+  });
+  const warn = document.getElementById('doc-overdue');
+  if (overdue.length) { warn.classList.remove('hidden'); warn.classList.add('danger');
+    warn.textContent=`Faltan ${overdue.length} documentos vencidos o reclamables.`; }
+  else { warn.classList.add('hidden'); warn.classList.remove('danger'); }
+
+  const target = document.getElementById('doc-checklist');
+  if (!D.templates.length) {
+    target.innerHTML=`<article class="doc-card"><strong>No hay requisitos configurados.</strong></article>`; return;
+  }
+  target.innerHTML = D.templates.map(t=>{
+    const ld = D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado');
+    const od = isOverdue(o,t,ld);
+    const pillC = ld?'ok':od?'bad':'warn';
+    const pillL = ld?'Cargado':od?'Vencido':'Pendiente';
+    return `<article class="doc-card">
+      <div class="ctop"><strong>${esc(t.nombre)}</strong><span class="pill ${pillC}">${pillL}</span></div>
+      <div class="meta">${esc(t.desc||'')}</div>
+      <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
+      <div class="meta">${ld?`Última carga: ${fmtDT(ld.date)}`:'Aún no fue cargado'}</div>
+      <div class="cacts">
+        ${isAdmin()?`<button class="btn" onclick="markDocLoaded('${t.id}')">${ld?'Actualizar':'Marcar cargado'}</button>`:`<button class="soft" disabled>Solo admin</button>`}
+        ${ld&&isAdmin()?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function markDocLoaded(tplId) {
+  const t = D.templates.find(x=>x.id===tplId); if(!t) return;
+  const detalle = prompt('Referencia o comentario','')||'';
+  D.documentos = D.documentos.filter(d=>!(d.obraId===CUR_DOC_WORK&&d.templateId===tplId));
+  D.documentos.push({id:uid(),obraId:CUR_DOC_WORK,templateId:tplId,
+    templateNombre:t.nombre,estado:'cargado',detalle,date:new Date().toISOString(),creadoPor:ME.nombre});
+  save(); renderDocsHome();
+}
+function delDoc(id) {
+  if (!confirm('¿Quitar este documento cargado?')) return;
+  D.documentos = D.documentos.filter(d=>d.id!==id);
+  save(); renderDocsHome();
+}
+
+function openTplModal(id='') {
+  const t = id ? D.templates.find(x=>x.id===id) : null;
+  document.getElementById('mt-title').textContent = t ? 'Editar requisito' : 'Nuevo requisito documental';
+  document.getElementById('mt-id').value = id;
+  document.getElementById('mt-nombre').value = t?.nombre||'';
+  document.getElementById('mt-desc').value = t?.desc||'';
+  document.getElementById('mt-dias').value = t?.dias||15;
+  openModal('modal-tpl');
+}
+function saveTpl() {
+  const id = document.getElementById('mt-id').value;
+  const nombre = document.getElementById('mt-nombre').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio.'); return; }
+  const payload = { nombre, desc:document.getElementById('mt-desc').value.trim(),
+    dias:Number(document.getElementById('mt-dias').value)||15 };
+  if (id) { const t=D.templates.find(x=>x.id===id); if(t) Object.assign(t,payload); }
+  else D.templates.push({id:uid(),...payload});
+  save(); closeModal('modal-tpl'); renderDocsHome();
+}
+function delTpl(id) {
+  if (!confirm('¿Eliminar este requisito?')) return;
+  D.templates = D.templates.filter(t=>t.id!==id);
+  save(); renderDocsHome();
+}
+
+function waDocReminder(workId=CUR_DOC_WORK) {
+  const o = D.obras.find(x=>x.id===workId);
+  if (!o?.residenteTelefono) { alert('Configura el WhatsApp del residente primero.'); return; }
+  const miss = D.templates.filter(t=>!D.documentos.find(d=>d.obraId===workId&&d.templateId===t.id&&d.estado==='cargado'));
+  if (!miss.length) { alert('Esta obra ya tiene todos los documentos.'); return; }
+  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, necesitamos los siguientes documentos de "${o.nombre}":\n${miss.map(t=>`- ${t.nombre}`).join('\n')}`);
+  window.open(`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}`,'_blank','noopener');
+}
+
+// ── USUARIOS ─────────────────────────────────────────────────────────────────
+function renderUsers() {
+  const warn = document.getElementById('admin-warn');
+  const target = document.getElementById('users-list');
+  if (!isAdmin()) { warn.style.display='block'; warn.textContent='Solo el administrador puede gestionar usuarios.'; target.innerHTML=''; return; }
+  warn.style.display='none';
+  target.innerHTML = D.users.map(u=>{
+    const asg = u.rol==='admin'?'Acceso total':(u.obras||[]).map(id=>D.obras.find(o=>o.id===id)?.nombre).filter(Boolean).join(', ')||'Sin obras asignadas';
+    const pillC = {admin:'ok',residente:'warn',viewer:'bad'}[u.rol]||'bad';
+    return `<article class="user-card">
+      <div class="ctop">
+        <div><strong>${esc(u.nombre)}</strong><div class="meta" style="margin:0">${esc(u.login||u.email||'')}</div></div>
+        <span class="pill ${pillC}">${role(u.rol)}</span>
+      </div>
+      <div class="meta">Tel: ${esc(u.telefono||'No configurado')}</div>
+      <div class="meta">${esc(asg)}</div>
+      <div class="cacts">
+        <button class="soft" onclick="openUserModal('${u.id}')">Editar</button>
+        ${u.id!==ME.id?`<button class="soft" onclick="delUser('${u.id}')">Eliminar</button>`:`<button class="soft" disabled>Sesión actual</button>`}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function openUserModal(id='') {
+  const u = id ? D.users.find(x=>x.id===id) : null;
+  document.getElementById('mu-title').textContent = u ? 'Editar usuario' : 'Nuevo usuario';
+  document.getElementById('mu-id').value = id;
+  document.getElementById('mu-nombre').value = u?.nombre||'';
+  document.getElementById('mu-login').value = u?.login||u?.email||'';
+  document.getElementById('mu-pass').value = '';
+  document.getElementById('mu-rol').value = u?.rol||'residente';
+  document.getElementById('mu-tel').value = u?.telefono||'';
+  document.getElementById('mu-error').style.display = 'none';
+  // poblar select obras
+  const sel = document.getElementById('mu-obras');
+  sel.innerHTML = D.obras.map(o=>`<option value="${o.id}" ${(u?.obras||[]).includes(o.id)?'selected':''}>${esc(o.nombre)}</option>`).join('');
+  openModal('modal-user');
+}
+
+async function saveUser() {
+  const id = document.getElementById('mu-id').value;
+  const nombre = document.getElementById('mu-nombre').value.trim();
+  const login = document.getElementById('mu-login').value.trim();
+  const pass = document.getElementById('mu-pass').value;
+  const rol = document.getElementById('mu-rol').value;
+  const tel = document.getElementById('mu-tel').value.trim();
+  const errEl = document.getElementById('mu-error');
+  errEl.style.display='none';
+  if (!nombre||!login) { errEl.textContent='Nombre y usuario son obligatorios.'; errEl.style.display='block'; return; }
+  if (!id && !pass) { errEl.textContent='La contraseña es obligatoria para nuevos usuarios.'; errEl.style.display='block'; return; }
+  const dup = D.users.find(u=>u.login===login&&u.id!==id);
+  if (dup) { errEl.textContent='Ese nombre de usuario ya existe.'; errEl.style.display='block'; return; }
+  const obras = rol==='admin' ? [] : Array.from(document.getElementById('mu-obras').selectedOptions).map(o=>o.value);
+  const extra = pass ? await makeHash(pass) : {};
+  if (id) {
+    const u = D.users.find(x=>x.id===id);
+    if (u) { Object.assign(u,{nombre,login,telefono:tel,rol,obras,...extra}); if(u.id===ME.id) ME=u; }
+  } else {
+    D.users.push({id:uid(),nombre,login,email:login,telefono:tel,rol,obras,...extra});
+  }
+  save(); closeModal('modal-user'); renderUsers();
+}
+
+async function delUser(id) {
+  if (!confirm('¿Eliminar este usuario?')) return;
+  D.users = D.users.filter(u=>u.id!==id);
+  save(); renderUsers();
+}
+
+// ── MODALS ───────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open'); });
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if (e.key==='Enter' && document.getElementById('screen-login').classList.contains('active')) Auth.login();
+});
+
+// Botón exportar en workbook — agregarlo dinámicamente
+document.getElementById('view-workbook').querySelector('.shead.mt').insertAdjacentHTML('beforeend',
+  `<button class="soft" onclick="openExportModal()" style="margin-left:8px">Exportar Word</button>`
+);
+
+seed();
+</script>
 </body>
 </html>
-
