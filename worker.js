@@ -1,20 +1,40 @@
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-};
+const ALLOWED_ORIGINS = new Set([
+  'https://balbuenarecaldew-arch.github.io',
+  'http://localhost:8000',
+  'http://127.0.0.1:8000',
+]);
+
+function corsHeaders(req) {
+  const origin = req.headers.get('Origin') || '';
+  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://balbuenarecaldew-arch.github.io';
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+    Vary: 'Origin',
+  };
+}
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-function json(data, status = 200) {
+function json(reqOrData, dataOrStatus = 200, status = 200) {
+  const hasRequest = reqOrData && typeof reqOrData === 'object' && 'headers' in reqOrData && typeof reqOrData.headers?.get === 'function';
+  const req = hasRequest ? reqOrData : { headers: new Headers({ Origin: 'https://balbuenarecaldew-arch.github.io' }) };
+  const data = hasRequest ? dataOrStatus : reqOrData;
+  const finalStatus = hasRequest ? status : dataOrStatus;
   return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
+    status: finalStatus,
+    headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
-function err(message, status = 400) {
-  return json({ error: message }, status);
+function err(reqOrMessage, messageOrStatus = 400, status = 400) {
+  const hasRequest = reqOrMessage && typeof reqOrMessage === 'object' && 'headers' in reqOrMessage && typeof reqOrMessage.headers?.get === 'function';
+  if (hasRequest) {
+    return json(reqOrMessage, { error: messageOrStatus }, status);
+  }
+  return json({ error: reqOrMessage }, messageOrStatus);
 }
 
 function genToken() {
