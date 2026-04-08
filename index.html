@@ -245,9 +245,10 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       </div>
       <div class="panel">
         <div id="wb-user-line" class="meta">Cargando datos de la obra…</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px">
           <button class="soft" onclick="openActModal()">Cargar actividad</button>
-          <button class="wa" onclick="waDailyReminder()">Avisar WhatsApp</button>
+          <button id="wb-wa-btn" class="wa admin-only" onclick="waDailyReminder()">Avisar WhatsApp</button>
+          <button id="wb-copy-btn" class="soft admin-only" onclick="copyReminder('daily', CUR_WORK)">Copiar aviso</button>
         </div>
         <div id="wb-warning" class="notice hidden"></div>
       </div>
@@ -488,7 +489,32 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <script>
 // ── STORAGE ──────────────────────────────────────────────────────────────────
 const KEY = 'lo_v5';
-const emptyData = () => ({ users:[], obras:[], actividades:[], documentos:[], templates:[] });
+function defaultReminderTemplates() {
+  return {
+    daily: 'Hola {residente}, aun no se cargaron las actividades diarias de la obra "{obra}" correspondientes a {fecha}. Por favor registra el libro diario.',
+    docs: 'Hola {residente}, faltan cargar estos documentos de la obra "{obra}":\n{documentos}'
+  };
+}
+function normalizeReminderTemplates(raw) {
+  const base = defaultReminderTemplates();
+  const src = raw && typeof raw === 'object' ? raw : {};
+  return {
+    daily: String(src.daily || base.daily),
+    docs: String(src.docs || base.docs)
+  };
+}
+function defaultAppSettings() {
+  return {
+    reminderTemplates: defaultReminderTemplates()
+  };
+}
+function normalizeAppSettings(raw) {
+  const src = raw && typeof raw === 'object' ? raw : {};
+  return {
+    reminderTemplates: normalizeReminderTemplates(src.reminderTemplates || src.templates || {})
+  };
+}
+const emptyData = () => ({ users:[], obras:[], actividades:[], documentos:[], templates:[], settings:defaultAppSettings() });
 let D = emptyData();
 let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, VIEW_STACK = [];
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
@@ -538,7 +564,8 @@ function normalizeData(raw) {
     obras: Array.isArray(raw.obras) ? raw.obras : [],
     actividades: Array.isArray(raw.actividades) ? raw.actividades : [],
     documentos: Array.isArray(raw.documentos) ? raw.documentos : [],
-    templates: Array.isArray(raw.templates) ? raw.templates : []
+    templates: Array.isArray(raw.templates) ? raw.templates : [],
+    settings: normalizeAppSettings(raw.settings)
   };
 }
 function setSyncStatus(msg, tone='warn') {
@@ -729,6 +756,10 @@ function activeSessions() {
   const cutoff = Date.now() - SESSION_TTL_MS;
   return Presence.sessions.filter(s => tsMillis(s.lastSeen) >= cutoff)
     .sort((a,b) => tsMillis(b.lastSeen) - tsMillis(a.lastSeen));
+}
+function appSettings() {
+  D.settings = normalizeAppSettings(D.settings);
+  return D.settings;
 }
 
 // ── HASH ─────────────────────────────────────────────────────────────────────
@@ -1134,11 +1165,104 @@ function renderSettings() {
       </article>
       <article class="notice session-note">WhatsApp no permite envío silencioso desde esta página. La automatización deja el mensaje listo y abre la conversación cuando el navegador lo permite.</article>`;
   }
+  if (wa) {
+    wa.insertAdjacentHTML('beforeend', `
+      <article class="toggle-card">
+        <div class="ctop">
+          <div>
+            <strong>Mensajes programados</strong>
+            <div class="meta">Escribe el texto base para los avisos automaticos o manuales.</div>
+          </div>
+          <div class="meta">Variables: {residente}, {obra}, {fecha}, {documentos}</div>
+        </div>
+        <label class="flabel"><span>Mensaje para actividad diaria pendiente</span>
+          <textarea id="settings-msg-daily" placeholder="Hola {residente}, falta cargar la actividad diaria de {obra}.">${esc(reminderTemplate('daily'))}</textarea>
+        </label>
+        <label class="flabel"><span>Mensaje para documentos pendientes</span>
+          <textarea id="settings-msg-docs" placeholder="Hola {residente}, faltan estos documentos en {obra}:&#10;{documentos}">${esc(reminderTemplate('docs'))}</textarea>
+        </label>
+        <div class="cacts">
+          <button class="btn" onclick="saveReminderTemplates()">Guardar mensajes</button>
+          <button class="soft" onclick="resetReminderTemplates()">Restablecer</button>
+        </div>
+      </article>
+      <article class="toggle-card">
+        <div class="ctop">
+          <div>
+            <strong>Centro rapido de avisos</strong>
+            <div class="meta">Otra opcion practica: copia el texto y pegalo por WhatsApp, SMS, correo o la app que uses.</div>
+          </div>
+        </div>
+        <div id="settings-reminders" class="list" style="margin-top:14px"></div>
+      </article>`);
+  }
+  renderReminderCenter();
   renderUsers();
   updateAdminUI();
 }
 
 // ── OBRAS ────────────────────────────────────────────────────────────────────
+function saveReminderTemplates() {
+  if (!isAdmin()) return;
+  const settings = appSettings();
+  const base = defaultReminderTemplates();
+  settings.reminderTemplates.daily = (document.getElementById('settings-msg-daily')?.value || '').trim() || base.daily;
+  settings.reminderTemplates.docs = (document.getElementById('settings-msg-docs')?.value || '').trim() || base.docs;
+  save(true);
+  renderSettings();
+  alert('Mensajes guardados.');
+}
+function resetReminderTemplates() {
+  if (!isAdmin()) return;
+  const settings = appSettings();
+  settings.reminderTemplates = defaultReminderTemplates();
+  save(true);
+  renderSettings();
+  alert('Mensajes restablecidos.');
+}
+function renderReminderCenter() {
+  const target = document.getElementById('settings-reminders');
+  if (!target) return;
+  const queue = reminderQueue();
+  if (!queue.length) {
+    target.innerHTML = `<article class="user-card"><strong>No hay avisos pendientes.</strong><div class="meta">Hoy no se detectan faltantes de libro diario ni de documentos.</div></article>`;
+    return;
+  }
+  target.innerHTML = queue.map(item => {
+    const phoneReady = !!String(item.obra.residenteTelefono || '').replace(/\D/g,'');
+    const actions = [];
+    if (item.missingDaily) {
+      actions.push(`
+        <div class="meta" style="margin-top:10px"><strong>Actividad diaria pendiente.</strong></div>
+        <div class="cacts">
+          <button class="wa" ${phoneReady?'':'disabled'} onclick="openWhatsAppReminder('daily','${item.obra.id}')">WhatsApp</button>
+          <button class="soft" onclick="copyReminder('daily','${item.obra.id}')">Copiar aviso</button>
+        </div>`);
+    }
+    if (item.missingDocs.length) {
+      actions.push(`
+        <div class="meta" style="margin-top:10px"><strong>Documentos pendientes: ${item.missingDocs.length}</strong></div>
+        <div class="meta">${item.missingDocs.map(doc => esc(doc.nombre)).join(' · ')}</div>
+        <div class="cacts">
+          <button class="wa" ${phoneReady?'':'disabled'} onclick="openWhatsAppReminder('documents','${item.obra.id}')">WhatsApp</button>
+          <button class="soft" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>
+        </div>`);
+    }
+    return `<article class="user-card">
+      <div class="ctop">
+        <div><strong>${esc(item.obra.nombre)}</strong><div class="meta" style="margin:0">${esc(item.obra.residenteNombre || 'Sin residente asignado')}</div></div>
+        <span class="pill ${phoneReady?'ok':'warn'}">${phoneReady?'WhatsApp listo':'Sin telefono'}</span>
+      </div>
+      <div class="cacts">
+        <button class="soft" onclick="openWorkbook('${item.obra.id}')">Abrir libro</button>
+        <button class="soft" onclick="renderChecklist('${item.obra.id}')">Abrir documentos</button>
+      </div>
+      ${actions.join('')}
+      ${phoneReady ? '' : `<div class="notice">Puedes usar "Copiar aviso" mientras configuras el telefono del residente.</div>`}
+    </article>`;
+  }).join('');
+}
+
 function myWorks() {
   if (!ME) return [];
   if (ME.rol==='admin') return D.obras;
@@ -1325,24 +1449,80 @@ function delAct(id) {
   let num=0; D.actividades.forEach(a=>{if(a.obraId===CUR_WORK)a.numero=++num;});
   save(); renderWorkbook(); renderWorks();
 }
+function reminderTemplate(kind) {
+  return appSettings().reminderTemplates[kind] || defaultReminderTemplates()[kind];
+}
+function fillReminderTemplate(template, vars) {
+  return String(template || '').replace(/\{([a-z_]+)\}/gi, (_, key) => {
+    const value = vars[key];
+    return value===undefined || value===null ? '' : String(value);
+  }).replace(/\n{3,}/g, '\n\n').trim();
+}
+async function copyText(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e) {}
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly','readonly');
+  area.style.position = 'fixed';
+  area.style.left = '-9999px';
+  document.body.appendChild(area);
+  area.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(area);
+  return ok;
+}
+async function copyReminder(kind, workId) {
+  const data = kind==='daily' ? buildDailyWhatsApp(workId) : buildDocWhatsApp(workId);
+  if (data.error) { alert(data.error); return false; }
+  const ok = await copyText(data.message);
+  alert(ok ? 'Mensaje copiado. Puedes pegarlo en WhatsApp, SMS o correo.' : 'No se pudo copiar el mensaje.');
+  return ok;
+}
+function reminderQueue() {
+  return D.obras.map(o => {
+    const actsToday = D.actividades.some(a=>a.obraId===o.id && new Date(a.edit||a.date).toDateString()===new Date().toDateString());
+    const missingDocs = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id)));
+    return { obra:o, missingDaily: !actsToday, missingDocs };
+  }).filter(x => x.missingDaily || x.missingDocs.length);
+}
 function buildDailyWhatsApp(workId=CUR_WORK) {
   const o = D.obras.find(x=>x.id===workId);
-  if (!o?.residenteTelefono) return { error:'Configura el WhatsApp del residente primero.' };
-  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, hoy aún no se cargaron actividades en la obra "${o.nombre}". Por favor registra el libro diario del día.`);
-  return { url:`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}` };
+  if (!o) return { error:'No se encontro la obra.' };
+  const message = fillReminderTemplate(reminderTemplate('daily'), {
+    residente: o.residenteNombre || 'residente',
+    obra: o.nombre || '',
+    fecha: fmtDate(new Date().toISOString()),
+    documentos: ''
+  });
+  return { message, url:String(o.residenteTelefono || '').replace(/\D/g,'') ? `https://wa.me/${String(o.residenteTelefono || '').replace(/\D/g,'')}?text=${encodeURIComponent(message)}` : '' };
 }
 function buildDocWhatsApp(workId=CUR_DOC_WORK) {
   const o = D.obras.find(x=>x.id===workId);
-  if (!o?.residenteTelefono) return { error:'Configura el WhatsApp del residente primero.' };
+  if (!o) return { error:'No se encontro la obra.' };
   const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(workId, t.id)));
   if (!miss.length) return { error:'Esta obra ya tiene todos los documentos.' };
-  const msg = encodeURIComponent(`Hola ${o.residenteNombre||''}, necesitamos los siguientes documentos de "${o.nombre}":\n${miss.map(t=>`- ${t.nombre}`).join('\n')}`);
-  return { url:`https://wa.me/${o.residenteTelefono.replace(/\D/g,'')}?text=${msg}` };
+  const message = fillReminderTemplate(reminderTemplate('docs'), {
+    residente: o.residenteNombre || 'residente',
+    obra: o.nombre || '',
+    fecha: fmtDate(new Date().toISOString()),
+    documentos: miss.map(t=>`- ${t.nombre}`).join('\n')
+  });
+  return { message, url:String(o.residenteTelefono || '').replace(/\D/g,'') ? `https://wa.me/${String(o.residenteTelefono || '').replace(/\D/g,'')}?text=${encodeURIComponent(message)}` : '' };
 }
 function openWhatsAppReminder(kind, workId, opts={}) {
   const data = kind==='daily' ? buildDailyWhatsApp(workId) : buildDocWhatsApp(workId);
   if (data.error) {
     if (!opts.silent) alert(data.error);
+    return false;
+  }
+  if (!data.url) {
+    if (!opts.silent) alert('Configura el telefono del residente para abrir WhatsApp. Mientras tanto puedes usar "Copiar aviso".');
     return false;
   }
   const opened = window.open(data.url,'_blank','noopener');
