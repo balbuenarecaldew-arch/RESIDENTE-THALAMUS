@@ -34,8 +34,17 @@ textarea{min-height:110px;resize:vertical}
   border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)}
 
 .login-card{width:min(100%,440px);padding:26px}
-.brand{width:64px;height:64px;display:grid;place-items:center;border-radius:20px;
-  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04101d;font-size:26px;margin-bottom:16px}
+.brand{
+  width:82px;height:82px;display:grid;place-items:center;padding:12px;margin-bottom:16px;border-radius:24px;
+  background:
+    radial-gradient(circle at 24% 20%,rgba(80,228,255,.24),transparent 34%),
+    radial-gradient(circle at 78% 80%,rgba(73,240,184,.18),transparent 30%),
+    linear-gradient(145deg,rgba(13,30,54,.98),rgba(4,12,24,.98));
+  border:1px solid rgba(80,228,255,.28);
+  box-shadow:0 22px 44px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05)}
+.brand-svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 12px rgba(80,228,255,.16))}
+.brand-sm{width:48px;height:48px;padding:7px;margin-bottom:0;border-radius:16px;box-shadow:0 14px 28px rgba(0,0,0,.28)}
+.login-card>.brand:not(.brand-tech){display:none}
 
 h1,h2,h3,h4{font-family:Orbitron,sans-serif}
 h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{font-size:15px}
@@ -58,6 +67,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   background:rgba(5,12,22,.84);backdrop-filter:blur(18px)}
 .topbar p{color:var(--muted);font-size:12px}
 .topbar-acts{display:flex;gap:10px}
+.topbar-brand{display:flex;align-items:center;gap:12px}
+.topbar-copy{display:grid;gap:4px}
 
 .shell{max-width:1180px;margin:0 auto;padding:18px 18px 100px}
 .panel{padding:20px}
@@ -197,6 +208,24 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <section id="screen-login" class="screen active">
   <div class="login-shell">
     <div class="login-card">
+      <div class="brand brand-tech" aria-hidden="true">
+        <svg class="brand-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="23" y="22" width="74" height="76" rx="24" stroke="var(--line2)" stroke-width="2"/>
+          <path d="M42 31H73L85 43V80C85 86.627 79.627 92 73 92H42C35.373 92 30 86.627 30 80V43C30 36.373 35.373 31 42 31Z" fill="rgba(7,17,31,.36)" stroke="var(--cyan)" stroke-width="5"/>
+          <path d="M73 31V43H85" stroke="var(--blue)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M44 54H71" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M44 67H71" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M44 80H60" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M30 58H18" stroke="var(--cyan)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="14" cy="58" r="5" fill="var(--cyan)"/>
+          <path d="M90 46H102" stroke="var(--blue)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="106" cy="46" r="5" fill="var(--blue)"/>
+          <path d="M90 76H102" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="106" cy="76" r="5" fill="var(--green)"/>
+          <path d="M60 92V104" stroke="var(--yellow)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="60" cy="108" r="5" fill="var(--yellow)"/>
+        </svg>
+      </div>
       <div class="brand">â¬¡</div>
       <h1>ASISTENTE DEL RESIDENTE</h1>
       <p class="sub">Seguimiento diario de obras civiles. Acceso seguro por usuario.</p>
@@ -217,7 +246,31 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <!-- APP -->
 <section id="screen-app" class="screen">
   <header class="topbar">
-    <div><h2>TU ASISTENTE</h2><p id="sess-user">Sesi&oacute;n activa</p><p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p></div>
+    <div class="topbar-brand">
+      <div class="brand brand-sm" aria-hidden="true">
+        <svg class="brand-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="23" y="22" width="74" height="76" rx="24" stroke="var(--line2)" stroke-width="2"/>
+          <path d="M42 31H73L85 43V80C85 86.627 79.627 92 73 92H42C35.373 92 30 86.627 30 80V43C30 36.373 35.373 31 42 31Z" fill="rgba(7,17,31,.36)" stroke="var(--cyan)" stroke-width="5"/>
+          <path d="M73 31V43H85" stroke="var(--blue)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M44 54H71" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M44 67H71" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M44 80H60" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M30 58H18" stroke="var(--cyan)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="14" cy="58" r="5" fill="var(--cyan)"/>
+          <path d="M90 46H102" stroke="var(--blue)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="106" cy="46" r="5" fill="var(--blue)"/>
+          <path d="M90 76H102" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="106" cy="76" r="5" fill="var(--green)"/>
+          <path d="M60 92V104" stroke="var(--yellow)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="60" cy="108" r="5" fill="var(--yellow)"/>
+        </svg>
+      </div>
+      <div class="topbar-copy">
+        <h2>TU ASISTENTE</h2>
+        <p id="sess-user">Sesi&oacute;n activa</p>
+        <p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p>
+      </div>
+    </div>
     <div class="topbar-acts">
       <button class="soft admin-only" onclick="App.openMain('settings')">Configuraci&oacute;n</button>
       <button class="soft" onclick="Auth.logout()">Salir</button>
@@ -255,7 +308,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </div>
         <button id="new-work-btn" class="btn" onclick="openWorkModal()">Nueva obra</button>
       </div>
-      <input id="work-search" class="search" placeholder="Buscar obraâ€¦" oninput="renderWorks(this.value)">
+      <input id="work-search" class="search" placeholder="Buscar obra" oninput="renderWorks(this.value)">
       <div id="works-list" class="list"></div>
     </section>
 
@@ -2490,4 +2543,3 @@ seed();
 </script>
 </body>
 </html>
-
