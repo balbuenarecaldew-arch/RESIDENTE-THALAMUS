@@ -292,7 +292,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
             <strong>Documentos</strong><span>REVISAR, archivos cargados y descargas por obra.</span>
           </button>
           <button class="soft feat-card admin-only" onclick="App.openMain('settings')">
-            <strong>Configuraci&oacute;n</strong><span>Usuarios, sesiones conectadas y avisos autom&aacute;ticos.</span>
+            <strong>Configuraci&oacute;n</strong><span>Usuarios, sesiones conectadas y avisos.</span>
           </button>
         </div>
       </div>
@@ -963,7 +963,7 @@ function ensureSettingsView() {
         </div>
         <div class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y apertura autom&aacute;tica</p></div>
+            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y acceso r&aacute;pido</p></div>
           </div>
           <div id="settings-wa" class="list" style="margin-top:14px"></div>
         </div>
@@ -1302,24 +1302,10 @@ function renderSettings() {
   if (wa) {
     wa.innerHTML = `
       <article class="toggle-card">
-        <div class="toggle-row">
-          <div>
-            <strong>Avisos autom&aacute;ticos del libro</strong>
-            <div class="meta">Abre WhatsApp autom&aacute;ticamente cuando una obra seleccionada no tenga actividad cargada hoy.</div>
-          </div>
-          <input type="checkbox" ${Prefs.autoDailyWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDailyWhatsApp', this.checked)">
-        </div>
-      </article>
-      <article class="toggle-card">
-        <div class="toggle-row">
-          <div>
-            <strong>Avisos autom&aacute;ticos de documentos</strong>
-            <div class="meta">Abre WhatsApp autom&aacute;ticamente cuando falten documentos en la obra seleccionada.</div>
-          </div>
-          <input type="checkbox" ${Prefs.autoDocWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDocWhatsApp', this.checked)">
-        </div>
-      </article>
-      <article class="notice session-note">WhatsApp no permite env&iacute;o silencioso desde esta p&aacute;gina. La automatizaci&oacute;n deja el mensaje listo y abre la conversaci&oacute;n cuando el navegador lo permite.</article>`;
+        <strong>WhatsApp manual y seguro</strong>
+        <div class="meta">Para evitar aperturas inesperadas, WhatsApp se abre solo cuando tocas su bot&oacute;n.</div>
+        <div class="meta">Los mensajes programados y el centro de avisos siguen disponibles para copiar o abrir el chat correcto.</div>
+      </article>`;
   }
   if (wa) {
     wa.insertAdjacentHTML('beforeend', `
@@ -1327,7 +1313,7 @@ function renderSettings() {
         <div class="ctop">
           <div>
             <strong>Mensajes programados</strong>
-            <div class="meta">Escribe el texto base para los avisos autom&aacute;ticos o manuales.</div>
+            <div class="meta">Escribe el texto base para los avisos manuales.</div>
           </div>
           <div class="meta">Variables: {residente}, {obra}, {fecha}, {documentos}</div>
         </div>
@@ -1709,8 +1695,8 @@ function openWhatsAppReminder(kind, workId, opts={}) {
   return true;
 }
 function maybeOpenWhatsApp(kind, workId) {
-  if (!workId || reminderTriggered(kind, workId)) return false;
-  return openWhatsAppReminder(kind, workId, { automatic:true, silent:true });
+  // Evitamos aperturas autom&aacute;ticas porque interfer&iacute;an con botones de navegaci&oacute;n como "Abrir libro".
+  return false;
 }
 function waDailyReminder() {
   openWhatsAppReminder('daily', CUR_WORK);
