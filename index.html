@@ -485,7 +485,6 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
 // ── STORAGE ──────────────────────────────────────────────────────────────────
 const KEY = 'lo_v5';
@@ -525,6 +524,11 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   messagingSenderId: '1030977737903',
   appId: '1:1030977737903:web:e19649400b1a99c0f0f05a'
 };
+const SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
+  url: 'https://hqnahfvvhcqoktawhvnz.supabase.co',
+  key: 'sb_publishable_dRKDwxqlJ6RpNSDyXuyVow_2xjqy-Vd',
+  bucket: 'RESIDENTE'
+};
 const ADMIN_EMAIL = 'sewyllconstrucciones@gmail.com';
 const CLOUD_COLLECTION = 'libro_obras';
 const CLOUD_DOCUMENT = 'shared';
@@ -551,11 +555,31 @@ const Presence = {
   heartbeat: null,
   sessions: []
 };
+const FileStore = {
+  provider: 'supabase',
+  ready: false
+};
 const defaultPrefs = () => ({
   autoDailyWhatsApp: false,
   autoDocWhatsApp: false
 });
 let Prefs = defaultPrefs();
+
+function initFileStore() {
+  FileStore.ready = !!(SUPABASE_CONFIG.url && SUPABASE_CONFIG.key && SUPABASE_CONFIG.bucket);
+}
+function storageObjectUrl(path, isPublic=true) {
+  const safePath = String(path || '').split('/').map(part => encodeURIComponent(part)).join('/');
+  const bucket = encodeURIComponent(SUPABASE_CONFIG.bucket || '');
+  return `${SUPABASE_CONFIG.url}/storage/v1/object/${isPublic ? 'public/' : ''}${bucket}/${safePath}`;
+}
+function storageHeaders(extra={}) {
+  return Object.assign({
+    apikey: SUPABASE_CONFIG.key,
+    Authorization: `Bearer ${SUPABASE_CONFIG.key}`
+  }, extra);
+}
+initFileStore();
 
 function normalizeData(raw) {
   if (!raw || typeof raw !== 'object') return emptyData();
@@ -676,7 +700,7 @@ async function initCloud() {
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
     Cloud.app = app;
     Cloud.docRef = app.firestore().collection(CLOUD_COLLECTION).doc(CLOUD_DOCUMENT);
-    Cloud.storage = firebase.storage ? app.storage() : null;
+    Cloud.storage = null;
     const snap = await Cloud.docRef.get();
     if (snap.exists && snap.data()?.payload) {
       D = normalizeData(snap.data().payload);
@@ -1671,7 +1695,8 @@ function decorateDocFileWindows(target) {
   });
 }
 function hasStorageReady() {
-  return !!(Cloud.storage && window.firebase && firebase.storage);
+  if (!FileStore.ready) initFileStore();
+  return !!(FileStore.ready && SUPABASE_CONFIG.url && SUPABASE_CONFIG.key && SUPABASE_CONFIG.bucket);
 }
 function setDocUploadState(loading, msg='') {
   const btn = document.getElementById('md-save-btn');
@@ -1688,7 +1713,7 @@ function setDocUploadState(loading, msg='') {
 function openDocUploadModal(tplId) {
   if (!CUR_DOC_WORK) { alert('Selecciona una obra primero.'); return; }
   if (!canUploadDocuments(CUR_DOC_WORK)) { alert('Tu perfil no puede cargar documentos en esta obra.'); return; }
-  if (!hasStorageReady()) { alert('Firebase Storage no está disponible todavía.'); return; }
+  if (!hasStorageReady()) { alert('Supabase Storage no está disponible todavía.'); return; }
   const tpl = D.templates.find(x=>x.id===tplId);
   document.getElementById('md-title').textContent = `Subir archivos${tpl ? `: ${tpl.nombre}` : ''}`;
   document.getElementById('md-tpl-id').value = tplId;
@@ -1700,20 +1725,47 @@ function openDocUploadModal(tplId) {
   openModal('modal-doc-upload');
 }
 async function uploadWithTimeout(path, file, metadata, timeoutMs=120000) {
-  const task = Cloud.storage.ref(path).put(file, metadata);
+  const controller = new AbortController();
   let timer = null;
   try {
-    return await Promise.race([
-      task,
-      new Promise((_, reject) => {
-        timer = setTimeout(() => {
-          try { if (typeof task.cancel === 'function') task.cancel(); } catch (e) {}
-          reject(new Error(`La carga de "${file.name}" tardó demasiado. Revisa tu conexión o las reglas de Firebase Storage.`));
-        }, timeoutMs);
-      })
-    ]);
+    timer = setTimeout(() => controller.abort(), timeoutMs);
+    const res = await fetch(storageObjectUrl(path, false), {
+      method: 'POST',
+      headers: storageHeaders({
+        'x-upsert': 'false',
+        'content-type': metadata?.contentType || file.type || 'application/octet-stream',
+        'cache-control': metadata?.cacheControl || '3600'
+      }),
+      body: file,
+      signal: controller.signal
+    });
+    const payload = await res.json().catch(() => null);
+    if (!res.ok) {
+      throw new Error(payload?.message || payload?.error || `Error ${res.status} al subir el archivo.`);
+    }
+    return {
+      path,
+      fullPath: payload?.Key || payload?.path || path,
+      url: storageObjectUrl(path, true)
+    };
+  } catch (e) {
+    if (e?.name === 'AbortError') {
+      throw new Error(`La carga de "${file.name}" tardó demasiado. Revisa tu conexión o la configuración de Supabase Storage.`);
+    }
+    throw e;
   } finally {
     if (timer) clearTimeout(timer);
+  }
+}
+async function deleteStoredFile(path) {
+  if (!hasStorageReady() || !path) return;
+  const res = await fetch(storageObjectUrl(path, false), {
+    method: 'DELETE',
+    headers: storageHeaders()
+  });
+  const payload = await res.json().catch(() => null);
+  if (!res.ok && res.status !== 404) {
+    throw new Error(payload?.message || payload?.error || `Error ${res.status} al eliminar archivo.`);
   }
 }
 async function saveDocUpload() {
@@ -1723,7 +1775,7 @@ async function saveDocUpload() {
   const tpl = D.templates.find(x=>x.id===tplId);
   if (!CUR_DOC_WORK || !tpl) { setDocUploadState(false, 'No se encontró la obra o el requisito.'); return; }
   if (!files.length) { setDocUploadState(false, 'Selecciona al menos un archivo.'); return; }
-  if (!hasStorageReady()) { setDocUploadState(false, 'Firebase Storage no está disponible.'); return; }
+  if (!hasStorageReady()) { setDocUploadState(false, 'Supabase Storage no está disponible.'); return; }
   setDocUploadState(true);
   try {
     let doc = getDocRecord(CUR_DOC_WORK, tplId);
@@ -1750,20 +1802,17 @@ async function saveDocUpload() {
       const path = `documentos/${CUR_DOC_WORK}/${tplId}/${fileId}_${cleanName}`;
       const task = await uploadWithTimeout(path, file, {
         contentType: file.type || 'application/octet-stream',
-        customMetadata: {
-          obraId: CUR_DOC_WORK,
-          templateId: tplId,
-          uploadedBy: ME.id || ''
-        }
+        cacheControl: '3600'
       });
-      const url = await task.ref.getDownloadURL();
       uploaded.push({
         id: fileId,
         name: file.name,
         size: file.size || 0,
         type: file.type || '',
         path,
-        url,
+        bucket: SUPABASE_CONFIG.bucket,
+        provider: 'supabase',
+        url: task.url,
         note,
         uploadedAt: new Date().toISOString(),
         uploadedBy: ME.nombre,
@@ -1782,7 +1831,7 @@ async function saveDocUpload() {
     else renderDocsHome();
   } catch (e) {
     console.error('Upload error', e);
-    setDocUploadState(false, `No se pudo subir el archivo a Firebase Storage.${e?.message ? ` Detalle: ${e.message}` : ''}`);
+    setDocUploadState(false, `No se pudo subir el archivo a Supabase Storage.${e?.message ? ` Detalle: ${e.message}` : ''}`);
     return;
   }
   setDocUploadState(false);
@@ -1793,7 +1842,7 @@ async function delDocFile(docId, fileId) {
   if (!doc || !file) return;
   if (!confirm(`¿Eliminar el archivo "${file.name}"?`)) return;
   try {
-    if (hasStorageReady() && file.path) await Cloud.storage.ref(file.path).delete();
+    if (hasStorageReady() && file.path) await deleteStoredFile(file.path);
   } catch (e) {
     console.error('Storage delete error', e);
   }
@@ -1812,7 +1861,7 @@ async function delDocFileGroup(id) {
   if (!confirm('¿Quitar este registro documental y sus archivos?')) return;
   for (const file of docFiles(doc)) {
     try {
-      if (hasStorageReady() && file.path) await Cloud.storage.ref(file.path).delete();
+      if (hasStorageReady() && file.path) await deleteStoredFile(file.path);
     } catch (e) {
       console.error('Storage delete error', e);
     }
