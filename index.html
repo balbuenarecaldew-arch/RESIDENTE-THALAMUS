@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Libro de Obras</title>
+<title>ASISTENTE DEL RESIDENTE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
@@ -197,14 +197,14 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <section id="screen-login" class="screen active">
   <div class="login-shell">
     <div class="login-card">
-      <div class="brand">⬡</div>
-      <h1>Libro de Obras</h1>
+      <div class="brand">â¬¡</div>
+      <h1>ASISTENTE EL RESIDENTE</h1>
       <p class="sub">Seguimiento diario de obras civiles. Acceso seguro por usuario.</p>
       <div id="login-error" class="alert"></div>
       <div class="fgrid">
         <label class="flabel"><span>Correo de acceso</span>
           <input id="li-user" placeholder="sewyllconstrucciones@gmail.com" autocomplete="username"></label>
-        <label class="flabel"><span>Contraseña</span>
+        <label class="flabel"><span>Contrase&ntilde;a</span>
           <input id="li-pass" type="password" placeholder="Tu clave de Firebase Auth" autocomplete="current-password"></label>
         <button id="li-btn" class="btn" onclick="Auth.login()">Ingresar</button>
       </div>
@@ -217,9 +217,9 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <!-- APP -->
 <section id="screen-app" class="screen">
   <header class="topbar">
-    <div><h2>LIBRO DE OBRAS</h2><p id="sess-user">Sesión activa</p><p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p></div>
+    <div><h2>Libro de Obra</h2><p id="sess-user">Sesi&oacute;n activa</p><p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p></div>
     <div class="topbar-acts">
-      <button class="soft admin-only" onclick="App.openMain('settings')">Configuración</button>
+      <button class="soft admin-only" onclick="App.openMain('settings')">Configuraci&oacute;n</button>
       <button class="soft" onclick="Auth.logout()">Salir</button>
     </div>
   </header>
@@ -228,18 +228,18 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <!-- HOME -->
     <section id="view-home" class="view active">
       <div class="panel">
-        <span class="eyebrow">Gestión móvil</span>
-        <h3 style="margin-top:14px;font-size:24px">Accesos principales</h3>
-        <p class="sub">Entrá directo al libro de obra o al panel documental. Todo lo demás queda en configuración.</p>
+        <span class="eyebrow">Gesti&oacute;n m&oacute;vil</span>
+        <h3 style="margin-top:14px;font-size:24px">Tareas principales</h3>
+        <p class="sub">Entr&aacute; directo al Libro de Obra o al panel documental.</p>
         <div class="hero-main">
           <button class="btn feat-card" onclick="App.openMain('works')">
-            <strong>Libro de obra</strong><span>Obras, residente y actividades del día.</span>
+            <strong>Libro de Obra</strong><span>Obras, residente y actividades del d&iacute;a.</span>
           </button>
           <button class="soft feat-card" onclick="App.openMain('documents')">
-            <strong>Documentos</strong><span>Checklist, archivos cargados y descargas por obra.</span>
+            <strong>Documentos</strong><span>REVISAR, archivos cargados y descargas por obra.</span>
           </button>
           <button class="soft feat-card admin-only" onclick="App.openMain('settings')">
-            <strong>Configuración</strong><span>Usuarios, sesiones conectadas y avisos automáticos.</span>
+            <strong>Configuraci&oacute;n</strong><span>Usuarios, sesiones conectadas y avisos autom&aacute;ticos.</span>
           </button>
         </div>
       </div>
@@ -251,11 +251,11 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       <div class="shead">
         <div class="shead-left">
           <button class="back" onclick="App.goBack()">&larr;</button>
-          <div><h3>Obras</h3><p class="sub" style="margin:0">Acceso directo al libro diario</p></div>
+          <div><h3>Obras</h3><p class="sub" style="margin:0">Acceso directo al Libro de Obra</p></div>
         </div>
         <button id="new-work-btn" class="btn" onclick="openWorkModal()">Nueva obra</button>
       </div>
-      <input id="work-search" class="search" placeholder="Buscar obra…" oninput="renderWorks(this.value)">
+      <input id="work-search" class="search" placeholder="Buscar obraâ€¦" oninput="renderWorks(this.value)">
       <div id="works-list" class="list"></div>
     </section>
 
@@ -263,13 +263,13 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-workbook" class="view">
       <div class="shead">
         <div class="shead-left">
-          <button class="back" onclick="App.goBack()">←</button>
-          <div><h3 id="wb-name">Libro diario</h3><p id="wb-sub" class="sub" style="margin:0"></p></div>
+          <button class="back" onclick="App.goBack()">&larr;</button>
+          <div><h3 id="wb-name">Libro de Obra</h3><p id="wb-sub" class="sub" style="margin:0"></p></div>
         </div>
         <button class="soft" onclick="openResidenteModal()">Residente</button>
       </div>
       <div class="panel">
-        <div id="wb-user-line" class="meta">Cargando datos de la obra…</div>
+        <div id="wb-user-line" class="meta">Cargando datos de la obraâ€¦</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px">
           <button id="wb-load-btn" class="btn-green" onclick="openActModal()">Cargar actividad</button>
           <button id="wb-book-toggle" class="soft" onclick="toggleWorkbookHistory()"><span id="wb-book-toggle-label">Ver libro</span></button>
@@ -279,7 +279,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         <div id="wb-warning" class="notice hidden"></div>
       </div>
       <div id="wb-history-head" class="shead mt hidden">
-        <div><h4>Actividades del libro</h4><p class="sub" style="margin:0;font-size:12px">Enumeradas automáticamente</p></div>
+        <div><h4>Libro de Obra</h4><p class="sub" style="margin:0;font-size:12px">Historial de actividades registradas</p></div>
         <button class="btn hidden" id="add-act-btn" onclick="openActModal()">Nueva actividad</button>
       </div>
       <div id="wb-list" class="list hidden"></div>
@@ -289,7 +289,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-documents" class="view">
       <div class="shead">
         <div class="shead-left">
-          <button class="back" onclick="App.goBack()">←</button>
+          <button class="back" onclick="App.goBack()">â†</button>
           <div><h3>Documentos</h3><p class="sub" style="margin:0">Requisitos y seguimiento</p></div>
         </div>
       </div>
@@ -322,7 +322,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-doc-work" class="view">
       <div class="shead">
         <div class="shead-left">
-          <button class="back" onclick="App.goBack()">â†</button>
+          <button class="back" onclick="App.goBack()">&larr;</button>
           <div><h3 id="doc-work-title">Documentos de la obra</h3><p id="doc-work-sub" class="sub" style="margin:0">Selecciona una obra</p></div>
         </div>
       </div>
@@ -345,21 +345,21 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <section id="view-settings" class="view admin-only">
       <div class="shead">
         <div class="shead-left">
-          <button class="back" onclick="App.goBack()">←</button>
-          <div><h3>Usuarios</h3><p class="sub" style="margin:0">Accesos y teléfonos</p></div>
+          <button class="back" onclick="App.goBack()">â†</button>
+          <div><h3>Usuarios</h3><p class="sub" style="margin:0">Accesos y tel&eacute;fonos</p></div>
         </div>
         <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
       </div>
-      <div class="notice">El acceso real se crea en Firebase Authentication. AquÃ­ solo defines correo, rol, telÃ©fono y obras.</div>
+      <div class="notice">El acceso real se crea en Firebase Authentication. Aqu&iacute; solo defines correo, rol, tel&eacute;fono y obras.</div>
       <div id="admin-warn" class="alert"></div>
       <div id="users-list" class="list"></div>
     </section>
 
   </main>
   <nav class="bottom-nav">
-    <button class="nav" data-main="works" onclick="App.openMain('works')">Libro de obra</button>
+    <button class="nav" data-main="works" onclick="App.openMain('works')">Libro de Obra</button>
     <button class="nav" data-main="documents" onclick="App.openMain('documents')">Documentos</button>
-    <button class="nav admin-only" data-main="settings" onclick="App.openMain('settings')">Configuración</button>
+    <button class="nav admin-only" data-main="settings" onclick="App.openMain('settings')">Configuraci&oacute;n</button>
   </nav>
 </section>
 
@@ -369,7 +369,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <h3 id="mw-title">Nueva obra</h3>
     <input type="hidden" id="mw-id">
     <div class="fgrid">
-      <label class="flabel"><span>Nombre de la obra *</span><input id="mw-nombre" placeholder="Ej: Construcción Ruta 9"></label>
+      <label class="flabel"><span>Nombre de la obra *</span><input id="mw-nombre" placeholder="Ej: Construcci&oacute;n Ruta 9"></label>
       <div class="row2">
         <label class="flabel"><span>Fecha de inicio *</span><input id="mw-inicio" type="date"></label>
         <label class="flabel"><span>Estado</span>
@@ -377,7 +377,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </label>
       </div>
       <label class="flabel"><span>Contratante</span><input id="mw-contratante" placeholder="Municipalidad de..."></label>
-      <label class="flabel"><span>Descripción</span><textarea id="mw-desc" placeholder="Descripción general…"></textarea></label>
+      <label class="flabel"><span>Descripci&oacute;n</span><textarea id="mw-desc" placeholder="Descripci&oacute;n general&hellip;"></textarea></label>
     </div>
     <div class="modal-acts">
       <button class="soft" onclick="closeModal('modal-work')">Cancelar</button>
@@ -392,20 +392,20 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <h3 id="ma-title">Nueva actividad</h3>
     <input type="hidden" id="ma-id">
     <div class="fgrid">
-      <label class="flabel"><span>Título *</span><input id="ma-titulo" placeholder="Ej: Colado de losa nivel 2"></label>
-      <label class="flabel"><span>Título de actividades</span><input id="ma-subtitulo" placeholder="Ej: Frente norte / hormigonado del día"></label>
-      <label class="flabel"><span>Categoría</span>
+      <label class="flabel"><span>T&iacute;tulo *</span><input id="ma-titulo" placeholder="Ej: Construcciones de cordon cuneta"></label>
+      <label class="flabel"><span>T&iacute;tulo de actividades</span><input id="ma-subtitulo" placeholder="tramo 1 calle kurupay"></label>
+      <label class="flabel"><span>Categor&iacute;a</span>
         <select id="ma-cat">
           <option value="avance">Avance de obra</option>
           <option value="incidencia">Incidencia / Problema</option>
-          <option value="inspeccion">Inspección</option>
-          <option value="material">Material / Provisión</option>
-          <option value="clima">Condición climática</option>
+          <option value="inspeccion">Inspecci&oacute;n</option>
+          <option value="material">Material / Provisi&oacute;n</option>
+          <option value="clima">Condici&oacute;n clim&aacute;tica</option>
           <option value="otro">Otro</option>
         </select>
       </label>
-      <label class="flabel"><span>Detalle / puntos de trabajo</span>
-        <textarea id="ma-items" placeholder="Un punto por línea:&#10;- Hormigonado de columnas eje B&#10;- Control de encofrado&#10;- Recepción de hierro"></textarea>
+      <label class="flabel"><span>un punto por linea</span>
+        <textarea id="ma-items" placeholder="Un punto por l&iacute;nea:&#10;- Hormigonado de columnas eje B&#10;- Control de encofrado&#10;- Recepci&oacute;n de hierro"></textarea>
       </label>
     </div>
     <div class="modal-acts">
@@ -420,8 +420,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
   <div class="modal">
     <h3>Configurar residente</h3>
     <div class="fgrid">
-      <label class="flabel"><span>Nombre del residente</span><input id="mr-nombre" placeholder="Ing. Juan Pérez"></label>
-      <label class="flabel"><span>WhatsApp (formato internacional)</span><input id="mr-tel" placeholder="+595981000000"></label>
+      <label class="flabel"><span>Nombre del residente</span><input id="mr-nombre" placeholder="Ej: Ing. Juan P&eacute;rez"></label>
+      <label class="flabel"><span>WhatsApp</span><input id="mr-tel" placeholder="Ej: 595981123456"></label>
     </div>
     <div class="modal-acts">
       <button class="soft" onclick="closeModal('modal-res')">Cancelar</button>
@@ -437,11 +437,11 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <input type="hidden" id="mu-id">
     <div class="fgrid">
       <div class="row2">
-        <label class="flabel"><span>Nombre completo *</span><input id="mu-nombre" placeholder="Juan Pérez"></label>
+        <label class="flabel"><span>Nombre completo *</span><input id="mu-nombre" placeholder="Juan P&eacute;rez"></label>
         <label class="flabel"><span>Correo *</span><input id="mu-login" placeholder="usuario@empresa.com"></label>
       </div>
       <div class="row2">
-        <div class="flabel"><span>Acceso</span><div class="notice" style="margin-top:0">La contraseña se administra en Firebase Authentication.</div></div>
+        <div class="flabel"><span>Acceso</span><div class="notice" style="margin-top:0">La contrase&ntilde;a se administra en Firebase Authentication.</div></div>
         <label class="flabel"><span>Rol</span>
           <select id="mu-rol">
             <option value="residente">Residente</option>
@@ -450,7 +450,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
           </select>
         </label>
       </div>
-      <label class="flabel"><span>WhatsApp del residente</span><input id="mu-tel" placeholder="+595981000000"></label>
+      <label class="flabel"><span>WhatsApp del residente</span><input id="mu-tel" placeholder="Ej: 595981123456"></label>
       <label class="flabel"><span>Obras asignadas (Ctrl+clic para varias)</span>
         <select id="mu-obras" multiple style="height:100px;border-radius:14px"></select>
       </label>
@@ -470,8 +470,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
     <input type="hidden" id="mt-id">
     <div class="fgrid">
       <label class="flabel"><span>Nombre del documento *</span><input id="mt-nombre" placeholder="Ej: Plano aprobado"></label>
-      <label class="flabel"><span>Descripción / observación</span><input id="mt-desc" placeholder="Opcional"></label>
-      <label class="flabel"><span>Días desde inicio para reclamar</span><input id="mt-dias" type="number" value="15" min="1"></label>
+      <label class="flabel"><span>Descripci&oacute;n / observaci&oacute;n</span><input id="mt-desc" placeholder="Opcional"></label>
+      <label class="flabel"><span>D&iacute;as desde inicio para reclamar</span><input id="mt-dias" type="number" value="15" min="1"></label>
     </div>
     <div class="modal-acts">
       <button class="soft" onclick="closeModal('modal-tpl')">Cancelar</button>
@@ -483,7 +483,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <!-- MODAL: EXPORTAR -->
 <div class="modal-bg" id="modal-doc-upload">
   <div class="modal">
-    <h3 id="md-title">Subir documentos</h3>
+    <h3 id="md-title">Subir archivos</h3>
     <input type="hidden" id="md-tpl-id">
     <div class="fgrid">
       <label class="flabel"><span>Archivos *</span><input id="md-files" type="file" multiple onchange="renderSelectedDocFiles()"></label>
@@ -510,8 +510,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <!-- MODAL: EXPORTAR -->
 <div class="modal-bg" id="modal-export">
   <div class="modal">
-    <h3>Exportar libro de obra</h3>
-    <p class="sub">Se generará un archivo Word con todas las actividades registradas.</p>
+    <h3>Exportar Libro de Obra</h3>
+    <p class="sub">Se generar&aacute; un archivo Word con todas las actividades registradas.</p>
     <div class="modal-acts">
       <button class="soft" onclick="closeModal('modal-export')">Cancelar</button>
       <button class="btn" onclick="doExport()">Descargar Word</button>
@@ -523,11 +523,11 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-// ── STORAGE ──────────────────────────────────────────────────────────────────
+// â”€â”€ STORAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const KEY = 'lo_v5';
 function defaultReminderTemplates() {
   return {
-    daily: 'Hola {residente}, aun no se cargaron las actividades diarias de la obra "{obra}" correspondientes a {fecha}. Por favor registra el libro diario.',
+    daily: 'Hola {residente}, a\u00fan no se cargaron las actividades diarias de la obra "{obra}" correspondientes a {fecha}. Por favor registra el Libro de Obra.',
     docs: 'Hola {residente}, faltan cargar estos documentos de la obra "{obra}":\n{documentos}'
   };
 }
@@ -705,7 +705,7 @@ function refreshSessionUser() {
     return;
   }
   ME = fresh;
-  document.getElementById('sess-user').textContent = fresh.nombre + ' · ' + role(fresh.rol);
+  document.getElementById('sess-user').textContent = `${fresh.nombre} \u00b7 ${role(fresh.rol)}`;
   updateAdminUI();
 }
 function rerenderCurrentView() {
@@ -776,7 +776,7 @@ async function initCloud() {
   }
 }
 
-// ── UTILS ────────────────────────────────────────────────────────────────────
+// â”€â”€ UTILS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const fmtDate = d => d ? new Date(d).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}) : '-';
@@ -831,7 +831,7 @@ function appSettings() {
   return D.settings;
 }
 
-// ── HASH ─────────────────────────────────────────────────────────────────────
+// â”€â”€ HASH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function hashPass(pass, salt, it=120000) {
   const e = new TextEncoder();
   const k = await crypto.subtle.importKey('raw',e.encode(pass),'PBKDF2',false,['deriveBits']);
@@ -844,7 +844,7 @@ async function makeHash(pass) {
   return { salt, it:120000, hash: await hashPass(pass,salt) };
 }
 
-// ── SEED ─────────────────────────────────────────────────────────────────────
+// â”€â”€ SEED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function seed() {
   load();
   loadPrefs();
@@ -868,7 +868,7 @@ async function seed() {
     if (!admin.email) { admin.email = ADMIN_EMAIL; changed = true; }
     if (!admin.login) { admin.login = ADMIN_EMAIL; changed = true; }
   }
-  // migrar contraseñas en texto plano
+  // migrar contraseÃ±as en texto plano
   for (const u of D.users) {
     if (!u.email && u.login && String(u.login).includes('@')) { u.email = String(u.login).trim().toLowerCase(); changed = true; }
     if (!u.login && u.email) { u.login = String(u.email).trim().toLowerCase(); changed = true; }
@@ -891,26 +891,26 @@ function ensureSettingsView() {
       <div class="shead">
         <div class="shead-left">
           <button class="back" onclick="App.goBack()">&larr;</button>
-          <div><h3>Configuración</h3><p class="sub" style="margin:0">Sesiones activas, usuarios y avisos</p></div>
+          <div><h3>Configuraci&oacute;n</h3><p class="sub" style="margin:0">Sesiones activas, usuarios y avisos</p></div>
         </div>
         <button class="btn admin-only" onclick="openUserModal()">Nuevo usuario</button>
       </div>
       <div class="docs-layout">
         <div class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>Usuario conectado</h4><p class="sub" style="margin:0;font-size:12px">Quién está usando esta sesión</p></div>
+            <div><h4>Usuario conectado</h4><p class="sub" style="margin:0;font-size:12px">Qui&eacute;n est&aacute; usando esta sesi&oacute;n</p></div>
           </div>
           <div id="settings-current-user" class="list" style="margin-top:14px"></div>
         </div>
         <div class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>Conectados ahora</h4><p class="sub" style="margin:0;font-size:12px">Pueden trabajar varias personas al mismo tiempo</p></div>
+            <div><h4>Sesiones activas</h4><p class="sub" style="margin:0;font-size:12px">Pueden trabajar varias personas al mismo tiempo</p></div>
           </div>
           <div id="settings-presence" class="list" style="margin-top:14px"></div>
         </div>
         <div class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y apertura automática</p></div>
+            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y apertura autom&aacute;tica</p></div>
           </div>
           <div id="settings-wa" class="list" style="margin-top:14px"></div>
         </div>
@@ -920,7 +920,7 @@ function ensureSettingsView() {
           <div><h4>Usuarios</h4><p class="sub" style="margin:0;font-size:12px">Accesos, roles y obras asignadas</p></div>
           <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
         </div>
-        <div class="notice">El acceso real se crea en Firebase Authentication. Aquí solo defines correo, rol, teléfono y obras.</div>
+        <div class="notice">El acceso real se crea en Firebase Authentication. Aqu&iacute; solo defines correo, rol, tel&eacute;fono y obras.</div>
         <div id="admin-warn" class="alert"></div>
         <div id="users-list" class="list" style="margin-top:14px"></div>
       </div>`;
@@ -968,7 +968,7 @@ async function stopPresence(removeRemote=false) {
   Presence.sessions = [];
 }
 
-// ── AUTH ─────────────────────────────────────────────────────────────────────
+// â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Auth = {
   started: false,
   setErr(msg) {
@@ -983,7 +983,7 @@ const Auth = {
     if (this.started) return;
     this.started = true;
     if (!window.firebase || !firebase.auth) {
-      this.setErr('Firebase Auth no está disponible.');
+      this.setErr('Firebase Auth no est\u00e1 disponible.');
       return;
     }
     try {
@@ -1038,7 +1038,7 @@ const Auth = {
     ME = u;
     document.getElementById('li-user').value = email;
     document.getElementById('li-pass').value = '';
-    document.getElementById('sess-user').textContent = u.nombre + ' · ' + role(u.rol);
+    document.getElementById('sess-user').textContent = `${u.nombre} \u00b7 ${role(u.rol)}`;
     this.setErr('');
     updateAdminUI();
     ensureSettingsView();
@@ -1057,20 +1057,20 @@ const Auth = {
     const email = document.getElementById('li-user').value.trim().toLowerCase();
     const pass = document.getElementById('li-pass').value;
     this.setErr('');
-    if (!email || !pass) { this.setErr('Ingresa correo y contraseña.'); return; }
-    if (!window.firebase || !firebase.auth) { this.setErr('Firebase Auth no está disponible.'); return; }
+    if (!email || !pass) { this.setErr('Ingresa correo y contrase\u00f1a.'); return; }
+    if (!window.firebase || !firebase.auth) { this.setErr('Firebase Auth no est\u00e1 disponible.'); return; }
     this.setLoading(true);
     try {
       await firebase.auth().signInWithEmailAndPassword(email, pass);
     } catch (e) {
       console.error('Firebase login error', e);
       const msg = {
-        'auth/invalid-email': 'Correo inválido.',
-        'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+        'auth/invalid-email': 'Correo inv\u00e1lido.',
+        'auth/invalid-credential': 'Correo o contrase\u00f1a incorrectos.',
         'auth/user-not-found': 'Usuario no encontrado en Firebase Auth.',
-        'auth/wrong-password': 'Correo o contraseña incorrectos.',
-        'auth/too-many-requests': 'Demasiados intentos. Prueba más tarde.'
-      }[e.code] || 'No se pudo iniciar sesión con Firebase.';
+        'auth/wrong-password': 'Correo o contrase\u00f1a incorrectos.',
+        'auth/too-many-requests': 'Demasiados intentos. Prueba m\u00e1s tarde.'
+      }[e.code] || 'No se pudo iniciar sesi\u00f3n con Firebase.';
       this.setErr(msg);
     } finally {
       this.setLoading(false);
@@ -1098,7 +1098,7 @@ const Auth = {
     const l = document.getElementById('li-user').value.trim().toLowerCase();
     const p = document.getElementById('li-pass').value;
     this.setErr('');
-    if (!l||!p) { this.setErr('Ingresa usuario y contraseña.'); return; }
+    if (!l||!p) { this.setErr('Ingresa usuario y contrase\u00f1a.'); return; }
     this.setLoading(true);
     try {
       const u = D.users.find(x => (x.login||'').toLowerCase()===l || (x.email||'').toLowerCase()===l);
@@ -1107,10 +1107,10 @@ const Auth = {
       if (u.hash && u.salt) { try { ok = (await hashPass(p,u.salt,u.it||120000))===u.hash; } catch(e){} }
       if (!ok && u.pass) ok = u.pass===p;
       if (!ok && u.rol==='admin' && p==='admin') ok = true;
-      if (!ok) { this.setErr('Contraseña incorrecta.'); return; }
+      if (!ok) { this.setErr('Contrase\u00f1a incorrecta.'); return; }
       if (u.pass && !u.hash) { Object.assign(u, await makeHash(p)); delete u.pass; save(); }
       ME = u;
-      document.getElementById('sess-user').textContent = u.nombre + ' · ' + role(u.rol);
+      document.getElementById('sess-user').textContent = `${u.nombre} \u00b7 ${role(u.rol)}`;
       updateAdminUI();
       showScreen('app');
       App.openMain('home');
@@ -1125,7 +1125,7 @@ const Auth = {
   }
 };
 
-// ── APP NAV ──────────────────────────────────────────────────────────────────
+// â”€â”€ APP NAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showScreen(n) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+n).classList.add('active');
@@ -1141,8 +1141,8 @@ function setNav(n) {
 }
 function normalizeUiLabels(root=document) {
   const fixes = {
-    'Ver mais': 'Ver más',
-    'VER MAIS': 'VER MÁS'
+    'Ver mais': 'Ver m\u00e1s',
+    'VER MAIS': 'VER M\u00c1S'
   };
   if (!root) return;
   root.querySelectorAll('.back').forEach(btn => { btn.innerHTML = '&larr;'; });
@@ -1195,7 +1195,7 @@ const App = {
   }
 };
 
-// ── HOME ─────────────────────────────────────────────────────────────────────
+// â”€â”€ HOME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderHome() {
   const home = document.getElementById('home-summary');
   if (!home || !ME) return;
@@ -1203,12 +1203,12 @@ function renderHome() {
   home.innerHTML = `
     <article class="panel quick-card">
       <strong>${esc(ME.nombre)}</strong>
-      <div class="meta">${esc(ME.email||ME.login||'Sin correo')} · ${role(ME.rol)}</div>
-      <div class="meta">Esta es la sesión conectada actualmente.</div>
+      <div class="meta">${esc(ME.email||ME.login||'Sin correo')} &middot; ${role(ME.rol)}</div>
+      <div class="meta">Esta es la sesi&oacute;n conectada actualmente.</div>
     </article>
     <article class="panel quick-card">
-      <strong>${Cloud.enabled ? 'Sincronización activa' : 'Modo local'}</strong>
-      <div class="meta">${Cloud.enabled ? 'Los cambios se comparten por Firebase.' : 'La app sigue funcionando, pero sin sincronización en tiempo real.'}</div>
+      <strong>${Cloud.enabled ? 'Sincronizaci&oacute;n activa' : 'Modo local'}</strong>
+      <div class="meta">${Cloud.enabled ? 'Los cambios se comparten por Firebase.' : 'La app sigue funcionando, pero sin sincronizaci&oacute;n en tiempo real.'}</div>
       <div class="meta">${connected.length ? `${connected.length} persona${connected.length===1?'':'s'} conectada${connected.length===1?'':'s'} ahora.` : 'No hay otras sesiones activas por ahora.'}</div>
     </article>`;
 }
@@ -1227,8 +1227,8 @@ function renderSettings() {
         <div><strong>${esc(ME.nombre)}</strong><div class="meta" style="margin:0">${esc(ME.email||ME.login||'Sin correo')}</div></div>
         <span class="pill ok">${role(ME.rol)}</span>
       </div>
-      <div class="meta">Sesión: ${esc(SESSION_ID)}</div>
-      <div class="meta">${Cloud.enabled ? 'Sincronización en tiempo real activa.' : 'Sincronización en tiempo real no disponible.'}</div>
+      <div class="meta">Sesi&oacute;n: ${esc(SESSION_ID)}</div>
+      <div class="meta">${Cloud.enabled ? 'Sincronizaci&oacute;n en tiempo real activa.' : 'Sincronizaci&oacute;n en tiempo real no disponible.'}</div>
     </article>`;
   }
   const presence = document.getElementById('settings-presence');
@@ -1239,11 +1239,11 @@ function renderSettings() {
       return `<article class="user-card">
         <div class="ctop">
           <div><strong>${esc(s.nombre||'Usuario')}</strong><div class="meta" style="margin:0">${esc(s.email||'Sin correo')}</div></div>
-          <span class="pill ${isMe?'ok':'warn'}">${isMe?'Esta sesión':role(s.rol)}</span>
+          <span class="pill ${isMe?'ok':'warn'}">${isMe?'Esta sesi&oacute;n':role(s.rol)}</span>
         </div>
-        <div class="meta">Última actividad: ${fmtDT(tsMillis(s.lastSeen)||new Date().toISOString())}</div>
+        <div class="meta">&Uacute;ltima actividad: ${fmtDT(tsMillis(s.lastSeen)||new Date().toISOString())}</div>
       </article>`;
-    }).join('') : `<article class="user-card"><strong>Solo esta sesión está activa.</strong><div class="meta">Cuando otra persona entre a la app, aparecerá aquí.</div></article>`;
+    }).join('') : `<article class="user-card"><strong>Solo esta sesi&oacute;n est&aacute; activa.</strong><div class="meta">Cuando otra persona entre a la app, aparecer&aacute; aqu&iacute;.</div></article>`;
   }
   const wa = document.getElementById('settings-wa');
   if (wa) {
@@ -1251,8 +1251,8 @@ function renderSettings() {
       <article class="toggle-card">
         <div class="toggle-row">
           <div>
-            <strong>Avisos automáticos del libro</strong>
-            <div class="meta">Abre WhatsApp automáticamente cuando una obra seleccionada no tenga actividad cargada hoy.</div>
+            <strong>Avisos autom&aacute;ticos del libro</strong>
+            <div class="meta">Abre WhatsApp autom&aacute;ticamente cuando una obra seleccionada no tenga actividad cargada hoy.</div>
           </div>
           <input type="checkbox" ${Prefs.autoDailyWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDailyWhatsApp', this.checked)">
         </div>
@@ -1260,13 +1260,13 @@ function renderSettings() {
       <article class="toggle-card">
         <div class="toggle-row">
           <div>
-            <strong>Avisos automáticos de documentos</strong>
-            <div class="meta">Abre WhatsApp automáticamente cuando falten documentos en la obra seleccionada.</div>
+            <strong>Avisos autom&aacute;ticos de documentos</strong>
+            <div class="meta">Abre WhatsApp autom&aacute;ticamente cuando falten documentos en la obra seleccionada.</div>
           </div>
           <input type="checkbox" ${Prefs.autoDocWhatsApp?'checked':''} onchange="setWhatsAppPref('autoDocWhatsApp', this.checked)">
         </div>
       </article>
-      <article class="notice session-note">WhatsApp no permite envío silencioso desde esta página. La automatización deja el mensaje listo y abre la conversación cuando el navegador lo permite.</article>`;
+      <article class="notice session-note">WhatsApp no permite env&iacute;o silencioso desde esta p&aacute;gina. La automatizaci&oacute;n deja el mensaje listo y abre la conversaci&oacute;n cuando el navegador lo permite.</article>`;
   }
   if (wa) {
     wa.insertAdjacentHTML('beforeend', `
@@ -1274,7 +1274,7 @@ function renderSettings() {
         <div class="ctop">
           <div>
             <strong>Mensajes programados</strong>
-            <div class="meta">Escribe el texto base para los avisos automaticos o manuales.</div>
+            <div class="meta">Escribe el texto base para los avisos autom&aacute;ticos o manuales.</div>
           </div>
           <div class="meta">Variables: {residente}, {obra}, {fecha}, {documentos}</div>
         </div>
@@ -1292,8 +1292,8 @@ function renderSettings() {
       <article class="toggle-card">
         <div class="ctop">
           <div>
-            <strong>Centro rapido de avisos</strong>
-            <div class="meta">Otra opcion practica: copia el texto y pegalo por WhatsApp, SMS, correo o la app que uses.</div>
+            <strong>Centro r&aacute;pido de avisos</strong>
+            <div class="meta">Otra opci&oacute;n pr&aacute;ctica: copia el texto y p&eacute;galo por WhatsApp, SMS, correo o la app que uses.</div>
           </div>
         </div>
         <div id="settings-reminders" class="list" style="margin-top:14px"></div>
@@ -1304,7 +1304,7 @@ function renderSettings() {
   updateAdminUI();
 }
 
-// ── OBRAS ────────────────────────────────────────────────────────────────────
+// â”€â”€ OBRAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function saveReminderTemplates() {
   if (!isAdmin()) return;
   const settings = appSettings();
@@ -1328,7 +1328,7 @@ function renderReminderCenter() {
   if (!target) return;
   const queue = reminderQueue();
   if (!queue.length) {
-    target.innerHTML = `<article class="user-card"><strong>No hay avisos pendientes.</strong><div class="meta">Hoy no se detectan faltantes de libro diario ni de documentos.</div></article>`;
+    target.innerHTML = `<article class="user-card"><strong>No hay avisos pendientes.</strong><div class="meta">Hoy no se detectan faltantes de Libro de Obra ni de documentos.</div></article>`;
     return;
   }
   target.innerHTML = queue.map(item => {
@@ -1345,7 +1345,7 @@ function renderReminderCenter() {
     if (item.missingDocs.length) {
       actions.push(`
         <div class="meta" style="margin-top:10px"><strong>Documentos pendientes: ${item.missingDocs.length}</strong></div>
-        <div class="meta">${item.missingDocs.map(doc => esc(doc.nombre)).join(' · ')}</div>
+        <div class="meta">${item.missingDocs.map(doc => esc(doc.nombre)).join(' &middot; ')}</div>
         <div class="cacts">
           <button class="wa" ${phoneReady?'':'disabled'} onclick="openWhatsAppReminder('documents','${item.obra.id}')">WhatsApp</button>
           <button class="soft" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>
@@ -1354,14 +1354,14 @@ function renderReminderCenter() {
     return `<article class="user-card">
       <div class="ctop">
         <div><strong>${esc(item.obra.nombre)}</strong><div class="meta" style="margin:0">${esc(item.obra.residenteNombre || 'Sin residente asignado')}</div></div>
-        <span class="pill ${phoneReady?'ok':'warn'}">${phoneReady?'WhatsApp listo':'Sin telefono'}</span>
+        <span class="pill ${phoneReady?'ok':'warn'}">${phoneReady?'WhatsApp listo':'Sin tel&eacute;fono'}</span>
       </div>
       <div class="cacts">
         <button class="soft" onclick="openWorkbook('${item.obra.id}')">Abrir libro</button>
         <button class="soft" onclick="renderChecklist('${item.obra.id}')">Abrir documentos</button>
       </div>
       ${actions.join('')}
-      ${phoneReady ? '' : `<div class="notice">Puedes usar "Copiar aviso" mientras configuras el telefono del residente.</div>`}
+      ${phoneReady ? '' : `<div class="notice">Puedes usar "Copiar aviso" mientras configuras el tel&eacute;fono del residente.</div>`}
     </article>`;
   }).join('');
 }
@@ -1389,11 +1389,10 @@ function renderWorks(q='') {
   let ws = myWorks();
   if (q) ws = ws.filter(o=>(o.nombre||'').toLowerCase().includes(q.toLowerCase()));
   if (!ws.length) {
-    list.innerHTML = `<article class="work-card"><strong>No hay obras visibles.</strong><div class="meta">Crea la primera obra con el botón de arriba.</div></article>`;
+    list.innerHTML = `<article class="work-card"><strong>No hay obras visibles.</strong><div class="meta">Crea la primera obra con el bot&oacute;n de arriba.</div></article>`;
     return;
   }
   list.innerHTML = ws.map(o => {
-    const total = D.actividades.filter(a=>a.obraId===o.id).length;
     const hoy = D.actividades.some(a=>a.obraId===o.id && new Date(a.edit||a.date).toDateString()===new Date().toDateString());
     const estadoClass = {activa:'ok',pausada:'warn',finalizada:'bad'}[o.estado||'activa']||'ok';
     return `<article class="work-card">
@@ -1404,7 +1403,7 @@ function renderWorks(q='') {
       <strong>${esc(o.nombre)}</strong>
       <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
       <div class="meta">${esc(o.contratante||'Sin contratante')}</div>
-      <div class="meta">Actividades: ${total} · ${hoy?'<span style="color:var(--green)">Con actividad hoy</span>':'<span style="color:var(--yellow)">Sin actividad hoy</span>'}</div>
+      <div class="meta">${hoy?'<span style="color:var(--green)">Con actividad hoy</span>':'<span style="color:var(--yellow)">Sin actividad hoy</span>'}</div>
       <div class="cacts">
         <button class="btn" onclick="openWorkbook('${o.id}')">Abrir libro</button>
         ${canEdit()?`<button class="soft" onclick="openWorkModal('${o.id}')">Editar</button>`:`<button class="soft" disabled>Ver</button>`}
@@ -1452,7 +1451,7 @@ function saveWork() {
   save(); closeModal('modal-work'); renderWorks();
 }
 
-// ── LIBRO DIARIO ─────────────────────────────────────────────────────────────
+// â”€â”€ LIBRO DIARIO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openWorkbook(id) {
   CUR_WORK = id;
   WB_SHOW_HISTORY = false;
@@ -1471,9 +1470,9 @@ function renderWorkbook() {
     .sort((a,b)=>(a.numero||0)-(b.numero||0));
   document.getElementById('wb-name').textContent = o.nombre;
   document.getElementById('wb-sub').textContent =
-    `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Residente no configurado'}`;
+    `Inicio ${fmtDate(o.inicio)} \u00b7 ${o.residenteNombre||'Residente no configurado'}`;
   document.getElementById('wb-user-line').textContent =
-    `Usuario conectado: ${ME?.nombre||'-'} · ${role(ME?.rol||'viewer')}`;
+    `Usuario conectado: ${ME?.nombre||'-'} \u00b7 ${role(ME?.rol||'viewer')}`;
   const canWrite = canEdit();
   const loadBtn = document.getElementById('wb-load-btn');
   const toggleBtn = document.getElementById('wb-book-toggle');
@@ -1490,8 +1489,8 @@ function renderWorkbook() {
   if (!hoy) {
     warn.classList.remove('hidden');
     warn.textContent = o.residenteTelefono
-      ? 'Hoy aún no se cargaron actividades. Puedes avisar al residente por WhatsApp.'
-      : 'Hoy aún no se cargaron actividades. Configura el teléfono del residente para enviar aviso.';
+      ? 'Hoy a\u00fan no se cargaron actividades. Puedes avisar al residente por WhatsApp.'
+      : 'Hoy a\u00fan no se cargaron actividades. Configura el tel\u00e9fono del residente para enviar aviso.';
   } else warn.classList.add('hidden');
   if (!hoy && Prefs.autoDailyWhatsApp) maybeOpenWhatsApp('daily', CUR_WORK);
 
@@ -1502,14 +1501,14 @@ function renderWorkbook() {
     return;
   }
   if (!acts.length) {
-    target.innerHTML = `<article class="act-card"><strong>Sin actividades aún.</strong><div class="meta">La primera que cargues aparece como ítem 1.</div></article>`;
+    target.innerHTML = `<article class="act-card"><strong>Sin actividades a&uacute;n.</strong><div class="meta">La primera que cargues aparece como &iacute;tem 1.</div></article>`;
     return;
   }
-  const catLabel = {avance:'Avance',incidencia:'Incidencia',inspeccion:'Inspección',
+  const catLabel = {avance:'Avance',incidencia:'Incidencia',inspeccion:'Inspecci\u00f3n',
     material:'Material',clima:'Clima',otro:'Otro'};
   target.innerHTML = acts.map((a,i) => `<article class="act-card">
     <div class="ctop">
-      <span class="enum">Ítem ${a.numero||i+1} · ${catLabel[a.cat]||a.cat||'Avance'}</span>
+      <span class="enum">&Iacute;tem ${a.numero||i+1} &middot; ${catLabel[a.cat]||a.cat||'Avance'}</span>
       <span class="pill ok" style="font-size:10px">${fmtDT(a.edit||a.date)}</span>
     </div>
     <strong>${esc(a.title)}</strong>
@@ -1550,7 +1549,7 @@ function saveAct() {
   const id = document.getElementById('ma-id').value;
   const title = document.getElementById('ma-titulo').value.trim();
   const subtitle = document.getElementById('ma-subtitulo').value.trim();
-  if (!title) { alert('El título es obligatorio.'); return; }
+  if (!title) { alert('El t\u00edtulo es obligatorio.'); return; }
   const items = document.getElementById('ma-items').value
     .split('\n').map(s=>s.trim()).filter(Boolean);
   const cat = document.getElementById('ma-cat').value;
@@ -1566,7 +1565,7 @@ function saveAct() {
   save(); closeModal('modal-act'); renderWorkbook(); renderWorks();
 }
 function delAct(id) {
-  if (!confirm('¿Eliminar esta actividad?')) return;
+  if (!confirm('Â¿Eliminar esta actividad?')) return;
   D.actividades = D.actividades.filter(a=>a.id!==id);
   // reordenar
   let num=0; D.actividades.forEach(a=>{if(a.obraId===CUR_WORK)a.numero=++num;});
@@ -1650,7 +1649,7 @@ function openWhatsAppReminder(kind, workId, opts={}) {
   }
   const opened = window.open(data.url,'_blank','noopener');
   if (!opened) {
-    if (!opts.silent) alert('El navegador bloqueó la apertura automática de WhatsApp.');
+    if (!opts.silent) alert('El navegador bloque\u00f3 la apertura autom\u00e1tica de WhatsApp.');
     return false;
   }
   if (opts.automatic) markReminderTriggered(kind, workId);
@@ -1664,7 +1663,7 @@ function waDailyReminder() {
   openWhatsAppReminder('daily', CUR_WORK);
 }
 
-// ── EXPORTAR WORD ─────────────────────────────────────────────────────────────
+// â”€â”€ EXPORTAR WORD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openExportModal() { openModal('modal-export'); }
 function doExport() {
   const o = D.obras.find(x=>x.id===CUR_WORK); if(!o) return;
@@ -1684,18 +1683,18 @@ function doExport() {
     table{width:100%;border-collapse:collapse}th{background:#1a5a2a;color:#fff;padding:8px;border:1px solid #ccc}
     p{margin:4px 0;font-size:11pt}.footer{margin-top:2em;font-size:10pt;color:#888;border-top:1px solid #ccc;padding-top:8px}
   </style></head><body>
-    <h1>📋 Libro de Obras Digital</h1>
+    <h1>&#128203; Libro de Obra Digital</h1>
     <h2>${esc(o.nombre)}</h2>
     <p><b>Contratante:</b> ${esc(o.contratante||'-')}</p>
     <p><b>Inicio:</b> ${fmtDate(o.inicio)} &nbsp; <b>Estado:</b> ${o.estado||'activa'}</p>
     <p><b>Residente:</b> ${esc(o.residenteNombre||'-')}</p>
-    ${o.desc?`<p><b>Descripción:</b> ${esc(o.desc)}</p>`:''}
+    ${o.desc?`<p><b>Descripci&oacute;n:</b> ${esc(o.desc)}</p>`:''}
     <p><b>Exportado:</b> ${fmtDT(new Date().toISOString())} por ${esc(ME.nombre)}</p>
     <h2>Registro de actividades</h2>
     <table><thead><tr>
-      <th style="width:40px">#</th><th>Fecha y hora</th><th>Categoría</th><th>Actividad</th><th>Registrado por</th>
+      <th style="width:40px">#</th><th>Fecha y hora</th><th>Categor&iacute;a</th><th>Actividad</th><th>Registrado por</th>
     </tr></thead><tbody>${rows||'<tr><td colspan="5" style="text-align:center;padding:20px">Sin actividades</td></tr>'}</tbody></table>
-    <div class="footer">Libro de Obras Digital · ${fmtDT(new Date().toISOString())} · ${esc(ME.nombre)}</div>
+    <div class="footer">Libro de Obra Digital &middot; ${fmtDT(new Date().toISOString())} &middot; ${esc(ME.nombre)}</div>
   </body></html>`;
   const b = new Blob([html],{type:'application/msword'});
   const a = document.createElement('a');
@@ -1705,7 +1704,7 @@ function doExport() {
   closeModal('modal-export');
 }
 
-// ── DOCUMENTOS ───────────────────────────────────────────────────────────────
+// â”€â”€ DOCUMENTOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getDocRecord(workId, tplId) {
   return D.documentos.find(d=>d.obraId===workId&&d.templateId===tplId) || null;
 }
@@ -1739,10 +1738,10 @@ function renderSelectedDocFiles() {
   target.innerHTML = files.length ? files.map(f=>`<div class="doc-file">
       <div>
         <strong>${esc(f.name)}</strong>
-        <small>${fmtBytes(f.size||0)}${f.type?` · ${esc(f.type)}`:''}</small>
+        <small>${fmtBytes(f.size||0)}${f.type?` Â· ${esc(f.type)}`:''}</small>
       </div>
     </div>`).join('')
-    : `<div class="window-empty">Todavía no seleccionaste archivos para subir.</div>`;
+    : `<div class="window-empty">Todav&iacute;a no seleccionaste archivos para subir.</div>`;
 }
 function renderCurrentDocFiles(tplId) {
   const target = document.getElementById('md-current-files');
@@ -1754,13 +1753,13 @@ function renderCurrentDocFiles(tplId) {
   target.innerHTML = files.length ? files.map(f=>`<div class="doc-file">
       <div>
         <strong>${esc(f.name)}</strong>
-        <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}</small>
+        <small>${fmtBytes(f.size)} &middot; ${fmtDT(f.uploadedAt)} &middot; ${esc(f.uploadedBy||'-')}</small>
       </div>
       <div class="inline-actions">
         <button class="soft mini" onclick='downloadStoredFile(${JSON.stringify(f.url)}, ${JSON.stringify(f.name)})'>Descargar</button>
       </div>
     </div>`).join('')
-    : `<div class="window-empty">Todavía no hay archivos cargados para este documento.</div>`;
+    : `<div class="window-empty">Todav&iacute;a no hay archivos cargados para este documento.</div>`;
 }
 function decorateDocFileWindows(target) {
   if (!target) return;
@@ -1812,7 +1811,7 @@ function setDocUploadState(loading, msg='') {
 function openDocUploadModal(tplId) {
   if (!CUR_DOC_WORK) { alert('Selecciona una obra primero.'); return; }
   if (!canUploadDocuments(CUR_DOC_WORK)) { alert('Tu perfil no puede cargar documentos en esta obra.'); return; }
-  if (!hasStorageReady()) { alert('Supabase Storage no está disponible todavía.'); return; }
+  if (!hasStorageReady()) { alert('Supabase Storage no est\u00e1 disponible todav\u00eda.'); return; }
   const tpl = D.templates.find(x=>x.id===tplId);
   document.getElementById('md-title').textContent = `Subir archivos${tpl ? `: ${tpl.nombre}` : ''}`;
   document.getElementById('md-tpl-id').value = tplId;
@@ -1849,7 +1848,7 @@ async function uploadWithTimeout(path, file, metadata, timeoutMs=120000) {
     };
   } catch (e) {
     if (e?.name === 'AbortError') {
-      throw new Error(`La carga de "${file.name}" tardó demasiado. Revisa tu conexión o la configuración de Supabase Storage.`);
+      throw new Error(`La carga de "${file.name}" tard\u00f3 demasiado. Revisa tu conexi\u00f3n o la configuraci\u00f3n de Supabase Storage.`);
     }
     throw e;
   } finally {
@@ -1872,9 +1871,9 @@ async function saveDocUpload() {
   const files = Array.from(document.getElementById('md-files').files||[]);
   const note = document.getElementById('md-note').value.trim();
   const tpl = D.templates.find(x=>x.id===tplId);
-  if (!CUR_DOC_WORK || !tpl) { setDocUploadState(false, 'No se encontró la obra o el requisito.'); return; }
+  if (!CUR_DOC_WORK || !tpl) { setDocUploadState(false, 'No se encontr\u00f3 la obra o el requisito.'); return; }
   if (!files.length) { setDocUploadState(false, 'Selecciona al menos un archivo.'); return; }
-  if (!hasStorageReady()) { setDocUploadState(false, 'Supabase Storage no está disponible.'); return; }
+  if (!hasStorageReady()) { setDocUploadState(false, 'Supabase Storage no est\u00e1 disponible.'); return; }
   setDocUploadState(true);
   try {
     let doc = getDocRecord(CUR_DOC_WORK, tplId);
@@ -1940,7 +1939,7 @@ async function delDocFile(docId, fileId) {
   const doc = D.documentos.find(d=>d.id===docId);
   const file = docFiles(doc).find(f=>f.id===fileId);
   if (!doc || !file) return;
-  if (!confirm(`¿Eliminar el archivo "${file.name}"?`)) return;
+  if (!confirm(`Â¿Eliminar el archivo "${file.name}"?`)) return;
   try {
     if (hasStorageReady() && file.path) await deleteStoredFile(file.path);
   } catch (e) {
@@ -1959,7 +1958,7 @@ async function delDocFile(docId, fileId) {
 async function delDocFileGroup(id) {
   const doc = D.documentos.find(d=>d.id===id);
   if (!doc) return;
-  if (!confirm('¿Quitar este registro documental y sus archivos?')) return;
+  if (!confirm('Â¿Quitar este registro documental y sus archivos?')) return;
   for (const file of docFiles(doc)) {
     try {
       if (hasStorageReady() && file.path) await deleteStoredFile(file.path);
@@ -1988,7 +1987,7 @@ function renderDocsHome() {
     document.getElementById('doc-detail-title').textContent = 'Checklist documental';
     document.getElementById('doc-detail-sub').textContent = 'Selecciona una obra';
     document.getElementById('doc-checklist').innerHTML =
-      `<article class="doc-card"><strong>Elige una obra.</strong><div class="meta">Aquí verás qué documentos ya fueron cargados y cuáles faltan.</div></article>`;
+      `<article class="doc-card"><strong>Elige una obra.</strong><div class="meta">Aqu&iacute; ver&aacute;s qu&eacute; documentos ya fueron cargados y cu&aacute;les faltan.</div></article>`;
     document.getElementById('doc-overdue').classList.add('hidden');
   }
 }
@@ -1998,8 +1997,8 @@ function renderTplList() {
   const tpls = D.templates;
   el.innerHTML = tpls.length ? tpls.map(t=>`<article class="tpl-card">
     <strong>${esc(t.nombre)}</strong>
-    <div class="meta">${esc(t.desc||'Sin descripción')}</div>
-    <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
+    <div class="meta">${esc(t.desc||'Sin descripci&oacute;n')}</div>
+    <div class="meta">Reclamar a los ${t.dias||15} d&iacute;as del inicio</div>
     <div class="cacts">
       <button class="soft" onclick="openTplModal('${t.id}')">Editar</button>
       <button class="soft" onclick="delTpl('${t.id}')">Eliminar</button>
@@ -2062,21 +2061,21 @@ function checklistMarkup(workId, opts={}) {
       const filesHtml = files.length ? `<div class="doc-files">${files.map(f=>`<div class="doc-file">
           <div>
             <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
-            <small>${fmtBytes(f.size)} Â· ${fmtDT(f.uploadedAt)} Â· ${esc(f.uploadedBy||'-')}${f.note?` Â· ${esc(f.note)}`:''}</small>
+            <small>${fmtBytes(f.size)} &middot; ${fmtDT(f.uploadedAt)} &middot; ${esc(f.uploadedBy||'-')}${f.note?` &middot; ${esc(f.note)}`:''}</small>
           </div>
           ${opts.allowDeleteFiles?`<button class="soft mini" onclick="delDocFile('${ld.id}','${f.id}')">Quitar</button>`:''}
         </div>`).join('')}</div>` : '';
       const actions = [];
-      if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar mÃ¡s':'Subir archivo'}</button>`);
+      if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar archivos':'Subir archivo'}</button>`);
       if (opts.allowDeleteGroup && ld) actions.push(`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`);
       if (opts.showReminder) actions.push(`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`);
       return `<article class="doc-card">
         <div class="ctop"><strong>${esc(t.nombre)}</strong><span class="pill ${pillC}">${pillL}</span></div>
         <div class="meta">${esc(t.desc||'')}</div>
-        <div class="meta">Reclamar a los ${t.dias||15} dÃ­as del inicio</div>
-        <div class="meta">${loaded?`Ãšltima carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'AÃºn no fue cargado'}</div>
+        <div class="meta">Reclamar a los ${t.dias||15} d&iacute;as del inicio</div>
+        <div class="meta">${loaded?`&Uacute;ltima carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'A&uacute;n no fue cargado'}</div>
         ${actions.length?`<div class="cacts">${actions.join('')}</div>`:''}
-        ${ld?.detalle?`<div class="meta">ObservaciÃ³n: ${esc(ld.detalle)}</div>`:''}
+        ${ld?.detalle?`<div class="meta">Observaci&oacute;n: ${esc(ld.detalle)}</div>`:''}
         ${filesHtml}
       </article>`;
     }).join('');
@@ -2098,7 +2097,7 @@ function renderResidentDocWork(workId=CUR_DOC_WORK) {
   });
   if (!data) { App.openMain('documents'); return; }
   document.getElementById('doc-work-title').textContent = data.obra.nombre;
-  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} Â· ${data.obra.residenteNombre||'Sin residente'}`;
+  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} \u00b7 ${data.obra.residenteNombre||'Sin residente'}`;
   const warn = document.getElementById('doc-work-overdue');
   if (data.overdue.length) {
     warn.classList.remove('hidden');
@@ -2118,7 +2117,7 @@ function renderChecklist(workId, preserve=false) {
   if (!preserve) App.openMain('documents');
   const o = D.obras.find(x=>x.id===workId); if(!o) return;
   document.getElementById('doc-detail-title').textContent = o.nombre;
-  document.getElementById('doc-detail-sub').textContent = `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Sin residente'}`;
+  document.getElementById('doc-detail-sub').textContent = `Inicio ${fmtDate(o.inicio)} Â· ${o.residenteNombre||'Sin residente'}`;
 
   const overdue = D.templates.filter(t=>{
     const ld = getDocRecord(workId, t.id);
@@ -2145,17 +2144,17 @@ function renderChecklist(workId, preserve=false) {
     const filesHtml = files.length ? `<div class="doc-files">${files.map(f=>`<div class="doc-file">
         <div>
           <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
-          <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}${f.note?` · ${esc(f.note)}`:''}</small>
+          <small>${fmtBytes(f.size)} Â· ${fmtDT(f.uploadedAt)} Â· ${esc(f.uploadedBy||'-')}${f.note?` Â· ${esc(f.note)}`:''}</small>
         </div>
         ${canEdit()?`<button class="soft mini" onclick="delDocFile('${ld.id}','${f.id}')">Quitar</button>`:''}
       </div>`).join('')}</div>` : '';
     return `<article class="doc-card">
       <div class="ctop"><strong>${esc(t.nombre)}</strong><span class="pill ${pillC}">${pillL}</span></div>
       <div class="meta">${esc(t.desc||'')}</div>
-      <div class="meta">Reclamar a los ${t.dias||15} días del inicio</div>
-      <div class="meta">${loaded?`Última carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'Aún no fue cargado'}</div>
+      <div class="meta">Reclamar a los ${t.dias||15} d&iacute;as del inicio</div>
+      <div class="meta">${loaded?`&Uacute;ltima carga: ${fmtDT(ld.date)}`:legacy?'Existe un registro anterior sin archivo adjunto.':'A&uacute;n no fue cargado'}</div>
       <div class="cacts">
-        ${canUploadDocuments(workId)?`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar más':'Subir archivo'}</button>`:`<button class="soft" disabled>Solo lectura</button>`}
+        ${canUploadDocuments(workId)?`<button class="btn" onclick="openDocUploadModal('${t.id}')">${loaded?'Agregar archivos':'Subir archivo'}</button>`:`<button class="soft" disabled>Solo lectura</button>`}
         ${ld&&canUploadDocuments(workId)?`<button class="soft" onclick="delDoc('${ld.id}')">Quitar todo</button>`:`<button class="wa" onclick="waDocReminder('${workId}')">Pedir WA</button>`}
       </div>
       ${ld?.detalle?`<div class="meta">Observación: ${esc(ld.detalle)}</div>`:''}
@@ -2207,7 +2206,7 @@ function docFolderMarkup(item) {
     </div>
     <strong>${esc(item.tpl.nombre)}</strong>
     <div class="folder-meta">${esc(item.tpl.desc || 'Carpeta documental')}</div>
-    <div class="folder-meta">Reclamar a los ${item.tpl.dias||15} días del inicio</div>
+    <div class="folder-meta">Reclamar a los ${item.tpl.dias||15} d&iacute;as del inicio</div>
     <div class="folder-meta">${esc(summary)}</div>
     <div class="folder-open">Abrir carpeta</div>
   </article>`;
@@ -2216,10 +2215,10 @@ function docDetailCardMarkup(item, opts={}) {
   const filesHtml = item.files.length ? `<div class="doc-files">${item.files.map(f=>`<div class="doc-file">
       <div>
         <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
-        <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}${f.note?` · ${esc(f.note)}`:''}</small>
+        <small>${fmtBytes(f.size)} &middot; ${fmtDT(f.uploadedAt)} &middot; ${esc(f.uploadedBy||'-')}${f.note?` &middot; ${esc(f.note)}`:''}</small>
       </div>
       ${opts.allowDeleteFiles&&item.ld?`<button class="soft mini" onclick="delDocFile('${item.ld.id}','${f.id}')">Quitar</button>`:''}
-    </div>`).join('')}</div>` : `<div class="window"><div class="window-head"><strong>Archivos cargados</strong><span>0 archivos</span></div><div class="window-body"><div class="window-empty">Todavía no hay archivos cargados para esta carpeta.</div></div></div>`;
+    </div>`).join('')}</div>` : `<div class="window"><div class="window-head"><strong>Archivos cargados</strong><span>0 archivos</span></div><div class="window-body"><div class="window-empty">Todav&iacute;a no hay archivos cargados para esta carpeta.</div></div></div>`;
   const actions = [];
   if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${item.tpl.id}')">${item.loaded?'Agregar archivos':'Subir archivo'}</button>`);
   else actions.push(`<button class="soft" disabled>Solo lectura</button>`);
@@ -2228,10 +2227,10 @@ function docDetailCardMarkup(item, opts={}) {
   if (opts.allowCopyReminder && !item.loaded) actions.push(`<button class="soft" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>`);
   return `<article class="doc-card">
     <div class="ctop"><strong>${esc(item.tpl.nombre)}</strong><span class="pill ${item.pillClass}">${item.pillLabel}</span></div>
-    <div class="meta">${esc(item.tpl.desc||'Sin descripción')}</div>
+    <div class="meta">${esc(item.tpl.desc||'Sin descripci&oacute;n')}</div>
     <div class="meta">Obra: ${esc(item.obra.nombre)}</div>
-    <div class="meta">Reclamar a los ${item.tpl.dias||15} días del inicio</div>
-    <div class="meta">${item.loaded?`Última carga: ${fmtDT(item.ld?.date || item.files[0]?.uploadedAt)}`:item.legacy?'Existe un registro anterior sin archivo adjunto.':'Aún no fue cargado'}</div>
+    <div class="meta">Reclamar a los ${item.tpl.dias||15} d&iacute;as del inicio</div>
+    <div class="meta">${item.loaded?`&Uacute;ltima carga: ${fmtDT(item.ld?.date || item.files[0]?.uploadedAt)}`:item.legacy?'Existe un registro anterior sin archivo adjunto.':'A&uacute;n no fue cargado'}</div>
     <div class="cacts">${actions.join('')}</div>
     ${item.ld?.detalle?`<div class="meta">Observación: ${esc(item.ld.detalle)}</div>`:''}
     ${filesHtml}
@@ -2265,7 +2264,7 @@ function renderDocsHome() {
   if (tplPanel) tplPanel.classList.toggle('hidden', !isAdmin());
   if (detailPanel) detailPanel.classList.add('hidden');
   if (worksPanel) worksPanel.style.gridColumn = !isAdmin() ? '1 / -1' : '';
-  if (worksSub) worksSub.textContent = 'Abre una obra para ver sus carpetas documentales.';
+  if (worksSub) worksSub.textContent = 'Abre una obra para ver documentos.';
   renderTplList();
   renderDocWorkList();
   normalizeUiLabels(document.getElementById('view-documents'));
@@ -2297,12 +2296,12 @@ function renderResidentDocWork(workId=CUR_DOC_WORK) {
   if (!data) { App.openMain('documents'); return; }
   CUR_DOC_TEMPLATE = null;
   document.getElementById('doc-work-title').textContent = data.obra.nombre;
-  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} · ${data.obra.residenteNombre||'Sin residente'}`;
+  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} \u00b7 ${data.obra.residenteNombre||'Sin residente'}`;
   const warn = document.getElementById('doc-work-overdue');
   if (data.overdue.length) {
     warn.classList.remove('hidden');
     warn.classList.add('danger');
-    warn.textContent = `Faltan ${data.overdue.length} carpetas documentales vencidas o reclamables.`;
+    warn.textContent = `Faltan ${data.overdue.length} carpetas documentales vencidas.`;
   } else {
     warn.classList.add('hidden');
     warn.classList.remove('danger');
@@ -2325,12 +2324,12 @@ function renderDocEntry(workId=CUR_DOC_WORK, tplId=CUR_DOC_TEMPLATE) {
   const item = docTemplateState(workId, tplId);
   if (!item) { App.goBack(); return; }
   document.getElementById('doc-entry-title').textContent = item.tpl.nombre;
-  document.getElementById('doc-entry-sub').textContent = `${item.obra.nombre} · Inicio ${fmtDate(item.obra.inicio)}`;
+  document.getElementById('doc-entry-sub').textContent = `${item.obra.nombre} \u00b7 Inicio ${fmtDate(item.obra.inicio)}`;
   const warn = document.getElementById('doc-entry-overdue');
   if (item.overdue) {
     warn.classList.remove('hidden');
     warn.classList.add('danger');
-    warn.textContent = 'Esta carpeta documental está vencida o ya es reclamable.';
+    warn.textContent = 'Esta carpeta documental est\u00e1 vencida o ya es reclamable.';
   } else {
     warn.classList.add('hidden');
     warn.classList.remove('danger');
@@ -2361,7 +2360,7 @@ function markDocLoaded(tplId) {
 }
 function delDoc(id) {
   return delDocFileGroup(id);
-  if (!confirm('¿Quitar este documento cargado?')) return;
+  if (!confirm('Â¿Quitar este documento cargado?')) return;
   D.documentos = D.documentos.filter(d=>d.id!==id);
   save(); renderDocsHome();
 }
@@ -2386,7 +2385,7 @@ function saveTpl() {
   save(); closeModal('modal-tpl'); renderDocsHome();
 }
 function delTpl(id) {
-  if (!confirm('¿Eliminar este requisito?')) return;
+  if (!confirm('Â¿Eliminar este requisito?')) return;
   D.templates = D.templates.filter(t=>t.id!==id);
   save(); renderDocsHome();
 }
@@ -2395,7 +2394,7 @@ function waDocReminder(workId=CUR_DOC_WORK) {
   openWhatsAppReminder('documents', workId);
 }
 
-// ── USUARIOS ─────────────────────────────────────────────────────────────────
+// â”€â”€ USUARIOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderUsers() {
   const warn = document.getElementById('admin-warn');
   const target = document.getElementById('users-list');
@@ -2416,7 +2415,7 @@ function renderUsers() {
       <div class="meta">${esc(asg)}</div>
       <div class="cacts">
         <button class="soft" onclick="openUserModal('${u.id}')">Editar</button>
-        ${u.id!==ME.id?`<button class="soft" onclick="delUser('${u.id}')">Eliminar</button>`:`<button class="soft" disabled>Sesión actual</button>`}
+        ${u.id!==ME.id?`<button class="soft" onclick="delUser('${u.id}')">Eliminar</button>`:`<button class="soft" disabled>Sesi&oacute;n actual</button>`}
       </div>
     </article>`;
   }).join('');
@@ -2459,12 +2458,12 @@ async function saveUser() {
 }
 
 async function delUser(id) {
-  if (!confirm('¿Eliminar este usuario?')) return;
+  if (!confirm('Â¿Eliminar este usuario?')) return;
   D.users = D.users.filter(u=>u.id!==id);
   save(); renderUsers();
 }
 
-// ── MODALS ───────────────────────────────────────────────────────────────────
+// â”€â”€ MODALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-bg').forEach(bg=>{
@@ -2477,12 +2476,12 @@ document.addEventListener('visibilitychange', () => {
   if (!document.hidden && ME) pingPresence();
 });
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('keydown',e=>{
   if (e.key==='Enter' && document.getElementById('screen-login').classList.contains('active')) Auth.login();
 });
 
-// Botón exportar en workbook — agregarlo dinámicamente
+// BotÃ³n exportar en workbook â€” agregarlo dinÃ¡micamente
 document.getElementById('view-workbook').querySelector('.shead.mt').insertAdjacentHTML('beforeend',
   `<button class="soft" onclick="openExportModal()" style="margin-left:8px">Exportar Word</button>`
 );
@@ -2491,3 +2490,4 @@ seed();
 </script>
 </body>
 </html>
+
