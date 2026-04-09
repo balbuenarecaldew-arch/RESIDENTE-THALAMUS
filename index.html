@@ -2036,7 +2036,7 @@ function renderTplList() {
   const tpls = D.templates;
   el.innerHTML = tpls.length ? tpls.map(t=>`<article class="tpl-card">
     <strong>${esc(t.nombre)}</strong>
-    <div class="meta">${esc(t.desc||'Sin descripci&oacute;n')}</div>
+    <div class="meta">${esc(t.desc||'Sin descripcion;n')}</div>
     <div class="meta">Reclamar a los ${t.dias||15} d&iacute;as del inicio</div>
     <div class="cacts">
       <button class="soft" onclick="openTplModal('${t.id}')">Editar</button>
