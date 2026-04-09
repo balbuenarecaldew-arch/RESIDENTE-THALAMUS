@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>RESIDENTE DIGITAL</title>
+<title>Libro de Obras</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
@@ -46,11 +46,12 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .flabel{display:grid;gap:7px}
 .flabel span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 
-.btn,.soft,.wa,.back,.nav{min-height:52px;border-radius:18px;font-weight:800}
+.btn,.btn-green,.soft,.wa,.back,.nav{min-height:52px;border-radius:18px;font-weight:800}
 .btn{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#03111d}
 .soft,.back,.nav{background:rgba(10,24,45,.95);color:var(--text);border:1px solid var(--line)}
 .wa{background:rgba(73,240,184,.14);color:var(--green);border:1px solid rgba(73,240,184,.24)}
-.btn:hover{opacity:.92}.soft:hover,.back:hover,.nav:hover{border-color:var(--line2)}
+.btn-green{background:linear-gradient(135deg,#c7ffe8,#68f3bf);color:#042116;box-shadow:0 16px 34px rgba(73,240,184,.22)}
+.btn:hover,.btn-green:hover{opacity:.92}.soft:hover,.back:hover,.nav:hover{border-color:var(--line2)}
 
 .topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;
   gap:12px;padding:16px;border-bottom:1px solid rgba(100,164,255,.14);
@@ -229,7 +230,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       <div class="panel">
         <span class="eyebrow">Gestión móvil</span>
         <h3 style="margin-top:14px;font-size:24px">Accesos principales</h3>
-        <p class="sub">Entrá directo al libro de obra o al panel documentos.</p>
+        <p class="sub">Entrá directo al libro de obra o al panel documental. Todo lo demás queda en configuración.</p>
         <div class="hero-main">
           <button class="btn feat-card" onclick="App.openMain('works')">
             <strong>Libro de obra</strong><span>Obras, residente y actividades del día.</span>
@@ -270,17 +271,18 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       <div class="panel">
         <div id="wb-user-line" class="meta">Cargando datos de la obra…</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px">
-          <button class="soft" onclick="openActModal()">Cargar actividad</button>
+          <button id="wb-load-btn" class="btn-green" onclick="openActModal()">Cargar actividad</button>
+          <button id="wb-book-toggle" class="soft" onclick="toggleWorkbookHistory()"><span id="wb-book-toggle-label">Ver libro</span></button>
           <button id="wb-wa-btn" class="wa admin-only" onclick="waDailyReminder()">Avisar WhatsApp</button>
           <button id="wb-copy-btn" class="soft admin-only" onclick="copyReminder('daily', CUR_WORK)">Copiar aviso</button>
         </div>
         <div id="wb-warning" class="notice hidden"></div>
       </div>
-      <div class="shead mt">
+      <div id="wb-history-head" class="shead mt hidden">
         <div><h4>Actividades del libro</h4><p class="sub" style="margin:0;font-size:12px">Enumeradas automáticamente</p></div>
-        <button class="btn" id="add-act-btn" onclick="openActModal()">Nueva actividad</button>
+        <button class="btn hidden" id="add-act-btn" onclick="openActModal()">Nueva actividad</button>
       </div>
-      <div id="wb-list" class="list"></div>
+      <div id="wb-list" class="list hidden"></div>
     </section>
 
     <!-- DOCUMENTOS -->
@@ -550,7 +552,7 @@ function normalizeAppSettings(raw) {
 }
 const emptyData = () => ({ users:[], obras:[], actividades:[], documentos:[], templates:[], settings:defaultAppSettings() });
 let D = emptyData();
-let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, CUR_DOC_TEMPLATE = null, VIEW_STACK = [];
+let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, CUR_DOC_TEMPLATE = null, WB_SHOW_HISTORY = false, VIEW_STACK = [];
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: 'AIzaSyD7s4YyFB8-C4IsVqW6gnA9HvRj1FE13eo',
   authDomain: 'residente-thalamus.firebaseapp.com',
@@ -992,7 +994,7 @@ const Auth = {
     firebase.auth().onAuthStateChanged(async fbUser => {
       if (!fbUser) {
         stopPresence(false);
-        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
+        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
         document.getElementById('li-pass').value = '';
         this.setErr('');
         updateAdminUI();
@@ -1085,7 +1087,7 @@ const Auth = {
       console.error('Firebase logout error', e);
     }
     stopPresence(false);
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     updateAdminUI();
@@ -1116,7 +1118,7 @@ const Auth = {
   },
   logout() {
     return this.logoutFirebaseOverride();
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     showScreen('login');
@@ -1453,7 +1455,13 @@ function saveWork() {
 // ── LIBRO DIARIO ─────────────────────────────────────────────────────────────
 function openWorkbook(id) {
   CUR_WORK = id;
+  WB_SHOW_HISTORY = false;
   App.openSub('workbook');
+  renderWorkbook();
+}
+
+function toggleWorkbookHistory(force) {
+  WB_SHOW_HISTORY = typeof force === 'boolean' ? force : !WB_SHOW_HISTORY;
   renderWorkbook();
 }
 
@@ -1466,7 +1474,16 @@ function renderWorkbook() {
     `Inicio ${fmtDate(o.inicio)} · ${o.residenteNombre||'Residente no configurado'}`;
   document.getElementById('wb-user-line').textContent =
     `Usuario conectado: ${ME?.nombre||'-'} · ${role(ME?.rol||'viewer')}`;
-  document.getElementById('add-act-btn').classList.toggle('hidden', !canEdit());
+  const canWrite = canEdit();
+  const loadBtn = document.getElementById('wb-load-btn');
+  const toggleBtn = document.getElementById('wb-book-toggle');
+  const toggleLabel = document.getElementById('wb-book-toggle-label');
+  const historyHead = document.getElementById('wb-history-head');
+  document.getElementById('add-act-btn').classList.add('hidden');
+  if (loadBtn) loadBtn.classList.toggle('hidden', !canWrite);
+  if (toggleBtn) toggleBtn.classList.toggle('hidden', !acts.length);
+  if (toggleLabel) toggleLabel.textContent = WB_SHOW_HISTORY ? 'Ocultar libro' : 'Ver libro';
+  if (historyHead) historyHead.classList.toggle('hidden', !WB_SHOW_HISTORY);
 
   const hoy = acts.some(a=>new Date(a.edit||a.date).toDateString()===new Date().toDateString());
   const warn = document.getElementById('wb-warning');
@@ -1479,6 +1496,11 @@ function renderWorkbook() {
   if (!hoy && Prefs.autoDailyWhatsApp) maybeOpenWhatsApp('daily', CUR_WORK);
 
   const target = document.getElementById('wb-list');
+  target.classList.toggle('hidden', !WB_SHOW_HISTORY);
+  if (!WB_SHOW_HISTORY) {
+    target.innerHTML = '';
+    return;
+  }
   if (!acts.length) {
     target.innerHTML = `<article class="act-card"><strong>Sin actividades aún.</strong><div class="meta">La primera que cargues aparece como ítem 1.</div></article>`;
     return;
