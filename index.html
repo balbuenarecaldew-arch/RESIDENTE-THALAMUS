@@ -154,12 +154,36 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .toggle-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
 .toggle-row input{width:22px;height:22px;accent-color:var(--cyan);margin-top:2px}
 .session-note{margin-top:12px}
+.folder-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.folder-card{
+  padding:18px;border-radius:26px;cursor:pointer;
+  background:linear-gradient(180deg,rgba(12,27,49,.98),rgba(7,16,30,.98));
+  border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.folder-card:hover{transform:translateY(-2px);border-color:var(--line2)}
+.folder-card .folder-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.folder-card .folder-meta{color:var(--muted);font-size:13px;line-height:1.45}
+.folder-card .folder-open{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:var(--cyan);font-size:13px;font-weight:800}
+.folder-icon{
+  position:relative;flex:0 0 auto;width:60px;height:42px;border-radius:12px;
+  background:linear-gradient(180deg,#f8d469,#c79512);
+  box-shadow:inset 0 -10px 18px rgba(0,0,0,.14),0 10px 24px rgba(0,0,0,.2);
+}
+.single-col{grid-template-columns:1fr!important}
+.folder-icon:before{
+  content:'';position:absolute;left:6px;top:-8px;width:24px;height:12px;border-radius:10px 10px 0 0;
+  background:linear-gradient(180deg,#ffd874,#d8a221);
+}
+.docs-layout.docs-browse{grid-template-columns:1fr}
 
 @media(min-width:900px){
   .stats{grid-template-columns:repeat(4,1fr)}
   .feat-grid{grid-template-columns:repeat(3,1fr)}
   .list{grid-template-columns:repeat(2,1fr)}
   .docs-layout{grid-template-columns:1fr 1fr 1.2fr;align-items:start}
+  .docs-layout.docs-browse{grid-template-columns:.95fr 1.05fr}
+  .docs-layout.docs-browse.single-panel{grid-template-columns:1fr}
   .bottom-nav{display:none}
   .hero-main{grid-template-columns:1.1fr 1.1fr .9fr}
   .home-summary{grid-template-columns:repeat(2,1fr)}
@@ -301,7 +325,18 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </div>
       </div>
       <div id="doc-work-overdue" class="notice hidden"></div>
-      <div id="doc-work-checklist" class="list" style="margin-top:14px"></div>
+      <div id="doc-work-checklist" class="list single-col" style="margin-top:14px"></div>
+    </section>
+
+    <section id="view-doc-entry" class="view">
+      <div class="shead">
+        <div class="shead-left">
+          <button class="back" onclick="App.goBack()">&larr;</button>
+          <div><h3 id="doc-entry-title">Carpeta documental</h3><p id="doc-entry-sub" class="sub" style="margin:0">Selecciona una carpeta</p></div>
+        </div>
+      </div>
+      <div id="doc-entry-overdue" class="notice hidden"></div>
+      <div id="doc-entry-content" class="list single-col" style="margin-top:14px"></div>
     </section>
 
     <!-- CONFIGURACION -->
@@ -515,7 +550,7 @@ function normalizeAppSettings(raw) {
 }
 const emptyData = () => ({ users:[], obras:[], actividades:[], documentos:[], templates:[], settings:defaultAppSettings() });
 let D = emptyData();
-let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, VIEW_STACK = [];
+let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, CUR_DOC_TEMPLATE = null, VIEW_STACK = [];
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: 'AIzaSyD7s4YyFB8-C4IsVqW6gnA9HvRj1FE13eo',
   authDomain: 'residente-thalamus.firebaseapp.com',
@@ -554,6 +589,10 @@ const Presence = {
   unsubscribe: null,
   heartbeat: null,
   sessions: []
+};
+const BackTrap = {
+  installed: false,
+  handling: false
 };
 const FileStore = {
   provider: 'supabase',
@@ -677,6 +716,10 @@ function rerenderCurrentView() {
   if (App.curView==='doc-work') {
     if (D.obras.find(x=>x.id===CUR_DOC_WORK)) renderResidentDocWork(CUR_DOC_WORK);
     else App.openMain('documents');
+  }
+  if (App.curView==='doc-entry') {
+    if (D.obras.find(x=>x.id===CUR_DOC_WORK) && D.templates.find(x=>x.id===CUR_DOC_TEMPLATE)) renderDocEntry(CUR_DOC_WORK, CUR_DOC_TEMPLATE);
+    else App.goBack();
   }
   if (App.curView==='settings') {
     if (!isAdmin()) App.openMain('home');
@@ -949,7 +992,7 @@ const Auth = {
     firebase.auth().onAuthStateChanged(async fbUser => {
       if (!fbUser) {
         stopPresence(false);
-        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
+        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
         document.getElementById('li-pass').value = '';
         this.setErr('');
         updateAdminUI();
@@ -1042,7 +1085,7 @@ const Auth = {
       console.error('Firebase logout error', e);
     }
     stopPresence(false);
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     updateAdminUI();
@@ -1073,7 +1116,7 @@ const Auth = {
   },
   logout() {
     return this.logoutFirebaseOverride();
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     showScreen('login');
@@ -1084,19 +1127,52 @@ const Auth = {
 function showScreen(n) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+n).classList.add('active');
+  if (n==='app') primeHardwareBack();
 }
 function showView(n) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+n).classList.add('active');
+  normalizeUiLabels(document.getElementById('view-'+n));
 }
 function setNav(n) {
   document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.main===n));
+}
+function normalizeUiLabels(root=document) {
+  const fixes = {
+    'Ver mais': 'Ver más',
+    'VER MAIS': 'VER MÁS'
+  };
+  if (!root) return;
+  root.querySelectorAll('.back').forEach(btn => { btn.innerHTML = '&larr;'; });
+  root.querySelectorAll('button,span,p,strong,h3,h4,small,div').forEach(el => {
+    if (el.children.length) return;
+    const text = String(el.textContent || '').trim();
+    if (fixes[text]) el.textContent = fixes[text];
+  });
+}
+function primeHardwareBack() {
+  if (!BackTrap.installed) {
+    window.addEventListener('popstate', () => {
+      if (BackTrap.handling) return;
+      if (!document.getElementById('screen-app')?.classList.contains('active')) return;
+      BackTrap.handling = true;
+      try {
+        App.goBack();
+      } finally {
+        try { history.pushState({ loAppBack:true, t:Date.now() }, ''); } catch (e) {}
+        BackTrap.handling = false;
+      }
+    });
+    BackTrap.installed = true;
+  }
+  try { history.pushState({ loAppBack:true, t:Date.now() }, ''); } catch (e) {}
 }
 
 const App = {
   curView: 'home',
   openMain(n) {
     if (n==='settings' && !isAdmin()) n = 'home';
+    if (n==='documents') CUR_DOC_TEMPLATE = null;
     VIEW_STACK = []; this.curView = n;
     showView(n); setNav(n);
     if (n==='home') renderHome();
@@ -1111,6 +1187,7 @@ const App = {
     if (p==='works') renderWorks();
     if (p==='documents') renderDocsHome();
     if (p==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+    if (p==='doc-entry') renderDocEntry(CUR_DOC_WORK, CUR_DOC_TEMPLATE);
     if (p==='settings') renderSettings();
     if (p==='home') renderHome();
   }
@@ -1827,7 +1904,8 @@ async function saveDocUpload() {
     doc.files = [...docFiles(doc), ...uploaded];
     save();
     closeModal('modal-doc-upload');
-    if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+    if (App.curView==='doc-entry') renderDocEntry(CUR_DOC_WORK, CUR_DOC_TEMPLATE || tplId);
+    else if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
     else renderDocsHome();
   } catch (e) {
     console.error('Upload error', e);
@@ -1852,7 +1930,8 @@ async function delDocFile(docId, fileId) {
     D.documentos = D.documentos.filter(d=>d.id!==docId);
   }
   save();
-  if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+  if (App.curView==='doc-entry') renderDocEntry(CUR_DOC_WORK, CUR_DOC_TEMPLATE);
+  else if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
   else renderDocsHome();
 }
 async function delDocFileGroup(id) {
@@ -1868,7 +1947,8 @@ async function delDocFileGroup(id) {
   }
   D.documentos = D.documentos.filter(d=>d.id!==id);
   save();
-  if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
+  if (App.curView==='doc-entry') renderDocEntry(CUR_DOC_WORK, CUR_DOC_TEMPLATE);
+  else if (App.curView==='doc-work') renderResidentDocWork(CUR_DOC_WORK);
   else renderDocsHome();
 }
 
@@ -2061,6 +2141,197 @@ function renderChecklist(workId, preserve=false) {
     </article>`;
   }).join('');
   decorateDocFileWindows(target);
+}
+
+function docTemplateState(workId, tplId) {
+  const obra = D.obras.find(x=>x.id===workId);
+  const tpl = D.templates.find(x=>x.id===tplId);
+  if (!obra || !tpl) return null;
+  const ld = getDocRecord(workId, tplId);
+  const files = docFiles(ld);
+  const loaded = hasUploadedFiles(ld);
+  const legacy = !!ld && !loaded;
+  const overdue = isOverdue(obra, tpl, loaded);
+  return {
+    obra,
+    tpl,
+    ld,
+    files,
+    loaded,
+    legacy,
+    overdue,
+    pillClass: loaded ? 'ok' : overdue ? 'bad' : 'warn',
+    pillLabel: loaded ? `${files.length} archivo${files.length===1?'':'s'}` : legacy ? 'Sin archivo' : overdue ? 'Vencido' : 'Pendiente'
+  };
+}
+function docWorkData(workId) {
+  const obra = D.obras.find(x=>x.id===workId);
+  if (!obra) return null;
+  const items = D.templates.map(t=>docTemplateState(workId, t.id)).filter(Boolean);
+  return {
+    obra,
+    items,
+    overdue: items.filter(item => item.overdue)
+  };
+}
+function docFolderMarkup(item) {
+  const summary = item.loaded
+    ? `${item.files.length} archivo${item.files.length===1?'':'s'} cargado${item.files.length===1?'':'s'}`
+    : item.overdue ? 'Documento pendiente y vencido.' : 'Abre la carpeta para revisar o cargar archivos.';
+  return `<article class="folder-card clickable" onclick="openDocEntry('${item.obra.id}','${item.tpl.id}')">
+    <div class="folder-top">
+      <div class="folder-icon" aria-hidden="true"></div>
+      <span class="pill ${item.pillClass}">${item.pillLabel}</span>
+    </div>
+    <strong>${esc(item.tpl.nombre)}</strong>
+    <div class="folder-meta">${esc(item.tpl.desc || 'Carpeta documental')}</div>
+    <div class="folder-meta">Reclamar a los ${item.tpl.dias||15} días del inicio</div>
+    <div class="folder-meta">${esc(summary)}</div>
+    <div class="folder-open">Abrir carpeta</div>
+  </article>`;
+}
+function docDetailCardMarkup(item, opts={}) {
+  const filesHtml = item.files.length ? `<div class="doc-files">${item.files.map(f=>`<div class="doc-file">
+      <div>
+        <a href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
+        <small>${fmtBytes(f.size)} · ${fmtDT(f.uploadedAt)} · ${esc(f.uploadedBy||'-')}${f.note?` · ${esc(f.note)}`:''}</small>
+      </div>
+      ${opts.allowDeleteFiles&&item.ld?`<button class="soft mini" onclick="delDocFile('${item.ld.id}','${f.id}')">Quitar</button>`:''}
+    </div>`).join('')}</div>` : `<div class="window"><div class="window-head"><strong>Archivos cargados</strong><span>0 archivos</span></div><div class="window-body"><div class="window-empty">Todavía no hay archivos cargados para esta carpeta.</div></div></div>`;
+  const actions = [];
+  if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${item.tpl.id}')">${item.loaded?'Agregar archivos':'Subir archivo'}</button>`);
+  else actions.push(`<button class="soft" disabled>Solo lectura</button>`);
+  if (opts.allowDeleteGroup && item.ld) actions.push(`<button class="soft" onclick="delDoc('${item.ld.id}')">Quitar todo</button>`);
+  if (opts.showReminder && !item.loaded) actions.push(`<button class="wa" onclick="waDocReminder('${item.obra.id}')">Pedir aviso</button>`);
+  if (opts.allowCopyReminder && !item.loaded) actions.push(`<button class="soft" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>`);
+  return `<article class="doc-card">
+    <div class="ctop"><strong>${esc(item.tpl.nombre)}</strong><span class="pill ${item.pillClass}">${item.pillLabel}</span></div>
+    <div class="meta">${esc(item.tpl.desc||'Sin descripción')}</div>
+    <div class="meta">Obra: ${esc(item.obra.nombre)}</div>
+    <div class="meta">Reclamar a los ${item.tpl.dias||15} días del inicio</div>
+    <div class="meta">${item.loaded?`Última carga: ${fmtDT(item.ld?.date || item.files[0]?.uploadedAt)}`:item.legacy?'Existe un registro anterior sin archivo adjunto.':'Aún no fue cargado'}</div>
+    <div class="cacts">${actions.join('')}</div>
+    ${item.ld?.detalle?`<div class="meta">Observación: ${esc(item.ld.detalle)}</div>`:''}
+    ${filesHtml}
+  </article>`;
+}
+function openDocWork(workId) {
+  CUR_DOC_WORK = workId;
+  CUR_DOC_TEMPLATE = null;
+  App.openSub('doc-work');
+  renderResidentDocWork(workId);
+}
+function openResidentDocWork(workId) {
+  openDocWork(workId);
+}
+function openDocEntry(workId, tplId) {
+  CUR_DOC_WORK = workId;
+  CUR_DOC_TEMPLATE = tplId;
+  App.openSub('doc-entry');
+  renderDocEntry(workId, tplId);
+}
+function renderDocsHome() {
+  const layout = document.querySelector('#view-documents .docs-layout');
+  const tplPanel = document.getElementById('doc-templates-panel');
+  const detailPanel = document.getElementById('doc-detail-panel');
+  const worksPanel = document.getElementById('doc-works-panel');
+  const worksSub = document.getElementById('doc-works-sub');
+  if (layout) {
+    layout.classList.add('docs-browse');
+    layout.classList.toggle('single-panel', !isAdmin());
+  }
+  if (tplPanel) tplPanel.classList.toggle('hidden', !isAdmin());
+  if (detailPanel) detailPanel.classList.add('hidden');
+  if (worksPanel) worksPanel.style.gridColumn = !isAdmin() ? '1 / -1' : '';
+  if (worksSub) worksSub.textContent = 'Abre una obra para ver sus carpetas documentales.';
+  renderTplList();
+  renderDocWorkList();
+  normalizeUiLabels(document.getElementById('view-documents'));
+}
+function renderDocWorkList() {
+  const ws = myWorks();
+  document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
+    const total = D.templates.length;
+    const missing = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
+    const loaded = Math.max(total - missing, 0);
+    const progressLine = total ? `${loaded} de ${total} carpetas con archivo cargado.` : 'Todavía no hay carpetas documentales configuradas.';
+    return `<article class="work-card clickable" style="border-radius:22px" onclick="openDocWork('${o.id}')">
+      <div class="ctop"><span class="ccode">OBRA</span>
+        <span class="pill ${missing?'warn':'ok'}">${missing?`${missing} faltantes`:'Completa'}</span>
+      </div>
+      <strong>${esc(o.nombre)}</strong>
+      <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
+      <div class="meta">${progressLine}</div>
+      <div class="meta">Entra para navegar como carpetas y archivos.</div>
+      <div class="cacts">
+        <button class="btn" onclick="event.stopPropagation();openDocWork('${o.id}')">Abrir carpetas</button>
+        ${isAdmin()?`<button class="soft" onclick="event.stopPropagation();copyReminder('documents','${o.id}')">Copiar aviso</button>`:''}
+      </div>
+    </article>`;
+  }).join('') : `<article class="work-card"><strong>No hay obras.</strong></article>`;
+}
+function renderResidentDocWork(workId=CUR_DOC_WORK) {
+  const data = docWorkData(workId);
+  if (!data) { App.openMain('documents'); return; }
+  CUR_DOC_TEMPLATE = null;
+  document.getElementById('doc-work-title').textContent = data.obra.nombre;
+  document.getElementById('doc-work-sub').textContent = `Inicio ${fmtDate(data.obra.inicio)} · ${data.obra.residenteNombre||'Sin residente'}`;
+  const warn = document.getElementById('doc-work-overdue');
+  if (data.overdue.length) {
+    warn.classList.remove('hidden');
+    warn.classList.add('danger');
+    warn.textContent = `Faltan ${data.overdue.length} carpetas documentales vencidas o reclamables.`;
+  } else {
+    warn.classList.add('hidden');
+    warn.classList.remove('danger');
+  }
+  const target = document.getElementById('doc-work-checklist');
+  const adminActions = isAdmin() ? `<article class="panel">
+    <strong>Acciones rápidas</strong>
+    <div class="meta" style="margin-top:8px">Desde aquí puedes avisar por WhatsApp o copiar el recordatorio completo de documentos pendientes.</div>
+    <div class="cacts" style="margin-top:14px">
+      <button class="wa" onclick="waDocReminder('${workId}')">WhatsApp</button>
+      <button class="soft" onclick="copyReminder('documents','${workId}')">Copiar aviso</button>
+    </div>
+  </article>` : '';
+  target.innerHTML = data.items.length
+    ? `${adminActions}<div class="folder-grid">${data.items.map(item => docFolderMarkup(item)).join('')}</div>`
+    : `<article class="doc-card"><strong>No hay requisitos configurados.</strong><div class="meta">Primero crea la lista maestra de documentos.</div></article>`;
+  normalizeUiLabels(document.getElementById('view-doc-work'));
+}
+function renderDocEntry(workId=CUR_DOC_WORK, tplId=CUR_DOC_TEMPLATE) {
+  const item = docTemplateState(workId, tplId);
+  if (!item) { App.goBack(); return; }
+  document.getElementById('doc-entry-title').textContent = item.tpl.nombre;
+  document.getElementById('doc-entry-sub').textContent = `${item.obra.nombre} · Inicio ${fmtDate(item.obra.inicio)}`;
+  const warn = document.getElementById('doc-entry-overdue');
+  if (item.overdue) {
+    warn.classList.remove('hidden');
+    warn.classList.add('danger');
+    warn.textContent = 'Esta carpeta documental está vencida o ya es reclamable.';
+  } else {
+    warn.classList.add('hidden');
+    warn.classList.remove('danger');
+  }
+  const target = document.getElementById('doc-entry-content');
+  target.innerHTML = docDetailCardMarkup(item, {
+    allowUpload: canUploadDocuments(workId),
+    allowDeleteGroup: isAdmin(),
+    allowDeleteFiles: isAdmin(),
+    showReminder: isAdmin(),
+    allowCopyReminder: isAdmin()
+  });
+  decorateDocFileWindows(target);
+  normalizeUiLabels(document.getElementById('view-doc-entry'));
+}
+function renderChecklist(workId, preserve=false) {
+  CUR_DOC_WORK = workId;
+  CUR_DOC_TEMPLATE = null;
+  if (preserve) {
+    renderResidentDocWork(workId);
+    return;
+  }
+  openDocWork(workId);
 }
 
 function markDocLoaded(tplId) {
