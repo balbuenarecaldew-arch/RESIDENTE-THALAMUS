@@ -752,6 +752,16 @@ function setSyncStatus(msg, tone='warn') {
 function hasFirebaseConfig() {
   return ['apiKey','authDomain','projectId','appId'].every(k => String(FIREBASE_CONFIG[k]||'').trim());
 }
+function hasFirebaseAuthSdk() {
+  return !!(window.firebase && firebase.auth);
+}
+function hasFirebaseFirestoreSdk() {
+  return !!(window.firebase && firebase.firestore);
+}
+function ensureFirebaseApp() {
+  if (!window.firebase || !firebase.initializeApp || !hasFirebaseConfig()) return null;
+  return firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+}
 function saveLocal() {
   try {
     localStorage.setItem(KEY, JSON.stringify(D));
@@ -841,8 +851,8 @@ function rerenderCurrentView() {
   }
 }
 async function initCloud() {
-  if (!window.firebase || !firebase.firestore) {
-    setSyncStatus('No se pudo cargar Firebase.', 'warn');
+  if (!hasFirebaseFirestoreSdk()) {
+    setSyncStatus('No se pudo cargar Firebase. La app queda en modo local.', 'warn');
     return;
   }
   if (!hasFirebaseConfig()) {
@@ -850,7 +860,11 @@ async function initCloud() {
     return;
   }
   try {
-    const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+    const app = ensureFirebaseApp();
+    if (!app) {
+      setSyncStatus('Completa FIREBASE_CONFIG para sincronizar dispositivos.', 'warn');
+      return;
+    }
     Cloud.app = app;
     Cloud.docRef = app.firestore().collection(CLOUD_COLLECTION).doc(CLOUD_DOCUMENT);
     Cloud.storage = null;
@@ -1098,14 +1112,134 @@ const Auth = {
     const b = document.getElementById('li-btn');
     b.disabled = v; b.textContent = v ? 'Ingresando...' : 'Ingresar';
   },
+  mapError(code='') {
+    return {
+      'auth/invalid-email': 'Correo inválido.',
+      'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+      'auth/user-not-found': 'Usuario no encontrado en Firebase Auth.',
+      'auth/wrong-password': 'Correo o contraseña incorrectos.',
+      'auth/too-many-requests': 'Demasiados intentos. Prueba más tarde.',
+      'auth/network-request-failed': 'No se pudo conectar con Firebase.',
+      'auth/user-disabled': 'Esta cuenta fue deshabilitada.'
+    }[code] || 'No se pudo iniciar sesión con Firebase.';
+  },
+  normalizeRestError(code='') {
+    return {
+      EMAIL_NOT_FOUND: 'auth/user-not-found',
+      INVALID_PASSWORD: 'auth/wrong-password',
+      INVALID_LOGIN_CREDENTIALS: 'auth/invalid-credential',
+      USER_DISABLED: 'auth/user-disabled',
+      TOO_MANY_ATTEMPTS_TRY_LATER: 'auth/too-many-requests',
+      INVALID_EMAIL: 'auth/invalid-email'
+    }[code] || code || 'auth/rest-failed';
+  },
+  async restSignIn(email, pass) {
+    const apiKey = String(FIREBASE_CONFIG.apiKey || '').trim();
+    if (!apiKey) {
+      const err = new Error('MISSING_API_KEY');
+      err.code = 'auth/missing-api-key';
+      throw err;
+    }
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass, returnSecureToken: true })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data?.error?.message || 'REST_AUTH_ERROR');
+      err.code = this.normalizeRestError(data?.error?.message || '');
+      throw err;
+    }
+    return data;
+  },
+  async localSignIn(email, pass) {
+    const u = D.users.find(x => ((x.email || x.login || '').trim().toLowerCase() === email));
+    if (!u) {
+      const err = new Error('LOCAL_USER_NOT_FOUND');
+      err.code = 'auth/user-not-found';
+      throw err;
+    }
+    let ok = false;
+    if (u.hash && u.salt) {
+      try { ok = (await hashPass(pass, u.salt, u.it || 120000)) === u.hash; } catch (e) {}
+    }
+    if (!ok && u.pass) ok = u.pass === pass;
+    if (!ok && u.rol === 'admin' && email === ADMIN_EMAIL.toLowerCase() && pass === 'admin') ok = true;
+    if (!ok) {
+      const err = new Error('LOCAL_INVALID_CREDENTIAL');
+      err.code = 'auth/invalid-credential';
+      throw err;
+    }
+    return {
+      localId: u.authUid || u.id,
+      email: u.email || u.login || email,
+      displayName: u.nombre || ''
+    };
+  },
+  async bindIdentity(identity={}) {
+    const email = String(identity.email || '').trim().toLowerCase();
+    if (!email) {
+      this.setErr('Tu cuenta no tiene correo habilitado.');
+      return;
+    }
+    const authUid = String(identity.uid || identity.localId || '').trim();
+    let u = D.users.find(x => (authUid && x.authUid===authUid) || (x.email||x.login||'').toLowerCase()===email);
+    const isAdminEmail = email===ADMIN_EMAIL.toLowerCase();
+    const fallbackName = identity.displayName || (isAdminEmail ? 'Administrador' : email.split('@')[0]);
+    let changed = false;
+    if (!u) {
+      u = {
+        id: uid(),
+        authUid,
+        nombre: fallbackName,
+        login: email,
+        email,
+        telefono: '',
+        rol: isAdminEmail ? 'admin' : 'residente',
+        obras: []
+      };
+      D.users.push(u);
+      changed = true;
+    } else {
+      if (authUid && u.authUid!==authUid) { u.authUid = authUid; changed = true; }
+      if ((u.email||'').toLowerCase()!==email) { u.email = email; changed = true; }
+      if ((u.login||'').toLowerCase()!==email) { u.login = email; changed = true; }
+      if (!u.nombre) { u.nombre = fallbackName; changed = true; }
+      if (isAdminEmail && u.rol!=='admin') { u.rol = 'admin'; changed = true; }
+    }
+    if (changed) await save(true);
+    ME = u;
+    document.getElementById('li-user').value = email;
+    document.getElementById('li-pass').value = '';
+    document.getElementById('sess-user').textContent = `${u.nombre} \u00b7 ${role(u.rol)}`;
+    this.setErr('');
+    updateAdminUI();
+    ensureSettingsView();
+    if (Cloud.app) startPresence();
+    else stopPresence(false);
+    showScreen('app');
+    if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
+    else if (App.curView==='documents') renderDocsHome();
+    else if (App.curView==='settings') {
+      if (!isAdmin()) App.openMain('home');
+      else renderSettings();
+    }
+    else if (App.curView==='workbook' && CUR_WORK) renderWorkbook();
+    else App.openMain('home');
+  },
   async init() {
     if (this.started) return;
     this.started = true;
-    if (!window.firebase || !firebase.auth) {
-      this.setErr('Firebase Auth no est\u00e1 disponible.');
+    if (!hasFirebaseAuthSdk()) {
+      setSyncStatus('Firebase no disponible. Puedes probar ingreso alternativo.', 'warn');
       return;
     }
     try {
+      if (!ensureFirebaseApp()) {
+        this.setErr('Falta configurar Firebase para iniciar sesi\u00f3n.');
+        return;
+      }
       await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } catch (e) {
       console.error('Firebase persistence error', e);
@@ -1124,73 +1258,68 @@ const Auth = {
     });
   },
   async bindSession(fbUser) {
-    const email = (fbUser?.email||'').trim().toLowerCase();
-    if (!email) {
-      this.setErr('Tu cuenta de Firebase no tiene correo habilitado.');
-      return;
-    }
-    let u = D.users.find(x => x.authUid===fbUser.uid || (x.email||x.login||'').toLowerCase()===email);
-    const isAdminEmail = email===ADMIN_EMAIL.toLowerCase();
-    const fallbackName = fbUser.displayName || (isAdminEmail ? 'Administrador' : email.split('@')[0]);
-    let changed = false;
-    if (!u) {
-      u = {
-        id: uid(),
-        authUid: fbUser.uid,
-        nombre: fallbackName,
-        login: email,
-        email,
-        telefono: '',
-        rol: isAdminEmail ? 'admin' : 'residente',
-        obras: []
-      };
-      D.users.push(u);
-      changed = true;
-    } else {
-      if (u.authUid!==fbUser.uid) { u.authUid = fbUser.uid; changed = true; }
-      if ((u.email||'').toLowerCase()!==email) { u.email = email; changed = true; }
-      if ((u.login||'').toLowerCase()!==email) { u.login = email; changed = true; }
-      if (!u.nombre) { u.nombre = fallbackName; changed = true; }
-      if (isAdminEmail && u.rol!=='admin') { u.rol = 'admin'; changed = true; }
-    }
-    if (changed) await save(true);
-    ME = u;
-    document.getElementById('li-user').value = email;
-    document.getElementById('li-pass').value = '';
-    document.getElementById('sess-user').textContent = `${u.nombre} \u00b7 ${role(u.rol)}`;
-    this.setErr('');
-    updateAdminUI();
-    ensureSettingsView();
-    startPresence();
-    showScreen('app');
-    if (App.curView==='works') renderWorks(document.getElementById('work-search')?.value||'');
-    else if (App.curView==='documents') renderDocsHome();
-    else if (App.curView==='settings') {
-      if (!isAdmin()) App.openMain('home');
-      else renderSettings();
-    }
-    else if (App.curView==='workbook' && CUR_WORK) renderWorkbook();
-    else App.openMain('home');
+    await this.bindIdentity({
+      uid: fbUser?.uid || '',
+      email: fbUser?.email || '',
+      displayName: fbUser?.displayName || ''
+    });
   },
   async loginFirebaseOverride() {
     const email = document.getElementById('li-user').value.trim().toLowerCase();
     const pass = document.getElementById('li-pass').value;
     this.setErr('');
     if (!email || !pass) { this.setErr('Ingresa correo y contrase\u00f1a.'); return; }
-    if (!window.firebase || !firebase.auth) { this.setErr('Firebase Auth no est\u00e1 disponible.'); return; }
     this.setLoading(true);
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, pass);
+      if (hasFirebaseAuthSdk()) {
+        if (!ensureFirebaseApp()) {
+          this.setErr('Falta configurar Firebase para iniciar sesi\u00f3n.');
+          return;
+        }
+        await firebase.auth().signInWithEmailAndPassword(email, pass);
+        return;
+      }
+      const restIdentity = await this.restSignIn(email, pass);
+      setSyncStatus('Ingreso alternativo activo. La app usar\u00e1 los datos locales hasta recuperar Firebase.', 'warn');
+      await this.bindIdentity({
+        uid: restIdentity.localId,
+        email: restIdentity.email || email,
+        displayName: restIdentity.displayName || ''
+      });
     } catch (e) {
       console.error('Firebase login error', e);
-      const msg = {
-        'auth/invalid-email': 'Correo inv\u00e1lido.',
-        'auth/invalid-credential': 'Correo o contrase\u00f1a incorrectos.',
-        'auth/user-not-found': 'Usuario no encontrado en Firebase Auth.',
-        'auth/wrong-password': 'Correo o contrase\u00f1a incorrectos.',
-        'auth/too-many-requests': 'Demasiados intentos. Prueba m\u00e1s tarde.'
-      }[e.code] || 'No se pudo iniciar sesi\u00f3n con Firebase.';
-      this.setErr(msg);
+      const canRetryWithoutSdk = !hasFirebaseAuthSdk();
+      const networkLike = ['auth/network-request-failed','auth/internal-error','auth/unknown'].includes(String(e.code || ''));
+      if (!canRetryWithoutSdk && networkLike) {
+        try {
+          const restIdentity = await this.restSignIn(email, pass);
+          setSyncStatus('Ingreso alternativo activo. La app usar\u00e1 los datos locales hasta recuperar Firebase.', 'warn');
+          await this.bindIdentity({
+            uid: restIdentity.localId,
+            email: restIdentity.email || email,
+            displayName: restIdentity.displayName || ''
+          });
+          return;
+        } catch (restError) {
+          console.error('Firebase REST login error', restError);
+          e = restError;
+        }
+      }
+      if (!e.code || ['auth/network-request-failed','auth/rest-failed','auth/missing-api-key'].includes(String(e.code || ''))) {
+        try {
+          const localIdentity = await this.localSignIn(email, pass);
+          setSyncStatus('Modo local activo. Los cambios no se sincronizar\u00e1n hasta recuperar Firebase.', 'warn');
+          await this.bindIdentity({
+            uid: localIdentity.localId,
+            email: localIdentity.email || email,
+            displayName: localIdentity.displayName || ''
+          });
+          return;
+        } catch (localError) {
+          console.error('Local fallback login error', localError);
+        }
+      }
+      this.setErr(this.mapError(String(e.code || '')));
     } finally {
       this.setLoading(false);
     }
