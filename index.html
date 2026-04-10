@@ -2468,14 +2468,6 @@ function renderResidentDocWork(workId=CUR_DOC_WORK) {
     warn.classList.remove('danger');
   }
   const target = document.getElementById('doc-work-checklist');
-  const term = String(document.getElementById('doc-folder-search')?.value || '').trim().toLowerCase();
-  const items = term
-    ? data.items.filter(item => `${item.tpl.nombre} ${item.tpl.desc||''}`.toLowerCase().includes(term))
-    : data.items;
-  const term = String(document.getElementById('doc-folder-search')?.value || '').trim().toLowerCase();
-  const items = term
-    ? data.items.filter(item => `${item.tpl.nombre} ${item.tpl.desc||''}`.toLowerCase().includes(term))
-    : data.items;
   target.innerHTML = data.html;
   decorateDocFileWindows(target);
 }
