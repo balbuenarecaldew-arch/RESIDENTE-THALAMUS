@@ -16,7 +16,7 @@
   --r:24px;--shadow:0 24px 60px rgba(0,0,0,.38);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Manrope,sans-serif;color:var(--text);
+body{font-family:Manrope,sans-serif;color:var(--text);line-height:1.38;
   background:radial-gradient(circle at top left,rgba(80,228,255,.14),transparent 28%),
     radial-gradient(circle at top right,rgba(114,146,255,.16),transparent 24%),
     linear-gradient(180deg,#030914,#07111f 35%,#0a1830);min-height:100vh}
@@ -62,16 +62,16 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .btn-green{background:linear-gradient(135deg,#c7ffe8,#68f3bf);color:#042116;box-shadow:0 16px 34px rgba(73,240,184,.22)}
 .btn:hover,.btn-green:hover{opacity:.92}.soft:hover,.back:hover,.nav:hover{border-color:var(--line2)}
 
-.topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;
-  gap:12px;padding:16px;border-bottom:1px solid rgba(100,164,255,.14);
+.topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:flex-start;
+  gap:12px;padding:14px 16px;border-bottom:1px solid rgba(100,164,255,.14);
   background:rgba(5,12,22,.84);backdrop-filter:blur(18px)}
 .topbar p{color:var(--muted);font-size:12px}
-.topbar-acts{display:flex;gap:10px}
+.topbar-acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .topbar-brand{display:flex;align-items:center;gap:12px}
 .topbar-copy{display:grid;gap:4px}
 
-.shell{max-width:1180px;margin:0 auto;padding:18px 18px 100px}
-.panel{padding:20px}
+.shell{max-width:860px;margin:0 auto;padding:12px 12px 96px}
+.panel{padding:14px}
 
 .eyebrow{display:inline-flex;padding:7px 10px;border-radius:999px;
   background:rgba(80,228,255,.08);color:var(--cyan);font-size:11px;font-weight:800;text-transform:uppercase}
@@ -79,7 +79,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .hero-acts{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:18px}
 .stats{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);margin-top:18px}
 .feat-grid{display:grid;gap:12px;margin-top:18px}
-.feat-card{padding:18px;text-align:left;cursor:pointer}
+.feat-card{padding:14px;text-align:left;cursor:pointer}
 .feat-card:hover{border-color:var(--line2)}
 .feat-card strong{display:block;margin-bottom:6px}
 .feat-card span{color:var(--muted);font-size:13px}
@@ -88,13 +88,19 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .stat-card span{color:var(--muted);font-size:14px}
 
 .view{display:none}.view.active{display:block}
-.shead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.shead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
 .shead.mt{margin-top:18px}
 .shead-left{display:flex;align-items:center;gap:12px}
 .back{width:52px}
+.shead-right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
-.list{display:grid;gap:12px}
-.work-card,.act-card,.doc-card,.user-card,.tpl-card{padding:18px}
+.list{display:grid;gap:10px}
+.work-card,.act-card,.doc-card,.user-card,.tpl-card{padding:14px}
+.card-link{
+  width:100%;display:grid;gap:10px;background:transparent;color:inherit;border:0;padding:0;
+  text-align:left
+}
+.work-chevron{color:var(--faint);font-size:22px;line-height:1}
 
 .ctop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .ccode{font-family:monospace;font-size:12px;color:var(--cyan)}
@@ -104,7 +110,38 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .warn{background:rgba(255,207,97,.12);color:var(--yellow)}
 .bad{background:rgba(255,123,167,.12);color:var(--red)}
 .meta{margin-top:8px;color:var(--muted);font-size:13px}
-.cacts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.cacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.ghost-danger{min-height:52px;border-radius:18px;font-weight:800;background:rgba(255,123,167,.12);color:var(--red);border:1px solid rgba(255,123,167,.24)}
+.ghost-danger:hover{border-color:rgba(255,123,167,.4)}
+.ghost-danger.mini{min-height:42px;padding:10px 14px;border-radius:14px}
+.compact-toolbar{display:grid;gap:10px;margin-bottom:14px}
+.compact-note{color:var(--faint);font-size:12px;line-height:1.45}
+.mobile-note{padding:12px 14px;border-radius:18px;border:1px solid var(--line);background:rgba(8,18,34,.55)}
+.work-shell{display:grid;gap:10px}
+.work-topline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.work-status{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.meta-chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(10,24,45,.92);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+.work-progress{margin-top:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+.work-progress>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.work-actions{display:grid;gap:8px;margin-top:12px}
+.work-actions.dual{grid-template-columns:1.25fr .95fr}
+.work-actions.triple{grid-template-columns:1.2fr .9fr .9fr}
+.work-actions.quad{grid-template-columns:repeat(2,1fr)}
+.section-divider{height:1px;background:rgba(100,164,255,.1);margin:10px 0}
+.notice-actions{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px}
+.settings-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.tab-btn{
+  min-height:44px;border-radius:16px;background:rgba(10,24,45,.82);color:var(--muted);
+  border:1px solid var(--line);font-weight:800
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,rgba(80,228,255,.18),rgba(114,146,255,.2));
+  color:var(--text);border-color:var(--line2)
+}
+.settings-pane{display:none;gap:14px}
+.settings-pane.active{display:grid}
+.settings-grid{display:grid;gap:14px}
+.settings-grid.two{grid-template-columns:1fr}
 
 .ol{margin-top:12px;padding-left:20px}
 .ol li{margin-top:6px;font-size:14px}
@@ -116,7 +153,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .alert{display:none;margin-top:14px;padding:12px 14px;border-radius:16px;
   background:rgba(255,123,167,.12);border:1px solid rgba(255,123,167,.24);font-size:14px}
 
-.search{margin-bottom:16px}
+.search{margin-bottom:14px}
 .docs-layout{display:grid;gap:14px}
 
 .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;
@@ -148,7 +185,8 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .doc-file small{display:block;color:var(--muted);font-size:12px}
 .doc-upload-note{min-height:96px}
 .mini{min-height:42px;padding:10px 14px;border-radius:14px;font-weight:700}
-.hero-main{display:grid;gap:12px;margin-top:18px}
+.hero-main{display:grid;gap:12px;margin-top:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.hero-main .admin-only{grid-column:1/-1}
 .home-summary{display:grid;gap:12px;margin-top:18px}
 .quick-card{padding:18px}
 .clickable{cursor:pointer}
@@ -166,39 +204,49 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
 .toggle-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
 .toggle-row input{width:22px;height:22px;accent-color:var(--cyan);margin-top:2px}
 .session-note{margin-top:12px}
-.folder-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.folder-grid{display:grid;gap:8px;grid-template-columns:1fr}
 .folder-card{
-  padding:18px;border-radius:26px;cursor:pointer;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:18px;cursor:pointer;
   background:linear-gradient(180deg,rgba(12,27,49,.98),rgba(7,16,30,.98));
-  border:1px solid var(--line);box-shadow:var(--shadow);
+  border:1px solid var(--line);box-shadow:0 16px 34px rgba(0,0,0,.24);
   transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
 }
 .folder-card:hover{transform:translateY(-2px);border-color:var(--line2)}
-.folder-card .folder-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
-.folder-card .folder-meta{color:var(--muted);font-size:13px;line-height:1.45}
-.folder-card .folder-open{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:var(--cyan);font-size:13px;font-weight:800}
+.folder-copy{min-width:0}
+.folder-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.folder-card .folder-meta{color:var(--muted);font-size:11px;line-height:1.35;margin-top:4px}
+.folder-card .folder-open{display:inline-flex;align-items:center;gap:8px;color:var(--faint);font-size:22px;font-weight:800;white-space:nowrap}
+.folder-side{display:grid;justify-items:end;gap:4px}
 .folder-icon{
-  position:relative;flex:0 0 auto;width:60px;height:42px;border-radius:12px;
+  position:relative;flex:0 0 auto;width:40px;height:28px;border-radius:9px;
   background:linear-gradient(180deg,#f8d469,#c79512);
   box-shadow:inset 0 -10px 18px rgba(0,0,0,.14),0 10px 24px rgba(0,0,0,.2);
 }
 .single-col{grid-template-columns:1fr!important}
 .folder-icon:before{
-  content:'';position:absolute;left:6px;top:-8px;width:24px;height:12px;border-radius:10px 10px 0 0;
+  content:'';position:absolute;left:4px;top:-5px;width:16px;height:9px;border-radius:10px 10px 0 0;
   background:linear-gradient(180deg,#ffd874,#d8a221);
 }
 .docs-layout.docs-browse{grid-template-columns:1fr}
+#works-list.list,#doc-work-list.list,#wb-list.list,#doc-work-checklist.list,#doc-entry-content.list{grid-template-columns:1fr}
+
+@media(max-width:560px){
+  .hero-main{grid-template-columns:1fr}
+}
 
 @media(min-width:900px){
   .stats{grid-template-columns:repeat(4,1fr)}
   .feat-grid{grid-template-columns:repeat(3,1fr)}
   .list{grid-template-columns:repeat(2,1fr)}
   .docs-layout{grid-template-columns:1fr 1fr 1.2fr;align-items:start}
-  .docs-layout.docs-browse{grid-template-columns:.95fr 1.05fr}
+  .docs-layout.docs-browse{grid-template-columns:1fr}
   .docs-layout.docs-browse.single-panel{grid-template-columns:1fr}
   .bottom-nav{display:none}
   .hero-main{grid-template-columns:1.1fr 1.1fr .9fr}
   .home-summary{grid-template-columns:repeat(2,1fr)}
+  .folder-grid{grid-template-columns:1fr 1fr}
+  .settings-grid.two{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -266,7 +314,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </svg>
       </div>
       <div class="topbar-copy">
-        <h2>TU ASISTENTE</h2>
+        <h2>ASISTENTE DEL RESIDENTE</h2>
         <p id="sess-user">Sesi&oacute;n activa</p>
         <p id="sync-status-app" class="sync-pill warn">Firebase no configurado.</p>
       </div>
@@ -308,7 +356,10 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
         </div>
         <button id="new-work-btn" class="btn" onclick="openWorkModal()">Nueva obra</button>
       </div>
-      <input id="work-search" class="search" placeholder="Buscar obra" oninput="renderWorks(this.value)">
+      <div class="compact-toolbar">
+        <input id="work-search" class="search" placeholder="Buscar obra, residente o contratante" oninput="renderWorks(this.value)">
+        <div class="compact-note mobile-note">Toca una obra para entrar al libro. Los accesos laterales te ayudan a ir a documentos, editar o eliminar.</div>
+      </div>
       <div id="works-list" class="list"></div>
     </section>
 
@@ -323,11 +374,9 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       </div>
       <div class="panel">
         <div id="wb-user-line" class="meta">Cargando datos de la obraâ€¦</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px">
+        <div class="work-actions dual" style="margin-top:12px">
           <button id="wb-load-btn" class="btn-green" onclick="openActModal()">Cargar actividad</button>
           <button id="wb-book-toggle" class="soft" onclick="toggleWorkbookHistory()"><span id="wb-book-toggle-label">Ver libro</span></button>
-          <button id="wb-wa-btn" class="wa admin-only" onclick="waDailyReminder()">Avisar WhatsApp</button>
-          <button id="wb-copy-btn" class="soft admin-only" onclick="copyReminder('daily', CUR_WORK)">Copiar aviso</button>
         </div>
         <div id="wb-warning" class="notice hidden"></div>
       </div>
@@ -345,7 +394,11 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
           <button class="back" onclick="App.goBack()">â†</button>
           <div><h3>Documentos</h3><p class="sub" style="margin:0">Requisitos y seguimiento</p></div>
         </div>
+        <div class="shead-right">
+          <button id="doc-templates-toggle" class="soft admin-only" onclick="toggleDocTemplates()">Ver requisitos</button>
+        </div>
       </div>
+      <input id="doc-work-search" class="search" placeholder="Buscar obra o residente" oninput="renderDocWorkList(this.value)">
       <div class="docs-layout">
         <div id="doc-templates-panel" class="panel admin-only">
           <div class="shead mt" style="margin-top:0">
@@ -379,6 +432,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
           <div><h3 id="doc-work-title">Documentos de la obra</h3><p id="doc-work-sub" class="sub" style="margin:0">Selecciona una obra</p></div>
         </div>
       </div>
+      <input id="doc-folder-search" class="search" placeholder="Buscar carpeta o documento" oninput="renderResidentDocWork()">
       <div id="doc-work-overdue" class="notice hidden"></div>
       <div id="doc-work-checklist" class="list single-col" style="margin-top:14px"></div>
     </section>
@@ -433,6 +487,7 @@ h1{font-size:22px}h2{font-size:13px;letter-spacing:.08em}h3{font-size:19px}h4{fo
       <label class="flabel"><span>Descripci&oacute;n</span><textarea id="mw-desc" placeholder="Descripci&oacute;n general&hellip;"></textarea></label>
     </div>
     <div class="modal-acts">
+      <button id="mw-delete-btn" class="ghost-danger hidden" style="margin-right:auto" onclick="delWork(document.getElementById('mw-id').value)">Eliminar obra</button>
       <button class="soft" onclick="closeModal('modal-work')">Cancelar</button>
       <button class="btn" onclick="saveWork()">Guardar</button>
     </div>
@@ -605,7 +660,7 @@ function normalizeAppSettings(raw) {
 }
 const emptyData = () => ({ users:[], obras:[], actividades:[], documentos:[], templates:[], settings:defaultAppSettings() });
 let D = emptyData();
-let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, CUR_DOC_TEMPLATE = null, WB_SHOW_HISTORY = false, VIEW_STACK = [];
+let ME = null, CUR_WORK = null, CUR_DOC_WORK = null, CUR_DOC_TEMPLATE = null, WB_SHOW_HISTORY = false, DOC_TEMPLATES_OPEN = false, SETTINGS_TAB = 'general', VIEW_STACK = [];
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: 'AIzaSyD7s4YyFB8-C4IsVqW6gnA9HvRj1FE13eo',
   authDomain: 'residente-thalamus.firebaseapp.com',
@@ -948,34 +1003,45 @@ function ensureSettingsView() {
         </div>
         <button class="btn admin-only" onclick="openUserModal()">Nuevo usuario</button>
       </div>
-      <div class="docs-layout">
-        <div class="panel">
-          <div class="shead mt" style="margin-top:0">
-            <div><h4>Usuario conectado</h4><p class="sub" style="margin:0;font-size:12px">Qui&eacute;n est&aacute; usando esta sesi&oacute;n</p></div>
+      <div class="settings-tabs">
+        <button id="settings-tab-general" class="tab-btn" onclick="setSettingsTab('general')">General</button>
+        <button id="settings-tab-alerts" class="tab-btn" onclick="setSettingsTab('alerts')">Avisos</button>
+        <button id="settings-tab-users" class="tab-btn admin-only" onclick="setSettingsTab('users')">Usuarios</button>
+      </div>
+      <div id="settings-pane-general" class="settings-pane">
+        <div class="settings-grid two">
+          <div class="panel">
+            <div class="shead mt" style="margin-top:0">
+              <div><h4>Usuario conectado</h4><p class="sub" style="margin:0;font-size:12px">Qui&eacute;n est&aacute; usando esta sesi&oacute;n</p></div>
+            </div>
+            <div id="settings-current-user" class="list" style="margin-top:14px"></div>
           </div>
-          <div id="settings-current-user" class="list" style="margin-top:14px"></div>
-        </div>
-        <div class="panel">
-          <div class="shead mt" style="margin-top:0">
-            <div><h4>Sesiones activas</h4><p class="sub" style="margin:0;font-size:12px">Pueden trabajar varias personas al mismo tiempo</p></div>
+          <div class="panel">
+            <div class="shead mt" style="margin-top:0">
+              <div><h4>Sesiones activas</h4><p class="sub" style="margin:0;font-size:12px">Pueden trabajar varias personas al mismo tiempo</p></div>
+            </div>
+            <div id="settings-presence" class="list" style="margin-top:14px"></div>
           </div>
-          <div id="settings-presence" class="list" style="margin-top:14px"></div>
         </div>
+      </div>
+      <div id="settings-pane-alerts" class="settings-pane">
         <div class="panel">
           <div class="shead mt" style="margin-top:0">
-            <div><h4>WhatsApp</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y acceso r&aacute;pido</p></div>
+            <div><h4>WhatsApp y avisos</h4><p class="sub" style="margin:0;font-size:12px">Recordatorios manuales y acceso r&aacute;pido</p></div>
           </div>
           <div id="settings-wa" class="list" style="margin-top:14px"></div>
         </div>
       </div>
-      <div class="panel admin-only" style="margin-top:14px">
-        <div class="shead mt" style="margin-top:0">
-          <div><h4>Usuarios</h4><p class="sub" style="margin:0;font-size:12px">Accesos, roles y obras asignadas</p></div>
-          <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
+      <div id="settings-pane-users" class="settings-pane admin-only">
+        <div class="panel">
+          <div class="shead mt" style="margin-top:0">
+            <div><h4>Usuarios</h4><p class="sub" style="margin:0;font-size:12px">Accesos, roles y obras asignadas</p></div>
+            <button class="btn" onclick="openUserModal()">Nuevo usuario</button>
+          </div>
+          <div class="notice">El acceso real se crea en Firebase Authentication. Aqu&iacute; solo defines correo, rol, tel&eacute;fono y obras.</div>
+          <div id="admin-warn" class="alert"></div>
+          <div id="users-list" class="list" style="margin-top:14px"></div>
         </div>
-        <div class="notice">El acceso real se crea en Firebase Authentication. Aqu&iacute; solo defines correo, rol, tel&eacute;fono y obras.</div>
-        <div id="admin-warn" class="alert"></div>
-        <div id="users-list" class="list" style="margin-top:14px"></div>
       </div>`;
 }
 async function pingPresence() {
@@ -1047,7 +1113,7 @@ const Auth = {
     firebase.auth().onAuthStateChanged(async fbUser => {
       if (!fbUser) {
         stopPresence(false);
-        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
+        ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; DOC_TEMPLATES_OPEN = false; SETTINGS_TAB = 'general'; VIEW_STACK = [];
         document.getElementById('li-pass').value = '';
         this.setErr('');
         updateAdminUI();
@@ -1140,7 +1206,7 @@ const Auth = {
       console.error('Firebase logout error', e);
     }
     stopPresence(false);
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; DOC_TEMPLATES_OPEN = false; SETTINGS_TAB = 'general'; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     updateAdminUI();
@@ -1171,7 +1237,7 @@ const Auth = {
   },
   logout() {
     return this.logoutFirebaseOverride();
-    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; VIEW_STACK = [];
+    ME = null; CUR_WORK = null; CUR_DOC_WORK = null; CUR_DOC_TEMPLATE = null; WB_SHOW_HISTORY = false; DOC_TEMPLATES_OPEN = false; SETTINGS_TAB = 'general'; VIEW_STACK = [];
     document.getElementById('li-pass').value = '';
     this.setErr('');
     showScreen('login');
@@ -1188,21 +1254,42 @@ function showView(n) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+n).classList.add('active');
   normalizeUiLabels(document.getElementById('view-'+n));
+  try { window.scrollTo({ top:0, left:0, behavior:'auto' }); } catch (e) {}
 }
 function setNav(n) {
   document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.main===n));
 }
 function normalizeUiLabels(root=document) {
+  const repairMojibake = (text) => String(text || '')
+    .replaceAll('Ã¡','á')
+    .replaceAll('Ã©','é')
+    .replaceAll('Ã­','í')
+    .replaceAll('Ã³','ó')
+    .replaceAll('Ãº','ú')
+    .replaceAll('Ã±','ñ')
+    .replaceAll('Ã','Á')
+    .replaceAll('Ã‰','É')
+    .replaceAll('Ã','Í')
+    .replaceAll('Ã“','Ó')
+    .replaceAll('Ãš','Ú')
+    .replaceAll('â€¦','...')
+    .replaceAll('Â¿','¿')
+    .replaceAll('Â·','·');
   const fixes = {
     'Ver mais': 'Ver m\u00e1s',
-    'VER MAIS': 'VER M\u00c1S'
+    'VER MAIS': 'VER M\u00c1S',
+    'Acciones rÃ¡pidas': 'Acciones rápidas',
+    'TodavÃ­a no hay carpetas documentales configuradas.': 'Todavía no hay carpetas documentales configuradas.',
+    'Desde aquÃ­ puedes avisar por WhatsApp o copiar el recordatorio completo de documentos pendientes.': 'Aquí puedes abrir WhatsApp o copiar el aviso completo de documentos pendientes.',
+    'Cargando datos de la obraâ€¦': 'Cargando datos de la obra...'
   };
   if (!root) return;
   root.querySelectorAll('.back').forEach(btn => { btn.innerHTML = '&larr;'; });
   root.querySelectorAll('button,span,p,strong,h3,h4,small,div').forEach(el => {
     if (el.children.length) return;
     const text = String(el.textContent || '').trim();
-    if (fixes[text]) el.textContent = fixes[text];
+    const repaired = fixes[text] || repairMojibake(text);
+    if (repaired !== text) el.textContent = repaired;
   });
 }
 function primeHardwareBack() {
@@ -1255,15 +1342,20 @@ function renderHome() {
   const connected = activeSessions();
   home.innerHTML = `
     <article class="panel quick-card">
-      <strong>${esc(ME.nombre)}</strong>
-      <div class="meta">${esc(ME.email||ME.login||'Sin correo')} &middot; ${role(ME.rol)}</div>
-      <div class="meta">Esta es la sesi&oacute;n conectada actualmente.</div>
-    </article>
-    <article class="panel quick-card">
-      <strong>${Cloud.enabled ? 'Sincronizaci&oacute;n activa' : 'Modo local'}</strong>
-      <div class="meta">${Cloud.enabled ? 'Los cambios se comparten por Firebase.' : 'La app sigue funcionando, pero sin sincronizaci&oacute;n en tiempo real.'}</div>
-      <div class="meta">${connected.length ? `${connected.length} persona${connected.length===1?'':'s'} conectada${connected.length===1?'':'s'} ahora.` : 'No hay otras sesiones activas por ahora.'}</div>
+      <div class="ctop">
+        <div><strong>${esc(ME.nombre)}</strong><div class="meta" style="margin:0">${esc(ME.email||ME.login||'Sin correo')} &middot; ${role(ME.rol)}</div></div>
+        <span class="pill ok">${role(ME.rol)}</span>
+      </div>
+      <div class="work-status">
+        <span class="meta-chip">${Cloud.enabled ? 'Sincronizaci&oacute;n activa' : 'Modo local'}</span>
+        <span class="meta-chip">${connected.length ? `${connected.length} sesi&oacute;n${connected.length===1?'':'es'} activa${connected.length===1?'':'s'}` : 'Sin otras sesiones activas'}</span>
+      </div>
+      <div class="meta">Usa los accesos principales para entrar directo al Libro de Obra o a Documentos.</div>
     </article>`;
+}
+function setSettingsTab(tab='general') {
+  SETTINGS_TAB = tab;
+  renderSettings();
 }
 function setWhatsAppPref(key, checked) {
   Prefs[key] = !!checked;
@@ -1273,6 +1365,10 @@ function setWhatsAppPref(key, checked) {
 function renderSettings() {
   ensureSettingsView();
   if (!ME || !isAdmin()) return;
+  ['general','alerts','users'].forEach(tab => {
+    document.getElementById(`settings-tab-${tab}`)?.classList.toggle('active', SETTINGS_TAB===tab);
+    document.getElementById(`settings-pane-${tab}`)?.classList.toggle('active', SETTINGS_TAB===tab);
+  });
   const current = document.getElementById('settings-current-user');
   if (current) {
     current.innerHTML = `<article class="user-card">
@@ -1341,6 +1437,7 @@ function renderSettings() {
   renderReminderCenter();
   renderUsers();
   updateAdminUI();
+  normalizeUiLabels(document.getElementById('view-settings'));
 }
 
 // â”€â”€ OBRAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1421,38 +1518,75 @@ function canUploadDocuments(workId=CUR_DOC_WORK) {
   return !workId || hasWorkAccess(workId);
 }
 function isAdmin() { return ME && ME.rol==='admin'; }
+function workSearchText(o) {
+  return [
+    o?.nombre,
+    o?.contratante,
+    o?.residenteNombre,
+    o?.codigo
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+function filteredWorks(query='') {
+  const term = String(query || '').trim().toLowerCase();
+  const ws = myWorks();
+  return term ? ws.filter(o => workSearchText(o).includes(term)) : ws;
+}
 
 function renderWorks(q='') {
   document.getElementById('new-work-btn').classList.toggle('hidden', !canEdit());
   const list = document.getElementById('works-list');
-  let ws = myWorks();
-  if (q) ws = ws.filter(o=>(o.nombre||'').toLowerCase().includes(q.toLowerCase()));
+  const ws = filteredWorks(q);
   if (!ws.length) {
-    list.innerHTML = `<article class="work-card"><strong>No hay obras visibles.</strong><div class="meta">Crea la primera obra con el bot&oacute;n de arriba.</div></article>`;
+    list.innerHTML = `<article class="work-card"><strong>No hay obras visibles.</strong><div class="meta">Prueba con otra b&uacute;squeda o crea una obra nueva.</div></article>`;
     return;
   }
   list.innerHTML = ws.map(o => {
     const hoy = D.actividades.some(a=>a.obraId===o.id && new Date(a.edit||a.date).toDateString()===new Date().toDateString());
+    const totalDocs = D.templates.length;
+    const missingDocs = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
     const estadoClass = {activa:'ok',pausada:'warn',finalizada:'bad'}[o.estado||'activa']||'ok';
+    const currentLabel = hoy ? 'Actividad cargada hoy' : 'Actividad pendiente hoy';
+    const currentTone = hoy ? 'var(--green)' : 'var(--yellow)';
+    const residentLine = o.residenteNombre || 'Residente no configurado';
+    const docsLine = totalDocs
+      ? (missingDocs ? `${missingDocs} documento${missingDocs===1?'':'s'} pendiente${missingDocs===1?'':'s'}` : 'Documentaci&oacute;n al d&iacute;a')
+      : 'Sin carpetas configuradas';
+    const actions = [
+      `<button class="soft mini" onclick="openDocWork('${o.id}')">Documentos</button>`
+    ];
+    if (canEdit()) actions.push(`<button class="soft mini" onclick="openWorkModal('${o.id}')">Editar</button>`);
+    if (isAdmin()) actions.push(`<button class="ghost-danger mini" onclick="delWork('${o.id}')">Eliminar</button>`);
     return `<article class="work-card">
-      <div class="ctop">
-        <span class="ccode">${esc(o.codigo||'OBRA')}</span>
-        <span class="pill ${estadoClass}">${o.estado||'activa'}</span>
-      </div>
-      <strong>${esc(o.nombre)}</strong>
-      <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
-      <div class="meta">${esc(o.contratante||'Sin contratante')}</div>
-      <div class="meta">${hoy?'<span style="color:var(--green)">Con actividad hoy</span>':'<span style="color:var(--yellow)">Sin actividad hoy</span>'}</div>
-      <div class="cacts">
-        <button class="btn" onclick="openWorkbook('${o.id}')">Abrir libro</button>
-        ${canEdit()?`<button class="soft" onclick="openWorkModal('${o.id}')">Editar</button>`:`<button class="soft" disabled>Ver</button>`}
+      <button class="card-link" onclick="openWorkbook('${o.id}')">
+        <div class="work-topline">
+          <span class="ccode">${esc(o.codigo||'OBRA')}</span>
+          <span class="pill ${estadoClass}">${o.estado||'activa'}</span>
+        </div>
+        <div class="work-topline" style="align-items:flex-start">
+          <div class="work-shell" style="gap:8px">
+            <strong>${esc(o.nombre)}</strong>
+            <div class="work-status">
+              <span class="meta-chip">Inicio: ${fmtDate(o.inicio)}</span>
+              <span class="meta-chip">${esc(residentLine)}</span>
+            </div>
+            ${o.contratante?`<div class="meta">${esc(o.contratante)}</div>`:''}
+            <div class="work-progress"><span style="width:${hoy ? 100 : 34}%"></span></div>
+            <div class="meta"><span style="color:${currentTone}">${currentLabel}</span> &middot; ${docsLine}</div>
+          </div>
+          <span class="work-chevron" aria-hidden="true">&rsaquo;</span>
+        </div>
+      </button>
+      <div class="work-actions" style="grid-template-columns:repeat(${actions.length},minmax(0,1fr))">
+        ${actions.join('')}
       </div>
     </article>`;
   }).join('');
+  normalizeUiLabels(document.getElementById('view-works'));
 }
 
 function openWorkModal(id='') {
   const o = id ? D.obras.find(x=>x.id===id) : null;
+  const deleteBtn = document.getElementById('mw-delete-btn');
   document.getElementById('mw-title').textContent = o ? 'Editar obra' : 'Nueva obra';
   document.getElementById('mw-id').value = id;
   document.getElementById('mw-nombre').value = o?.nombre||'';
@@ -1460,6 +1594,7 @@ function openWorkModal(id='') {
   document.getElementById('mw-estado').value = o?.estado||'activa';
   document.getElementById('mw-contratante').value = o?.contratante||'';
   document.getElementById('mw-desc').value = o?.desc||'';
+  if (deleteBtn) deleteBtn.classList.toggle('hidden', !(o && isAdmin()));
   openModal('modal-work');
 }
 
@@ -1487,7 +1622,51 @@ function saveWork() {
       const u = D.users.find(x=>x.id===ME.id); if(u) u.obras=ME.obras;
     }
   }
-  save(); closeModal('modal-work'); renderWorks();
+  save(); closeModal('modal-work'); renderWorks(document.getElementById('work-search')?.value||'');
+}
+async function delWork(id) {
+  if (!id) return;
+  const obra = D.obras.find(o=>o.id===id);
+  if (!obra) return;
+  const actsCount = D.actividades.filter(a=>a.obraId===id).length;
+  const relatedDocs = D.documentos.filter(d=>d.obraId===id);
+  const files = relatedDocs.flatMap(doc => docFiles(doc));
+  const wasWorkbook = App.curView==='workbook' && CUR_WORK===id;
+  const wasDocs = ['doc-work','doc-entry'].includes(App.curView) && CUR_DOC_WORK===id;
+  const msg = `Se eliminará la obra "${obra.nombre}" junto con ${actsCount} actividad(es), ${relatedDocs.length} registro(s) documental(es) y ${files.length} archivo(s) asociado(s).`;
+  const confirmText = `Se eliminará la obra "${obra.nombre}" junto con ${actsCount} actividad(es), ${relatedDocs.length} registro(s) documental(es) y ${files.length} archivo(s) asociado(s).`;
+  if (!confirm(confirmText)) return;
+  for (const file of files) {
+    try {
+      if (hasStorageReady() && file.path) await deleteStoredFile(file.path);
+    } catch (e) {
+      console.error('Storage delete error', e);
+    }
+  }
+  D.obras = D.obras.filter(o=>o.id!==id);
+  D.actividades = D.actividades.filter(a=>a.obraId!==id);
+  D.documentos = D.documentos.filter(d=>d.obraId!==id);
+  D.users.forEach(u => {
+    if (Array.isArray(u.obras)) u.obras = u.obras.filter(workId => workId!==id);
+  });
+  if (ME && Array.isArray(ME.obras)) ME.obras = ME.obras.filter(workId => workId!==id);
+  if (CUR_WORK===id) {
+    CUR_WORK = null;
+    WB_SHOW_HISTORY = false;
+  }
+  if (CUR_DOC_WORK===id) {
+    CUR_DOC_WORK = null;
+    CUR_DOC_TEMPLATE = null;
+  }
+  closeModal('modal-work');
+  await save(true);
+  if (wasWorkbook) App.openMain('works');
+  else if (wasDocs) App.openMain('documents');
+  renderWorks(document.getElementById('work-search')?.value||'');
+  renderDocsHome();
+  if (isAdmin()) {
+    renderSettings();
+  }
 }
 
 // â”€â”€ LIBRO DIARIO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1519,28 +1698,38 @@ function renderWorkbook() {
   const historyHead = document.getElementById('wb-history-head');
   document.getElementById('add-act-btn').classList.add('hidden');
   if (loadBtn) loadBtn.classList.toggle('hidden', !canWrite);
-  if (toggleBtn) toggleBtn.classList.toggle('hidden', !acts.length);
+  if (toggleBtn) toggleBtn.classList.remove('hidden');
   if (toggleLabel) toggleLabel.textContent = WB_SHOW_HISTORY ? 'Ocultar libro' : 'Ver libro';
   if (historyHead) historyHead.classList.toggle('hidden', !WB_SHOW_HISTORY);
 
   const hoy = acts.some(a=>new Date(a.edit||a.date).toDateString()===new Date().toDateString());
   const warn = document.getElementById('wb-warning');
+  const phoneReady = !!String(o.residenteTelefono || '').replace(/\D/g,'');
   if (!hoy) {
     warn.classList.remove('hidden');
-    warn.textContent = o.residenteTelefono
-      ? 'Hoy a\u00fan no se cargaron actividades. Puedes avisar al residente por WhatsApp.'
-      : 'Hoy a\u00fan no se cargaron actividades. Configura el tel\u00e9fono del residente para enviar aviso.';
-  } else warn.classList.add('hidden');
-  if (!hoy && Prefs.autoDailyWhatsApp) maybeOpenWhatsApp('daily', CUR_WORK);
+    warn.innerHTML = `
+      <div>${o.residenteTelefono
+        ? 'Hoy a&uacute;n no se cargaron actividades.'
+        : 'Hoy a&uacute;n no se cargaron actividades. Configura el tel&eacute;fono del residente para abrir WhatsApp directo.'}</div>
+      ${isAdmin() ? `<div class="notice-actions">
+        <button class="wa" ${phoneReady?'':'disabled'} onclick="openWhatsAppReminder('daily','${CUR_WORK}')">WhatsApp</button>
+        <button class="soft" onclick="copyReminder('daily','${CUR_WORK}')">Copiar aviso</button>
+      </div>` : ''}`;
+  } else {
+    warn.classList.add('hidden');
+    warn.innerHTML = '';
+  }
 
   const target = document.getElementById('wb-list');
   target.classList.toggle('hidden', !WB_SHOW_HISTORY);
   if (!WB_SHOW_HISTORY) {
     target.innerHTML = '';
+    normalizeUiLabels(document.getElementById('view-workbook'));
     return;
   }
   if (!acts.length) {
     target.innerHTML = `<article class="act-card"><strong>Sin actividades a&uacute;n.</strong><div class="meta">La primera que cargues aparece como &iacute;tem 1.</div></article>`;
+    normalizeUiLabels(document.getElementById('view-workbook'));
     return;
   }
   const catLabel = {avance:'Avance',incidencia:'Incidencia',inspeccion:'Inspecci\u00f3n',
@@ -1559,6 +1748,7 @@ function renderWorkbook() {
       <button class="soft" onclick="delAct('${a.id}')">Eliminar</button>
     </div>`:''}
   </article>`).join('');
+  normalizeUiLabels(document.getElementById('view-workbook'));
 }
 
 function openResidenteModal() {
@@ -2016,6 +2206,7 @@ function renderDocsHome() {
   const tplPanel = document.getElementById('doc-templates-panel');
   const detailPanel = document.getElementById('doc-detail-panel');
   const worksSub = document.getElementById('doc-works-sub');
+  const toggleBtn = document.getElementById('doc-templates-toggle');
   if (tplPanel) tplPanel.classList.toggle('hidden', !isAdmin());
   if (detailPanel) detailPanel.classList.toggle('hidden', !isAdmin());
   if (worksSub) worksSub.textContent = isAdmin() ? 'Selecciona para ver checklist' : 'Toca una obra para ver y cargar documentos';
@@ -2036,7 +2227,7 @@ function renderTplList() {
   const tpls = D.templates;
   el.innerHTML = tpls.length ? tpls.map(t=>`<article class="tpl-card">
     <strong>${esc(t.nombre)}</strong>
-    <div class="meta">${esc(t.desc||'Sin descripcion;n')}</div>
+    <div class="meta">${esc(t.desc||'Sin descripci&oacute;n')}</div>
     <div class="meta">Reclamar a los ${t.dias||15} d&iacute;as del inicio</div>
     <div class="cacts">
       <button class="soft" onclick="openTplModal('${t.id}')">Editar</button>
@@ -2046,8 +2237,8 @@ function renderTplList() {
   : `<article class="tpl-card"><strong>Sin requisitos configurados.</strong><div class="meta">Crea la lista maestra de documentos.</div></article>`;
 }
 
-function renderDocWorkList() {
-  const ws = myWorks();
+function renderDocWorkList(q='') {
+  const ws = filteredWorks(q);
   document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
     const miss = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
     if (!isAdmin()) {
@@ -2071,7 +2262,8 @@ function renderDocWorkList() {
         <button class="wa" onclick="waDocReminder('${o.id}')">WhatsApp</button>
       </div>
     </article>`;
-  }).join('') : `<article class="work-card"><strong>No hay obras.</strong></article>`;
+  }).join('') : `<article class="work-card"><strong>No hay obras.</strong><div class="meta">Prueba con otra b&uacute;squeda.</div></article>`;
+  normalizeUiLabels(document.getElementById('view-documents'));
 }
 
 function isOverdue(o, t, loaded) {
@@ -2147,6 +2339,14 @@ function renderResidentDocWork(workId=CUR_DOC_WORK) {
     warn.classList.remove('danger');
   }
   const target = document.getElementById('doc-work-checklist');
+  const term = String(document.getElementById('doc-folder-search')?.value || '').trim().toLowerCase();
+  const items = term
+    ? data.items.filter(item => `${item.tpl.nombre} ${item.tpl.desc||''}`.toLowerCase().includes(term))
+    : data.items;
+  const term = String(document.getElementById('doc-folder-search')?.value || '').trim().toLowerCase();
+  const items = term
+    ? data.items.filter(item => `${item.tpl.nombre} ${item.tpl.desc||''}`.toLowerCase().includes(term))
+    : data.items;
   target.innerHTML = data.html;
   decorateDocFileWindows(target);
 }
@@ -2234,20 +2434,27 @@ function docWorkData(workId) {
     overdue: items.filter(item => item.overdue)
   };
 }
+function toggleDocTemplates(force) {
+  DOC_TEMPLATES_OPEN = typeof force === 'boolean' ? force : !DOC_TEMPLATES_OPEN;
+  renderDocsHome();
+}
 function docFolderMarkup(item) {
   const summary = item.loaded
-    ? `${item.files.length} archivo${item.files.length===1?'':'s'} cargado${item.files.length===1?'':'s'}`
-    : item.overdue ? 'Documento pendiente y vencido.' : 'Abre la carpeta para revisar o cargar archivos.';
+    ? `&Uacute;ltima carga: ${fmtDT(item.ld?.date || item.files[0]?.uploadedAt)}`
+    : item.overdue ? 'Pendiente vencido' : `Plazo: ${item.tpl.dias||15} d&iacute;as desde el inicio`;
+  const secondary = item.tpl.desc
+    ? `${esc(item.tpl.desc)} &middot; ${summary}`
+    : summary;
   return `<article class="folder-card clickable" onclick="openDocEntry('${item.obra.id}','${item.tpl.id}')">
-    <div class="folder-top">
-      <div class="folder-icon" aria-hidden="true"></div>
-      <span class="pill ${item.pillClass}">${item.pillLabel}</span>
+    <div class="folder-icon" aria-hidden="true"></div>
+    <div class="folder-copy">
+      <div class="folder-title"><strong>${esc(item.tpl.nombre)}</strong></div>
+      <div class="folder-meta">${secondary}</div>
     </div>
-    <strong>${esc(item.tpl.nombre)}</strong>
-    <div class="folder-meta">${esc(item.tpl.desc || 'Carpeta documental')}</div>
-    <div class="folder-meta">Reclamar a los ${item.tpl.dias||15} d&iacute;as del inicio</div>
-    <div class="folder-meta">${esc(summary)}</div>
-    <div class="folder-open">Abrir carpeta</div>
+    <div class="folder-side">
+      <span class="pill ${item.pillClass}">${item.pillLabel}</span>
+      <span class="folder-open">&rsaquo;</span>
+    </div>
   </article>`;
 }
 function docDetailCardMarkup(item, opts={}) {
@@ -2259,11 +2466,11 @@ function docDetailCardMarkup(item, opts={}) {
       ${opts.allowDeleteFiles&&item.ld?`<button class="soft mini" onclick="delDocFile('${item.ld.id}','${f.id}')">Quitar</button>`:''}
     </div>`).join('')}</div>` : `<div class="window"><div class="window-head"><strong>Archivos cargados</strong><span>0 archivos</span></div><div class="window-body"><div class="window-empty">Todav&iacute;a no hay archivos cargados para esta carpeta.</div></div></div>`;
   const actions = [];
-  if (opts.allowUpload) actions.push(`<button class="btn" onclick="openDocUploadModal('${item.tpl.id}')">${item.loaded?'Agregar archivos':'Subir archivo'}</button>`);
-  else actions.push(`<button class="soft" disabled>Solo lectura</button>`);
-  if (opts.allowDeleteGroup && item.ld) actions.push(`<button class="soft" onclick="delDoc('${item.ld.id}')">Quitar todo</button>`);
-  if (opts.showReminder && !item.loaded) actions.push(`<button class="wa" onclick="waDocReminder('${item.obra.id}')">Pedir aviso</button>`);
-  if (opts.allowCopyReminder && !item.loaded) actions.push(`<button class="soft" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>`);
+  if (opts.allowUpload) actions.push(`<button class="btn mini" onclick="openDocUploadModal('${item.tpl.id}')">${item.loaded?'Agregar archivos':'Subir archivo'}</button>`);
+  else actions.push(`<button class="soft mini" disabled>Solo lectura</button>`);
+  if (opts.allowDeleteGroup && item.ld) actions.push(`<button class="soft mini" onclick="delDoc('${item.ld.id}')">Quitar todo</button>`);
+  if (opts.showReminder && !item.loaded) actions.push(`<button class="wa mini" onclick="waDocReminder('${item.obra.id}')">Pedir aviso</button>`);
+  if (opts.allowCopyReminder && !item.loaded) actions.push(`<button class="soft mini" onclick="copyReminder('documents','${item.obra.id}')">Copiar aviso</button>`);
   return `<article class="doc-card">
     <div class="ctop"><strong>${esc(item.tpl.nombre)}</strong><span class="pill ${item.pillClass}">${item.pillLabel}</span></div>
     <div class="meta">${esc(item.tpl.desc||'Sin descripci&oacute;n')}</div>
@@ -2296,39 +2503,53 @@ function renderDocsHome() {
   const detailPanel = document.getElementById('doc-detail-panel');
   const worksPanel = document.getElementById('doc-works-panel');
   const worksSub = document.getElementById('doc-works-sub');
+  const toggleBtn = document.getElementById('doc-templates-toggle');
   if (layout) {
     layout.classList.add('docs-browse');
-    layout.classList.toggle('single-panel', !isAdmin());
+    layout.classList.add('single-panel');
   }
-  if (tplPanel) tplPanel.classList.toggle('hidden', !isAdmin());
+  if (tplPanel) {
+    tplPanel.classList.toggle('hidden', !(isAdmin() && DOC_TEMPLATES_OPEN));
+    tplPanel.style.gridColumn = '1 / -1';
+  }
   if (detailPanel) detailPanel.classList.add('hidden');
-  if (worksPanel) worksPanel.style.gridColumn = !isAdmin() ? '1 / -1' : '';
-  if (worksSub) worksSub.textContent = 'Abre una obra para ver documentos.';
+  if (worksPanel) worksPanel.style.gridColumn = '1 / -1';
+  if (toggleBtn) {
+    toggleBtn.classList.toggle('hidden', !isAdmin());
+    toggleBtn.textContent = DOC_TEMPLATES_OPEN ? 'Ocultar requisitos' : 'Ver requisitos';
+  }
+  if (worksSub) worksSub.textContent = 'Toca una obra para abrir sus carpetas.';
   renderTplList();
-  renderDocWorkList();
+  renderDocWorkList(document.getElementById('doc-work-search')?.value || '');
   normalizeUiLabels(document.getElementById('view-documents'));
 }
-function renderDocWorkList() {
-  const ws = myWorks();
+function renderDocWorkList(q='') {
+  const ws = filteredWorks(q);
   document.getElementById('doc-work-list').innerHTML = ws.length ? ws.map(o=>{
     const total = D.templates.length;
     const missing = D.templates.filter(t=>!hasUploadedFiles(getDocRecord(o.id, t.id))).length;
     const loaded = Math.max(total - missing, 0);
+    const completion = total ? Math.round((loaded / total) * 100) : 0;
     const progressLine = total ? `${loaded} de ${total} carpetas con archivo cargado.` : 'Todavía no hay carpetas documentales configuradas.';
     return `<article class="work-card clickable" style="border-radius:22px" onclick="openDocWork('${o.id}')">
-      <div class="ctop"><span class="ccode">OBRA</span>
+      <div class="work-topline"><span class="ccode">OBRA</span>
         <span class="pill ${missing?'warn':'ok'}">${missing?`${missing} faltantes`:'Completa'}</span>
       </div>
-      <strong>${esc(o.nombre)}</strong>
-      <div class="meta">Inicio: ${fmtDate(o.inicio)}</div>
-      <div class="meta">${progressLine}</div>
-      <div class="meta">Entra para navegar como carpetas y archivos.</div>
-      <div class="cacts">
-        <button class="btn" onclick="event.stopPropagation();openDocWork('${o.id}')">Abrir carpetas</button>
-        ${isAdmin()?`<button class="soft" onclick="event.stopPropagation();copyReminder('documents','${o.id}')">Copiar aviso</button>`:''}
+      <div class="work-topline" style="align-items:flex-start">
+        <div class="work-shell" style="gap:8px">
+          <strong>${esc(o.nombre)}</strong>
+          <div class="work-status">
+            <span class="meta-chip">Inicio: ${fmtDate(o.inicio)}</span>
+            <span class="meta-chip">${esc(o.residenteNombre || 'Sin residente')}</span>
+          </div>
+          <div class="work-progress"><span style="width:${completion}%"></span></div>
+          <div class="meta">${progressLine}</div>
+        </div>
+        <span class="work-chevron" aria-hidden="true">&rsaquo;</span>
       </div>
     </article>`;
-  }).join('') : `<article class="work-card"><strong>No hay obras.</strong></article>`;
+  }).join('') : `<article class="work-card"><strong>No hay obras.</strong><div class="meta">Prueba con otra b&uacute;squeda.</div></article>`;
+  normalizeUiLabels(document.getElementById('view-documents'));
 }
 function renderResidentDocWork(workId=CUR_DOC_WORK) {
   const data = docWorkData(workId);
@@ -2346,17 +2567,23 @@ function renderResidentDocWork(workId=CUR_DOC_WORK) {
     warn.classList.remove('danger');
   }
   const target = document.getElementById('doc-work-checklist');
+  const term = String(document.getElementById('doc-folder-search')?.value || '').trim().toLowerCase();
+  const items = term
+    ? data.items.filter(item => `${item.tpl.nombre} ${item.tpl.desc||''}`.toLowerCase().includes(term))
+    : data.items;
   const adminActions = isAdmin() ? `<article class="panel">
-    <strong>Acciones rápidas</strong>
-    <div class="meta" style="margin-top:8px">Desde aquí puedes avisar por WhatsApp o copiar el recordatorio completo de documentos pendientes.</div>
-    <div class="cacts" style="margin-top:14px">
+    <strong>Atajos r&aacute;pidos</strong>
+    <div class="meta" style="margin-top:8px">Abre el recordatorio correcto o c&oacute;pialo sin salir de esta obra.</div>
+    <div class="notice-actions">
       <button class="wa" onclick="waDocReminder('${workId}')">WhatsApp</button>
       <button class="soft" onclick="copyReminder('documents','${workId}')">Copiar aviso</button>
     </div>
   </article>` : '';
-  target.innerHTML = data.items.length
-    ? `${adminActions}<div class="folder-grid">${data.items.map(item => docFolderMarkup(item)).join('')}</div>`
-    : `<article class="doc-card"><strong>No hay requisitos configurados.</strong><div class="meta">Primero crea la lista maestra de documentos.</div></article>`;
+  target.innerHTML = !data.items.length
+    ? `<article class="doc-card"><strong>No hay requisitos configurados.</strong><div class="meta">Primero crea la lista maestra de documentos.</div></article>`
+    : !items.length
+      ? `<article class="doc-card"><strong>No hay coincidencias.</strong><div class="meta">Prueba con otro nombre de documento.</div></article>`
+      : `${adminActions}<div class="folder-grid">${items.map(item => docFolderMarkup(item)).join('')}</div>`;
   normalizeUiLabels(document.getElementById('view-doc-work'));
 }
 function renderDocEntry(workId=CUR_DOC_WORK, tplId=CUR_DOC_TEMPLATE) {
